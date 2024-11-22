@@ -1,0 +1,22 @@
+{
+  "name": "leda",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "homepage": "https://valentinapasqual.github.io/leda",
+  "scripts": {
+    "build": "tailwindcss -i ./app/style.css -o ./app/style.css --minify", 
+    "deploy": "gh-pages -d ."  
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "gh-pages": "^6.2.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "vite": "^5.4.10"
+  },
+  "dependencies": {
+    "itemsjs": "^2.1.25",
+    "leaflet": "^1.9.4"
+  }
+}
