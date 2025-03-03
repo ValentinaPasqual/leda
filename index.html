@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEDA Search</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-indigo-600">LEDA</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="text-gray-600 hover:text-gray-900">About</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900">Contatti</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold text-gray-900 mb-8">Esplora il Tuo Percorso</h1>
+            <p class="text-xl text-gray-600 mb-12">Scopri nuovi itinerari e luoghi attraverso LEDA Search</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Card Percorsi -->
+                <a href="/leda/pages/percorso.html" class="group">
+                    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition duration-300">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-route text-4xl text-indigo-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Percorsi</h2>
+                        <p class="text-gray-600">Esplora itinerari personalizzati e scopri nuove destinazioni</p>
+                    </div>
+                </a>
+
+                <!-- Card Atlante -->
+                <a href="/pages/mappa.html" class="group">
+                    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition duration-300">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-map-marked-alt text-4xl text-indigo-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Atlante</h2>
+                        <p class="text-gray-600">Visualizza la mappa interattiva con tutti i punti di interesse</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="text-center text-gray-500">
+                <p>&copy; 2025 LEDA Search. Tutti i diritti riservati.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

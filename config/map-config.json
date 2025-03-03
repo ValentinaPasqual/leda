@@ -1,0 +1,63 @@
+{
+  "map": {
+    "initialView": [51.505, -0.09],
+    "initialZoom": 5,
+    "tileLayer": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  "datasetConfig": {
+    "multivalue_rows" : {
+      "Alpinist" : ",",
+      "Guide": ",",
+      "Expedition_members": ","
+    }
+  },
+  "searchConfig": {
+    "debounceTime": 300,
+    "defaultSort": "date_desc",
+    "sortOptions": [
+      {"value": "date_desc", "label": "Year (Desc)"},
+      {"value": "date_asc", "label": "Year (Asc)"}
+    ]
+  },
+  "resultsDisplay": {
+    "tagsToShow": ["Titolo", "author", "year"]
+  },
+  "sortings": {
+    "date_desc": {
+      "field": "Year",
+      "order": "desc"
+    },
+    "date_asc": {
+      "field": "Year",
+      "order": "asc"
+    }
+  },
+  "aggregations": {
+    "Expedition_members": {
+      "title": "Members",
+      "size": 500,
+      "conjunction": false,
+      "type": "simple"
+    },
+    "Year": {
+      "title": "Year",
+      "size": 100,
+      "conjunction": false,
+      "type": "range"
+    },
+    "altitude_span": {
+      "title": "Altitude",
+      "size": 100,
+      "conjunction": false,
+      "type": "range"
+    },
+    "SOIUSA": {
+      "title": "SOIUSA",
+      "size": 100,
+      "conjunction": false,
+      "type": "taxonomy"
+    }
+  },
+  "searchableFields": ["Titolo"]
+}
