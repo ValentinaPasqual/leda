@@ -1,0 +1,151 @@
+ID_opera	Spazi geografici	Tipologia del luogo	Note sullo spazio	Interpretazione	osm_id	lat_long
+1	Sanremo	paese			42651	43.8198253,7.7748827
+2	Liguria	città	Una città non specificata in Liguria		301482	44.4777617,8.7026296
+3	Torino	città			43992	45.0677551,7.6824892
+4	Torino	città			43992	45.0677551,7.6824892
+5	Isola di Ocana	mare				
+6						
+7	Torino	città			43992	45.0677551,7.6824892
+8	Torino	campagna			43992	45.0677551,7.6824892
+9						
+10	Torino	interno			43992	45.0677551,7.6824892
+11	Rio delle Amazzoni	bosco			172122662	0.1865944,-50.7348369
+11	Europa non specificato	bosco, mare				
+12	Non specificato (forse Sud America?)	montagna				
+13	Non specificato (forse Sud America?)	interno				
+14	Villacidro	campagna, paese, bosco			39919	39.4569925,8.7367219
+15	Zurigo 	città, montagna, paese	Crispoli		1682248	47.3744489,8.5410422
+15	Widmad					
+15	Lewrosen					
+16	Seveso	città			45608	45.6434655,9.1373787
+17	Seveso	città			45608	45.6434655,9.1373787
+18	Campagna lombarda intorno al fiume Lambro 	campagna, paese, pianura, fiume			570545	45.5302185,9.2659323
+19	Maremma Toscana	campagna, paese, collina, pianura	Campagna toscana ma tutta l’Italia è coinvolta dall’apocalisse		4279861	42.6303496,11.1095079
+20	Terra	città, campagna			267187327	34.9656724,32.4248003
+21	Alta Maremma	pianura				
+22	Hindenburg	montagna, pianura, paese, bosco, fiume			3641174	52.7533929,11.9288673
+22	Roccia del Piandot	montagna, pianura, paese, bosco, fiume				
+22	Sasso della Campanula	montagna, pianura, paese, bosco, fiume				
+22	Klagenfurt	montagna, pianura, paese, bosco, fiume			105870	46.6239430,14.3075976
+22	Gorizia	montagna, pianura, paese, bosco, fiume	(ma tutti i toponimi sono nella stessa zona...)		179075	45.9441278,13.6252288
+22	Altipiano di Asiago	montagna, pianura, paese, bosco, fiume			18558498	45.5568695,10.2232761
+23	Maremma Toscana	città, paese, campagna	Firenze; Pisa; Cecina; Volterra		4279861	42.6303496,11.1095079
+24	Maremma Toscana	paese, città, campagna, collina	Firenze; Pisa; Cecina; Volterra		4279861	42.6303496,11.1095079
+25	Malo 	paese, fiume, bosco, campagna			45550	45.6602960,11.4074930
+26	Italia, sicuramente, forse Campania? Sicuramente non Roma	interno, paese, bosco				
+27	Altipiano di Asiago	montagna, bosco, fiume			18558498	45.5568695,10.2232761
+28	Altipiano di Asiago	paese, montagna, pianura, bosco			18558498	45.5568695,10.2232761
+29	Altipiano di Asiago	montagna, paese, bosco, pianura			18558498	45.5568695,10.2232761
+30	Vicenza	città, bosco			44580	45.6348591,11.4063543
+31	Napoli				40767	40.8358846,14.2487679
+31	Aberdeen				1900654	57.1482429,-2.0928095
+31	Caserta				40940	41.2035192,14.1168624
+31	Casal di Principe				41007	41.0114120,14.1248250
+31	San Cipriano d'Aversa				40978	40.9988120,14.1317260
+31	Casapesenna	paese, città			40979	40.9915120,14.1361260
+32	nuova baja california	città, mare				
+33	Milano	città	Cortesforza (inventato)		44915	45.4641943,9.1896346
+34	Genova	città, interno			44875	44.4072600,8.9338624
+35	Roma	città			41485	41.8933203,12.4829321
+36						
+37	Bologna	città, campagna			43172	44.4938203,11.3426327
+38	Arcipelago de La Maddalena	mare			7454306	41.2127826,9.4066598
+39	Sharm el Sheik	interno, mare	Aereporto		872858698	25.4688226,56.3433687
+39	Milano	città			44915	45.4641943,9.1896346
+39	Mar Egeo	mare	Capo Atreide, Lago di Kalamia		4594226	38.0622276,25.7205887
+39	Atene	città			441183	37.9755648,23.7348324
+39	Roma	città			41485	41.8933203,12.4829321
+40		montagna				
+41	Rimini	mare, città			42661	43.9465433,12.6307490
+41	Riviera Romagnola	mare, città				
+41	Cervia	mare, città			42959	44.2609836,12.3495462
+41	Lido delle Nazioni a Comacchio	mare, città			248100655	44.7426066,12.2412215
+41	Lago delle Nazioni	mare, città			25332893	44.7688281,12.2412809
+42	Palermo	campagna, città, mare			39513	38.1112268,13.3524434
+42	Torre Normanna	campagna, città, mare			443171345	40.6204066,16.1472078
+42	Cefalù	campagna, città, mare			39444	38.0349570,14.0244562
+42	Messina	campagna, città, mare			39514	38.1937571,15.5542082
+43	Italia meridionale	paese	Alento (inventato)		17514288	40.4053173,15.9328381
+44	Parigi	città			71525	48.8534951,2.3483915
+44	New York	città			175905	40.7127281,-74.0060152
+44	Long Island	città			3955977	40.8514970,-73.0994297
+44	Milano	città			44915	45.4641943,9.1896346
+45	Napoli				40767	40.8358846,14.2487679
+45	San Francisco				111968	37.7792588,-122.4193286
+45	Chignolo				845681277	45.8492096,9.5099311
+45	Lodi				44181	45.2613104,9.4916781
+45	Milano				44915	45.4641943,9.1896346
+45	Como				45614	45.9394759,9.1494101
+45	Lugano				2888417	46.0050102,8.9520281
+45	Kriessern				1884082999	47.3653317,9.6071943
+45	lago di Costanza				1156846	47.6477691,9.3471796
+45	Bregenz				75073	47.5025779,9.7472924
+45	Ulm				62495	48.3984968,9.9912458
+45	Elchingen				941078	48.4525086,10.0842004
+45	Wurzburg				62464	49.7780356,9.9434769
+45	Walldorf				453404	49.3038134,8.6433518
+45	Gottinga				191361	51.5328328,9.9351811
+45	Hannover				59418	52.3744779,9.7385532
+45	Bergen-Belsen				2707989157	48.8601371,2.4001275
+45	Wilseder Berg				742231390	53.1678028,9.9390268
+45	Bleckede				1837837	53.2933058,10.7299955
+45	Wulfsen				335212	53.3007223,10.1473808
+45	Radbruch				1392132	53.3115360,10.2844007
+45	Handorf				1255319	48.9081326,6.4413019
+45	Ratzeburg				1471100	53.7011061,10.7742880
+45	Teschow				260059096	53.7874656,12.6297233
+45	Kaseberga	pianura, montagna, mare			27805208	55.3870958,14.0656814
+46	Milano	montagna			44915	45.4641943,9.1896346
+46	Grana (BG)	montagna			10207399661	45.9682534,10.1035775
+46	Katmandu	montagna			12394677	27.7083170,85.3205817
+46	Himalaya	montagna			3791305957	27.9856880,86.9163367
+47	Čukotka	mare			11256819599	50.5498349,16.2309744
+47	Alaska	mare			1116270	64.4459613,-149.6809090
+47	Canada	mare			1428125	61.0666922,-107.9917070
+47	Norvegia	mare			1059668	64.5731537,11.5280364
+47	Siberia	mare			1221148	65.2729258,95.4899032
+47	Groenlandia	mare			7662545	71.8171799,-40.4263179
+48						
+49	Speziale	campagna			4452527394	40.7913913,17.4598637
+50	Roma	città			41485	41.8933203,12.4829321
+51	Friuli	campagna				
+52	Appennino	montagna			823645399	42.9778013,13.0796986
+53	Calabria	paese			1783980	39.0565974,16.5249864
+54	Palestina	città	Territori Palestinesi!		1703814	31.4624210,34.2627215
+55	Liguria	città, bosco			301482	44.4777617,8.7026296
+55	Lambrate	città, bosco			3356418408	45.4824346,9.2410536
+56	Mantova	città			43798	45.1692628,10.6708365
+57		bosco				
+58	Carso	bosco			11801461	45.7550942,13.7932829
+58	Balcani	bosco			4016746	41.7785016,23.8146770
+59						
+60						
+61	Roma	città			41485	41.8933203,12.4829321
+62						
+63	Italia settentrionale	bosco			33890846	41.8996571,12.3826951
+64		città				
+65						
+66						
+67						
+68	Foresta di Cuma	bosco			10207399661	40.84922,14.04896
+69	Forlì	città			42907	44.2227278,12.0412730
+70						
+71						
+72		città				
+73	Milano	città			44915	45.4641943,9.1896346
+74	Italia				365331	42.6384261,12.6742970
+75		bosco				
+76						
+77						
+78						
+79						
+80	Foresta di Białowieża	bosco, campagna			14705359	52.8649192,23.8810102
+81		bosco				
+82	Appennino settentrionale	montagna			276532495	44.3378141,11.2027931
+83						
+83	Alpi	montagna, paese			2698607	45.9083263,9.1420628
+84	Cimalta (inventato)	montagna, paese				
+85	Sicilia	campagna			39152	37.5877940,14.1550480
+86	Italia settentrionale	città, paese			33890846	41.8996571,12.3826951
+86	Inghilterra	città, paese			58447	52.5310214,-1.2649062
+86	Mentone	città, paese			74727	43.7753495,7.5029213
