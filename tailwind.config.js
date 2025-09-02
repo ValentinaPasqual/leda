@@ -1,44 +1,42 @@
-  /** @type {import('tailwindcss').Config} */
-  module.exports = {
-    content: [
-      './index.html',
-      './src/**/*.{js,ts,jsx,tsx,html}',
-      './*.{html,js}',
-    ],
-    theme: {
-      extend: {
-        colors: {
-          // PRIMARY COLOR - Users customize this to match their brand
-          primary: {
-            50: '#f0fdf4',
-            100: '#dcfce7',
-            200: '#bbf7d0',
-            300: '#86efac',
-            400: '#4ade80',
-            500: '#22c55e', // Main green
-            600: '#16a34a',
-            700: '#15803d',
-            800: '#166534',
-            900: '#14532d',
-
-          },
-          // SECONDARY COLOR (optional)
-          secondary: {
-            50: '#fef2f2',
-            100: '#fee2e2',
-            200: '#fecaca',
-            300: '#fca5a5',
-            400: '#f87171',
-            500: '#ef4444', // Main red
-            600: '#dc2626',
-            700: '#b91c1c',
-            800: '#991b1b',
-            900: 'rgba(127, 29, 29, 1)',
-          }
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx,html}',
+    './*.{html,js}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // PRIMARY COLOR - Users customize this to match their brand (mandatory)
+        primary: {
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#22c55e', // Main green
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d',
         },
-        // CUSTOM FONTS
-        fontFamily: {   
-
+        // SECONDARY COLOR (mandatory, can be the same as primary if no shades are needed)
+        secondary: {
+          50: '#fef2f2',
+          100: '#fee2e2',
+          200: '#fecaca',
+          300: '#fca5a5',
+          400: '#f87171',
+          500: '#ef4444', // Main red
+          600: '#dc2626',
+          700: '#b91c1c',
+          800: '#991b1b',
+          900: 'rgba(127, 29, 29, 1)',
+        }
+      },
+      // CUSTOM FONTS
+      fontFamily: {   
         // MODERN SANS-SERIF - Clean, readable, professional
         // ['Inter', 'ui-sans-serif', 'system-ui'],              // Very popular, excellent readability
         // ['Roboto', 'ui-sans-serif', 'system-ui'],             // Google's Material Design font
@@ -98,64 +96,70 @@
         'body': ['Rubik', 'ui-sans-serif', 'system-ui'],
       },
     },
-    plugins: [],
-  }
+  },
+  safelist: [
+    // Pattern per tutte le classi background primary e secondary [safer import in js files for dynamic application]
+    {
+      pattern: /bg-(primary|secondary)-(50|100|200|300|400|500|600|700|800|900)/
+    }
+  ],
+  plugins: [],
 };
 
-  /* 
-  EXAMPLES: Change primary color to match your brand
+/* 
+EXAMPLES: Change primary color to match your brand
 
-  // 🟢 GREEN THEME
-  primary: {
-    50: '#f0fdf4',
-    100: '#dcfce7',
-    200: '#bbf7d0',
-    300: '#86efac',
-    400: '#4ade80',
-    500: '#22c55e', // Main green
-    600: '#16a34a',
-    700: '#15803d',
-    800: '#166534',
-    900: '#14532d',
-  },
+// 🟢 GREEN THEME
+primary: {
+  50: '#f0fdf4',
+  100: '#dcfce7',
+  200: '#bbf7d0',
+  300: '#86efac',
+  400: '#4ade80',
+  500: '#22c55e', // Main green
+  600: '#16a34a',
+  700: '#15803d',
+  800: '#166534',
+  900: '#14532d',
+},
 
-  // 🟣 PURPLE THEME  
-  primary: {
-    50: '#faf5ff',
-    100: '#f3e8ff',
-    200: '#e9d5ff',
-    300: '#d8b4fe',
-    400: '#c084fc',
-    500: '#a855f7', // Main purple
-    600: '#9333ea',
-    700: '#7c3aed',
-    800: '#6b21a8',
-    900: '#581c87',
-  },
+// 🟣 PURPLE THEME  
+primary: {
+  50: '#faf5ff',
+  100: '#f3e8ff',
+  200: '#e9d5ff',
+  300: '#d8b4fe',
+  400: '#c084fc',
+  500: '#a855f7', // Main purple
+  600: '#9333ea',
+  700: '#7c3aed',
+  800: '#6b21a8',
+  900: '#581c87',
+},
 
-  // 🔴 RED THEME
-  primary: {
-    50: '#fef2f2',
-    100: '#fee2e2',
-    200: '#fecaca',
-    300: '#fca5a5',
-    400: '#f87171',
-    500: '#ef4444', // Main red
-    600: '#dc2626',
-    700: '#b91c1c',
-    800: '#991b1b',
-    900: '#7f1d1d',
-  },
-  primary: {
-    50: '#eff6ff',
-    100: '#dbeafe', 
-    200: '#bfdbfe',
-    300: '#93c5fd',
-    400: '#60a5fa',
-    500: '#3b82f6', // 👈 MAIN BRAND COLOR - Change this!
-    600: '#2563eb',
-    700: '#1d4ed8',
-    800: '#1e40af',
-    900: '#1e3a8a',
-  }
-  */
+// 🔴 RED THEME
+primary: {
+  50: '#fef2f2',
+  100: '#fee2e2',
+  200: '#fecaca',
+  300: '#fca5a5',
+  400: '#f87171',
+  500: '#ef4444', // Main red
+  600: '#dc2626',
+  700: '#b91c1c',
+  800: '#991b1b',
+  900: '#7f1d1d',
+},
+primary: {
+  50: '#eff6ff',
+  100: '#dbeafe', 
+  200: '#bfdbfe',
+  300: '#93c5fd',
+  400: '#60a5fa',
+  500: '#3b82f6', // 👈 MAIN BRAND COLOR - Change this!
+  600: '#2563eb',
+  700: '#1d4ed8',
+  800: '#1e40af',
+  900: '#1e3a8a',
+}
+*/

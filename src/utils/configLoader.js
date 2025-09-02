@@ -2,15 +2,17 @@ const base = import.meta.env.BASE_URL;
 
 async function loadConfiguration() {
   try {
-    // First, try to load from localStorage (for any saved updates)
-    const savedConfig = localStorage.getItem('mapConfig');
+    // Usa l'APP_ID per creare una chiave unica
+    const storageKey = `mapConfig_${__APP_ID__}`;
+    const savedConfig = localStorage.getItem(storageKey);
+    
     if (savedConfig) {
-      console.log('Loading configuration from localStorage (with updates)');
+      console.log(`Loading configuration from localStorage (${storageKey})`);
       return JSON.parse(savedConfig);
     }
     
     // If no saved config, load from server
-    const response = await fetch(`${base}/config/map-config.json`);
+    const response = await fetch(`${base}config/map-config.json`);
     const config = await response.json();
     console.log('Loaded configuration from server:', config);
     return config;
@@ -22,10 +24,11 @@ async function loadConfiguration() {
 
 async function saveConfiguration(config) {
   try {
-    // Save to localStorage (this persists between browser sessions)
-    localStorage.setItem('mapConfig', JSON.stringify(config, null, 2));
-    console.log('✅ Configuration permanently saved to browser storage');
-    
+    // Usa la stessa chiave per salvare
+    const storageKey = `mapConfig_${__APP_ID__}`;
+    localStorage.setItem(storageKey, JSON.stringify(config, null, 2));
+    console.log(`✅ Configuration saved to ${storageKey}`);
+         
     return true;
   } catch (error) {
     console.error('Error saving configuration:', error);

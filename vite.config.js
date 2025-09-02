@@ -1,8 +1,15 @@
+// vite.config.js
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
 
+const BASE_PATH = '/leda/';
+
 export default defineConfig({
-  base: '/leda/',
+  base: BASE_PATH,
+  
+  define: {
+    __APP_ID__: JSON.stringify(BASE_PATH.replace(/\//g, '') || 'root')
+  },
   
   resolve: {
     alias: {

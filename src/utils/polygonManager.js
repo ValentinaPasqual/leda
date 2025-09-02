@@ -6,21 +6,13 @@
 
 const base = import.meta.env.BASE_URL;
 
+
 export class PolygonManager {
   constructor(map) {
     this.map = map;
     this.polygonLayers = new Map();
     this.polygonRepository = null;
     this.polygonLayerGroup = L.layerGroup().addTo(this.map);
-    
-    // Fixed styles
-    this.defaultStyle = {
-      color: '#3388ff',
-      weight: 2,
-      opacity: 0.8,
-      fillColor: '#3388ff',
-      fillOpacity: 0.1
-    };
   }
 
   /**
@@ -118,16 +110,8 @@ export class PolygonManager {
   createPolygonLayer(geojson, locationData) {
     return L.geoJSON(geojson, {
       style: this.defaultStyle,
+      className: 'polygon', // Add the special CSS class
       onEachFeature: (feature, layer) => {
-        if (locationData.display_name) {
-          layer.bindPopup(`
-            <div>
-              <h4>${locationData.display_name}</h4>
-              <p><strong>Coordinates:</strong> ${locationData.lat}, ${locationData.lon}</p>
-            </div>
-          `);
-        }
-
         layer.on({
           click: (e) => {
             L.DomEvent.stopPropagation(e);

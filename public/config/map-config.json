@@ -38,6 +38,10 @@
       }
     }
   },
+  "map_popups": {
+    "show_polygons": "True",
+    "show_related_pins": "True"
+  },
   "searchConfig": {
     "debounceTime": 300,
     "defaultSort": "date_desc",
@@ -106,5 +110,5 @@
       "type": "range"
     }
   },
-  "searchableFields": ["Titolo", "Anno"]
+  "searchableFields": ["Titolo", "Anno", "Autore"]
 }
