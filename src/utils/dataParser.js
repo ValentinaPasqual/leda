@@ -57,8 +57,8 @@ const dataParser = {
     try {
       // Fetch both TSV files in parallel
       const [catalogueResponse, geodataResponse] = await Promise.all([
-        fetch(`${base}/data/catalogue.tsv`),
-        fetch(`${base}/data/geodata.tsv`)
+        fetch(`${base}/data/references.tsv`),
+        fetch(`${base}/data/locations.tsv`)
       ]);
       
       const [catalogueText, geodataText] = await Promise.all([

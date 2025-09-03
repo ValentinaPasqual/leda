@@ -55,6 +55,9 @@ class LEDASearch {
       // Perform initial search and load polygons
       await this.performSearch();
       
+      // NUOVO: Applica filtri dall'URL dopo l'inizializzazione
+      this.applyUrlFilters();
+      
       // Mark initial load as complete
       this.isInitialLoad = false;
       this.isFullyLoaded = true;
@@ -69,6 +72,78 @@ class LEDASearch {
       // Removed hideProgressLoader() call
       this.hideFullScreenLoader();
     }
+  }
+
+  // NUOVO: Metodo per applicare filtri dall'URL
+  applyUrlFilters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const filterKey = urlParams.get('filter');
+    const filterValue = urlParams.get('value');
+    
+    console.log('Checking URL parameters:', { filterKey, filterValue });
+    
+    if (filterKey && filterValue) {
+      console.log(`Applying URL filter: ${filterKey} = ${filterValue}`);
+      
+      // Verifica che il filtro esista nella configurazione
+      if (this.config.aggregations && this.config.aggregations[filterKey]) {
+        // Applica il filtro
+        setTimeout(() => {
+          this.handleStateChange({
+            type: 'FACET_CHANGE',
+            facetType: filterKey,
+            value: filterValue,
+            checked: true
+          });
+          
+          console.log(`Filter applied: ${filterKey} = ${filterValue}`);
+          this.showFilterNotification(filterKey, filterValue);
+          
+          // Opzionale: rimuovi i parametri dall'URL
+          // window.history.replaceState({}, document.title, window.location.pathname);
+        }, 1500); // Delay per assicurarsi che tutto sia inizializzato
+      } else {
+        console.warn(`Filter key '${filterKey}' not found in configuration`);
+        this.showNotification(`Filtro '${filterKey}' non trovato`, 'warning');
+      }
+    }
+  }
+
+  // NUOVO: Metodo per mostrare notifica filtro applicato
+  showFilterNotification(filterKey, filterValue) {
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300';
+    notification.style.transform = 'translateX(100%)';
+    notification.innerHTML = `
+      <div class="flex items-center space-x-3">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+        </svg>
+        <span>Filtro applicato: <strong>${filterKey}</strong> = "${filterValue}"</span>
+        <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-white hover:text-gray-200">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animazione di entrata
+    setTimeout(() => {
+      notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Auto-rimozione dopo 5 secondi
+    setTimeout(() => {
+      notification.style.transform = 'translateX(100%)';
+      setTimeout(() => {
+        if (notification.parentElement) {
+          notification.parentElement.removeChild(notification);
+        }
+      }, 300);
+    }, 5000);
   }
 
   createEmptyFilters() {
@@ -167,54 +242,6 @@ class LEDASearch {
       }, 300);
     }
   }
-
-  // Progress loader methods - kept but commented out for reference
-  /*
-  showProgressLoader() {
-    if (!this.progressLoader) {
-      this.progressLoader = document.createElement('div');
-      this.progressLoader.className = 'fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200';
-      this.progressLoader.style.display = 'block';
-      
-      const progressBar = document.createElement('div');
-      progressBar.className = 'h-full bg-gradient-to-r from-primary-500 to-purple-500 shadow-lg';
-      progressBar.style.width = '0%';
-      progressBar.style.transition = 'width 0.3s ease-out';
-      
-      this.progressLoader.appendChild(progressBar);
-      document.body.appendChild(this.progressLoader);
-      
-      console.log('Progress loader created and added to DOM');
-    }
-    
-    this.progressLoader.style.display = 'block';
-    const progressBar = this.progressLoader.querySelector('div');
-    if (progressBar) {
-      // Force a reflow
-      progressBar.offsetHeight;
-      progressBar.style.width = '100%';
-      console.log('Progress bar animation started');
-    }
-    this.isLoading = true;
-  }
-
-  hideProgressLoader() {
-    if (this.progressLoader) {
-      const progressBar = this.progressLoader.querySelector('div');
-      if (progressBar) {
-        progressBar.style.width = '0%';
-        console.log('Progress bar animation ended');
-      }
-      // Hide the container after animation completes
-      setTimeout(() => {
-        if (this.progressLoader) {
-          this.progressLoader.style.display = 'none';
-        }
-      }, 300);
-    }
-    this.isLoading = false;
-  }
-  */
 
   // Simplified notification system
   showNotification(message, type = 'info') {

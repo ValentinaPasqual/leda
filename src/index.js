@@ -137,6 +137,7 @@ async function initializeMap(config, data) {
     errorContainer.appendChild(errorMessage);
   }
 }
+
 // Funzione per generare la sezione "In evidenza sulla mappa"
 function generateFeaturedLocations(data) {
   // Seleziona solo gli elementi con in_evidence impostato a true
@@ -165,18 +166,6 @@ function generateFeaturedLocations(data) {
     // Crea la scheda
     const card = document.createElement('div');
     card.className = 'bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200 card-hover transition duration-300';
-    
-    // Aggiungi l'immagine
-    const imageContainer = document.createElement('div');
-    imageContainer.className = 'h-48 overflow-hidden';
-    
-    // const image = document.createElement('img');
-    // image.src = item.image_url || '/api/placeholder/600/400'; // Usa un placeholder se non c'è un'immagine
-    // image.alt = item.name || 'Immagine montagna';
-    // image.className = 'w-full h-full object-cover';
-    
-    // imageContainer.appendChild(image);
-    // card.appendChild(imageContainer);
     
     // Crea il contenuto della scheda
     const content = document.createElement('div');
@@ -211,11 +200,6 @@ function generateFeaturedLocations(data) {
     link.href = `#${item.id || ''}`;
     link.className = 'text-indigo-600 font-medium hover:text-indigo-800 inline-flex items-center';
 
-  // link.textContent = 'Esplora la storia'; to be added then
-  //   const icon = document.createElement('i');
-  //   icon.className = 'fas fa-arrow-right ml-2';
-  //   link.appendChild(icon);
-    
     content.appendChild(link);
     card.appendChild(content);
     
@@ -263,27 +247,24 @@ async function initializeFeaturedLocations(data) {
   }
 }
 
-// Funzione per generare la sezione "Percorsi narrativi"
-function generateStorytellingPaths(data) {
-  // Raggruppa gli elementi per valore di storytelling_path
-  const pathGroups = {};
+// Funzione per generare la sezione degli indici basata sugli aggregations
+function generateIndexCards(config) {
+  // Verifica se esistono aggregations nella configurazione
+  if (!config.aggregations || typeof config.aggregations !== 'object') {
+    console.warn('Nessuna configurazione aggregations trovata');
+    return null;
+  }
   
-  // Raccogli solo gli elementi con storytelling_path come stringa non vuota
-  data.forEach(item => {
-    if (item.storytelling_path && typeof item.storytelling_path === 'string') {
-      const pathName = item.storytelling_path;
-      
-      if (!pathGroups[pathName]) {
-        pathGroups[pathName] = [];
-      }
-      
-      pathGroups[pathName].push(item);
-    }
-  });
+  // Converte l'oggetto aggregations in array
+  const aggregationsArray = Object.entries(config.aggregations).map(([key, value]) => ({
+    name: key,
+    ...value
+  }));
   
-  // Se non ci sono percorsi narrativi, non mostrare la sezione
-  const pathNames = Object.keys(pathGroups);
-  if (pathNames.length === 0) return null;
+  if (aggregationsArray.length === 0) {
+    console.warn('Nessuna aggregation trovata');
+    return null;
+  }
   
   // Crea il container principale
   const container = document.createElement('div');
@@ -292,101 +273,81 @@ function generateStorytellingPaths(data) {
   // Aggiungi il titolo della sezione
   const title = document.createElement('h2');
   title.className = 'text-3xl font-bold text-gray-900 mb-8';
-  title.textContent = 'Percorsi narrativi';
+  title.textContent = 'Esplora per categorie';
   container.appendChild(title);
   
-  // Crea la griglia per le schede dei percorsi
+  // Crea la griglia per le schede
   const grid = document.createElement('div');
   grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
   container.appendChild(grid);
   
-  // Genera una scheda per ogni gruppo di percorso narrativo
-  pathNames.forEach(pathName => {
-    const pathItems = pathGroups[pathName];
-    
+  // Genera una scheda per ogni aggregation - USA aggregationsArray invece di config.aggregations
+  aggregationsArray.forEach(aggregation => {
     // Crea la scheda
     const card = document.createElement('div');
-    card.className = 'bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200 card-hover transition duration-300';
-    
-    // Aggiungi l'immagine se il primo elemento ha un'immagine
-    if (pathItems[0].image_url) {
-      const imageContainer = document.createElement('div');
-      imageContainer.className = 'h-48 overflow-hidden';
-      
-      const image = document.createElement('img');
-      image.src = pathItems[0].image_url;
-      image.alt = pathName;
-      image.className = 'w-full h-full object-cover';
-      
-      imageContainer.appendChild(image);
-      card.appendChild(imageContainer);
-    }
+    card.className = 'bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300';
     
     // Crea il contenuto della scheda
     const content = document.createElement('div');
     content.className = 'p-6';
     
-    // Intestazione con nome del percorso e conteggio
-    const header = document.createElement('div');
-    header.className = 'flex justify-between items-center mb-2';
-    
+    // Titolo dell'aggregation (usa 'title' se presente, altrimenti 'name')
     const name = document.createElement('h3');
-    name.className = 'text-xl font-bold';
-    name.textContent = pathName;
+    name.className = 'text-xl font-bold text-gray-900 mb-3';
+    name.textContent = aggregation.title || aggregation.name || 'Categoria';
+    content.appendChild(name);
     
-    const count = document.createElement('span');
-    count.className = 'text-sm bg-indigo-100 text-indigo-800 px-2 py-1 rounded';
-    count.textContent = `${pathItems.length} elementi`;
-    
-    header.appendChild(name);
-    header.appendChild(count);
-    content.appendChild(header);
-    
-    // Descrizione del percorso
-    if (pathItems[0].storytelling_path_description) {
-      const description = document.createElement('p');
-      description.className = 'text-gray-600 mb-4';
-      description.textContent = pathItems[0].storytelling_path_description;
-      content.appendChild(description);
+    // Categoria (se presente)
+    if (aggregation.category) {
+      const category = document.createElement('p');
+      category.className = 'text-sm text-gray-500 mb-2';
+      category.textContent = aggregation.category;
+      content.appendChild(category);
     }
     
-    // Lista di elementi inclusi (max 10)
-    const itemsList = document.createElement('div');
-    itemsList.className = 'mt-4 mb-4';
+    // Badge per il tipo di aggregation
+    const typeBadge = document.createElement('span');
+    typeBadge.className = 'inline-block px-2 py-1 text-xs font-medium rounded mb-4';
     
-    const itemsTitle = document.createElement('h4');
-    itemsTitle.className = 'text-sm font-medium text-gray-700 mb-2';
-    itemsTitle.textContent = 'Elementi inclusi:';
-    itemsList.appendChild(itemsTitle);
-    
-    const itemsContainer = document.createElement('ul');
-    itemsContainer.className = 'text-sm text-gray-600 pl-5 list-disc';
-    
-    // Mostra fino a 10 elementi
-    const displayItems = pathItems.slice(0, 10);
-    displayItems.forEach(item => {
-      const listItem = document.createElement('li');
-      listItem.textContent = item.Name || 'Elemento senza nome';
-      itemsContainer.appendChild(listItem);
-    });
-    
-    // Se ci sono più di 10 elementi, mostra un indicatore
-    if (pathItems.length > 10) {
-      const moreItems = document.createElement('li');
-      moreItems.className = 'italic';
-      moreItems.textContent = `e altri ${pathItems.length - 10} elementi...`;
-      itemsContainer.appendChild(moreItems);
+    // Stile diverso in base al tipo
+    switch (aggregation.type) {
+      case 'simple':
+        typeBadge.className += ' bg-blue-100 text-blue-800';
+        typeBadge.textContent = 'Lista semplice';
+        break;
+      case 'range':
+        typeBadge.className += ' bg-green-100 text-green-800';
+        typeBadge.textContent = 'Per intervalli';
+        break;
+      case 'taxonomy':
+        typeBadge.className += ' bg-purple-100 text-purple-800';
+        typeBadge.textContent = 'Tassonomia';
+        break;
+      default:
+        typeBadge.className += ' bg-gray-100 text-gray-800';
+        typeBadge.textContent = 'Altro';
     }
+    content.appendChild(typeBadge);
     
-    itemsList.appendChild(itemsContainer);
-    content.appendChild(itemsList);
-    
-    // Link per esplorare - apre in una nuova pagina
+    // Link per esplorare
     const link = document.createElement('a');
-    link.href = `pages/narrative.html?percorso=${encodeURIComponent(pathName)}`;
-    link.rel = 'noopener noreferrer';
-    link.className = 'text-indigo-600 font-medium hover:text-indigo-800 inline-flex items-center explore-path-button';
-    link.textContent = 'Esplora percorso';
+    const encodedIndex = encodeURIComponent(aggregation.name);
+    const encodedView = encodeURIComponent(aggregation.type);
+    link.href = `pages/indice.html?index=${encodedIndex}&view=${encodedView}`;
+    link.className = 'inline-flex items-center text-indigo-600 font-medium hover:text-indigo-800 transition-colors duration-200';
+    
+    const linkText = document.createElement('span');
+    linkText.textContent = 'Esplora categoria';
+    link.appendChild(linkText);
+    
+    // Icona freccia
+    const arrow = document.createElement('svg');
+    arrow.className = 'ml-2 w-4 h-4';
+    arrow.setAttribute('fill', 'none');
+    arrow.setAttribute('stroke', 'currentColor');
+    arrow.setAttribute('viewBox', '0 0 24 24');
+    arrow.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>';
+    link.appendChild(arrow);
     
     content.appendChild(link);
     card.appendChild(content);
@@ -398,33 +359,55 @@ function generateStorytellingPaths(data) {
   return container;
 }
 
-// Funzione per inizializzare la sezione dei percorsi narrativi
-async function initializeStorytellingPaths(data) {
+// Funzione per inizializzare la sezione degli indici
+async function initializeIndexCards(config) {
   try {
-      // Trova l'elemento container per i percorsi narrativi
-      const pathsContainer = document.getElementById('storytelling-paths-container');
-      if (pathsContainer) {
-        const pathsSection = generateStorytellingPaths(data);
-        if (pathsSection) {
-          pathsContainer.appendChild(pathsSection);
-          console.log('Sezione "Percorsi narrativi" generata con successo');
-        } else {
-          console.log('Nessun percorso narrativo trovato nei dati');
-        }
+    // Trova l'elemento container per le schede degli indici
+    const indexContainer = document.getElementById('index-cards-container');
+    if (indexContainer) {
+      const indexSection = generateIndexCards(config);
+      if (indexSection) {
+        // Pulisci il container prima di aggiungere il nuovo contenuto
+        indexContainer.innerHTML = '';
+        indexContainer.appendChild(indexSection);
+        console.log('Sezione degli indici generata con successo');
       } else {
-        console.warn('Container per i percorsi narrativi non trovato (ID: storytelling-paths-container)');
+        console.log('Nessuna aggregation trovata nella configurazione');
       }
+    } else {
+      console.warn('Container per le schede degli indici non trovato (ID: index-cards-container)');
+    }
   } catch (error) {
-    console.error('Errore durante l\'inizializzazione dei percorsi narrativi:', error);
+    console.error('Errore durante l\'inizializzazione delle schede degli indici:', error);
   }
 }
 
-// Funzione per aggiornare i contenuti dinamicamente
-document.addEventListener('DOMContentLoaded', async() => {
-        const config = await loadConfiguration();
-        const data = await parseData();
-        initializeMap(config, data);
-        updateProjectDescription(config)
-        initializeFeaturedLocations(data);
-        initializeStorytellingPaths(data);
-});
+// Chiama tutte funzione
+async function initializeApp() {
+  try {
+    // Carica la configurazione
+    const config = await loadConfiguration();
+    console.log('Configurazione caricata:', config);
+    
+    // Aggiorna la descrizione del progetto
+    updateProjectDescription(config);
+    
+    // Inizializza le schede degli indici
+    await initializeIndexCards(config);
+    
+    // Carica e processa i dati
+    const data = await parseData();
+    console.log('Dati caricati:', data);
+    
+    // Inizializza la mappa
+    await initializeMap(config, data);
+    
+    // Inizializza le sezioni della pagina
+    await initializeFeaturedLocations(data);
+    
+  } catch (error) {
+    console.error('Errore durante l\'inizializzazione dell\'app:', error);
+  }
+}
+// Avvia l'applicazione quando il DOM è pronto
+document.addEventListener('DOMContentLoaded', initializeApp);

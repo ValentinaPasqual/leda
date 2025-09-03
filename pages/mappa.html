@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" href="data:;base64,=" />
 </head>
-<body class="overflow-hidden">
+<body class="overflow-hidden" id="map-page">
 
 <header class="bg-primary-800 text-white shadow-lg">
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,7 +24,8 @@
                 </div>
                 <div class="hidden md:flex ml-10 space-x-8 items-center">
                     <a href="../" class="text-white hover:text-primary-200 font-medium transition">Home</a>
-                    <a href="#" class="text-white hover:text-primary-200 font-medium transition">Atlante</a>
+                    <a href="#" class="bg-primary-700 text-primary-200 px-4 py-2 rounded-md font-medium transition">Mappa</a>
+                    <a href="../#index-cards-container" class="text-white hover:text-primary-200 font-medium transition">Indici</a>
                     <!-- <a href="#" class="text-white hover:text-primary-200 font-medium transition">Pionieri</a>
                     <a href="#" class="text-white hover:text-primary-200 font-medium transition">Cronologia</a> -->
                 </div>
@@ -142,7 +143,7 @@
                     </div>
 
                     <button id="toggle-results" class="nav-button flex items-center space-x-2 px-4 py-2 rounded-full shadow-lg hover:shadow-xl">
-                        <span class="font-medium">Opere</span>
+                        <span class="font-medium">Riferimenti</span>
                         <i class="fas fa-list text-lg"></i>
                     </button>
                 </div>

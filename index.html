@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 min-h-screen" id="index-page">
     <!-- Header semplificato -->
 <header class="bg-primary-800 text-white shadow-lg">
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,8 +21,9 @@
                     </div>
                 </div>
                 <div class="hidden md:flex ml-10 space-x-8 items-center">
-                    <a href="#" class="text-white hover:text-primary-200 font-medium transition">Home</a>
-                    <a href="./pages/mappa.html" class="text-white hover:text-primary-200 font-medium transition">Atlante</a>
+                    <a href="#" class="bg-primary-700 text-primary-200 px-4 py-2 rounded-md font-medium transition">Home</a>
+                    <a href="./pages/mappa.html" class="text-white hover:text-primary-200 font-medium transition">Mappa</a>
+                    <a href="#index-cards-container" class="text-white hover:text-primary-200 font-medium transition">Indici</a>
                     <!-- <a href="#" class="text-white hover:text-primary-200 font-medium transition">Pionieri</a>
                     <a href="#" class="text-white hover:text-primary-200 font-medium transition">Cronologia</a> -->
                 </div>
@@ -36,7 +37,7 @@
 </header>
 
     <!-- Layout principale con grid a due colonne -->
-<!-- Mappa in risalto -->
+    <!-- Mappa in risalto -->
 <div class="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 py-8 px-4 sm:px-6 lg:px-8">
     <!-- Mappa (occupa 2/3 su desktop) -->
     <div class="lg:col-span-2">
@@ -45,7 +46,7 @@
             <div class="absolute inset-0 bg-primary-900 bg-opacity-20 backdrop-filter backdrop-blur-sm z-10"></div>
             
             <!-- Mappa -->
-            <div id="map-preview" class="w-full h-[600px] md:h-[700px] relative z-0"></div>
+            <div id="map" class="w-full h-[600px] md:h-[700px] relative z-0"></div>
             
             <!-- Badge superiore con effetto glassmorphism -->
             <div class="absolute top-6 left-6 bg-white bg-opacity-80 backdrop-filter backdrop-blur-md p-4 rounded-lg shadow-lg border-l-4 border-primary-600 z-20 transform transition-all duration-300 hover:scale-105">
@@ -74,7 +75,7 @@
     <!-- Colonna laterale con pulsanti e descrizione (occupa 1/3 su desktop) -->
     <div class="flex flex-col space-y-6">
         <!-- Descrizione del progetto con effetti visivi -->
-        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-primary-700 relative overflow-hidden">
+        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-secondary-700 relative overflow-hidden">
             <!-- Pattern decorativo -->
             <div class="absolute -right-12 -top-12 w-32 h-32 bg-primary-100 rounded-full opacity-70"></div>
             
@@ -110,11 +111,10 @@
         
         <!-- Pulsanti con effetti avanzati -->
         <div class="flex flex-col space-y-4">
-            <a href="#" class="group relative flex items-center justify-center bg-gradient-to-r from-primary-600 to-primary-800 text-white font-bold py-4 px-6 rounded-xl shadow-lg overflow-hidden transition duration-300 ease-in-out hover:shadow-primary-200 hover:shadow-xl">
-                <!-- Sfondo animato -->
-                <div class="absolute inset-0 bg-gradient-to-r from-primary-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <!-- <a href="#" class="group relative flex items-center justify-center bg-gradient-to-r from-primary-600 to-primary-800 text-white font-bold py-4 px-6 rounded-xl shadow-lg overflow-hidden transition duration-300 ease-in-out hover:shadow-primary-200 hover:shadow-xl">
                 
-                <!-- Icona e testo -->
+                <div class="absolute inset-0 bg-gradient-to-r from-primary-600 to-secondary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
                 <span class="relative z-10 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 transform group-hover:rotate-12 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -122,17 +122,16 @@
                     <span class="text-lg">Scopri di più</span>
                 </span>
                 
-                <!-- Freccia indicatrice -->
                 <span class="absolute right-4 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </span>
-            </a>
+            </a> -->
             
             <a href="./pages/mappa.html" class="group relative flex items-center justify-center bg-gradient-to-r from-primary-600 to-primary-800 text-white font-bold py-4 px-6 rounded-xl shadow-lg overflow-hidden transition duration-300 ease-in-out hover:shadow-primary-200 hover:shadow-xl">
                 <!-- Sfondo animato -->
-                <div class="absolute inset-0 bg-gradient-to-r from-primary-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-primary-600 to-secondary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
                 <!-- Icona e testo -->
                 <span class="relative z-10 flex items-center">
@@ -165,7 +164,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Ultimo aggiornamento: Aprile 2025
+                    Ultimo aggiornamento: Settembre 2025
                 </div>
             </div>
         </div>
@@ -181,6 +180,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div id="storytelling-paths-container"></div>
     </div>
+
+    <div id="index-cards-container"></div>
 </div>
 
 
