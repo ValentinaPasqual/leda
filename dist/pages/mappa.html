@@ -9,13 +9,13 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" href="data:;base64,=" />
-  <script type="module" crossorigin src="/leda/assets/mappa-DqQdVSFi.js"></script>
-  <link rel="modulepreload" crossorigin href="/leda/assets/modulepreload-polyfill-B5Qt9EMX.js">
-  <link rel="modulepreload" crossorigin href="/leda/assets/initMap-NKkbeoNK.js">
-  <link rel="modulepreload" crossorigin href="/leda/assets/dataParser-DBHBUcJg.js">
-  <link rel="stylesheet" crossorigin href="/leda/assets/initMap-BCl4iR1b.css">
+  <script type="module" crossorigin src="/leda/assets/js/mappa.js"></script>
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/dataParser-D6eLBq9c.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/initMap-CwvpaTTG.js">
+  <link rel="stylesheet" crossorigin href="/leda/assets/css/initMap.css">
+  <link rel="stylesheet" crossorigin href="/leda/assets/css/tailwind.css">
 </head>
-<body class="overflow-hidden">
+<body class="overflow-hidden" id="map-page">
 
 <header class="bg-primary-800 text-white shadow-lg">
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,7 +29,8 @@
                 </div>
                 <div class="hidden md:flex ml-10 space-x-8 items-center">
                     <a href="../" class="text-white hover:text-primary-200 font-medium transition">Home</a>
-                    <a href="#" class="text-white hover:text-primary-200 font-medium transition">Atlante</a>
+                    <a href="#" class="bg-primary-700 text-primary-200 px-4 py-2 rounded-md font-medium transition">Mappa</a>
+                    <a href="../#index-cards-container" class="text-white hover:text-primary-200 font-medium transition">Indici</a>
                     <!-- <a href="#" class="text-white hover:text-primary-200 font-medium transition">Pionieri</a>
                     <a href="#" class="text-white hover:text-primary-200 font-medium transition">Cronologia</a> -->
                 </div>
@@ -147,7 +148,7 @@
                     </div>
 
                     <button id="toggle-results" class="nav-button flex items-center space-x-2 px-4 py-2 rounded-full shadow-lg hover:shadow-xl">
-                        <span class="font-medium">Opere</span>
+                        <span class="font-medium">Riferimenti</span>
                         <i class="fas fa-list text-lg"></i>
                     </button>
                 </div>

@@ -21,8 +21,8 @@
     "card_description": "Descrizione Ecocritica"
   },
   "map": {
-    "initialView": [46.5, 9.8],
-    "initialZoom": 7,
+    "initialView": [41.8719, 12.5674],
+    "initialZoom": 6,
     "tileLayers": {
       "Default": {
         "tileLayer": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
