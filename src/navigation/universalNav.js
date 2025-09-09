@@ -27,7 +27,6 @@ export class UniversalNav {
     calculateBasePath(config) {
         const currentDir = dirname(this.currentPath);
         const rootDir = '/' + config?.project?.projectShortTitle?.toLowerCase() || '';
-        console.log('HIHIHIHI', rootDir)
         
         const relativePath = relative(currentDir, rootDir);
         
@@ -67,7 +66,11 @@ export class UniversalNav {
         const logoImageUrl = this.config?.project?.projectThumbnailURL;
         
         if (logoImageUrl && logoImageUrl.trim() !== '') {
-            const imagePath = this.getRelativePath(`imgs/${logoImageUrl}`);
+            // Controlla se il percorso inizia già con imgs/
+            const imagePath = logoImageUrl.startsWith('imgs/') 
+                ? this.getRelativePath(logoImageUrl)
+                : this.getRelativePath(`imgs/${logoImageUrl}`);
+                
             return `
                 <a href="${this.getRelativePath('index.html')}">
                     <img src="${imagePath}" alt="Logo" class="h-20 object-contain">
