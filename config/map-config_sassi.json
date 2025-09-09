@@ -1,0 +1,116 @@
+{
+  "project" : {
+    "projectShortTitle": "SASSI",
+    "projectThumbnailURL": "./imgs/SASSI_logo_bright.png",
+    "projectTitle": "Storia dell'Alpinismo: Scalate Storiche in Italia",
+    "projectSubtitle":"???",
+    "projectDescription":"Esplora la storia dell'alpinismo",
+    "mapInfoTitle": "Scopri le prime ascese",
+    "mapInfoDescription": "Questa mappa interattiva ti permette di esplorare i luoghi che hanno fatto la storia dell'alpinismo. Clicca sui marker per visualizzare informazioni dettagliate."
+  },
+  "datasetConfig": {
+    "multivalue_rows" : {
+      "Expedition_members": ", "
+    }
+  },
+  "result_cards": {
+    "card_title": "Item_Name",  
+    "card_subtitle": "Year",
+    "card_subtitle_2": "Type",
+    "card_description": "Dispute"
+  },
+  "map": {
+    "initialView": [46.5, 9.8],
+    "initialZoom": 7,
+    "tileLayers": {
+      "Default": {
+        "tileLayer": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "attribution": "© OpenStreetMap contributors"
+      },
+      "Stadia.StamenTerrain" : {
+        "tileLayer": "https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png",
+        "attribution": "© OpenStreetMap contributors 222"
+        },
+      "Stadia.StamenTonerLite" : {
+        "tileLayer": "https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}{r}.png", 
+	      "attribution": "&copy; <a href='https://www.stadiamaps.com/' target='_blank'>Stadia Maps</a> &copy; <a href='https://www.stamen.com/' target='_blank'>Stamen Design</a> &copy; <a href='https://openmaptiles.org/' target='_blank'>OpenMapTiles</a> &copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+      }
+    }
+  },
+  "searchConfig": {
+    "debounceTime": 300,
+    "defaultSort": "date_desc",
+    "sortOptions": [
+      {"value": "title_asc", "label": "Mountain (Asc)"},
+      {"value": "title_desc", "label": "Mountain (Desc)"},
+      {"value": "date_asc", "label": "Year (Asc)"},
+      {"value": "date_desc", "label": "Year (Desc)"}
+    ]
+  },
+  "resultsDisplay": {
+    "tagsToShow": ["Location", "Item_Name"]
+  },
+  "sortings": {
+    "title_desc": {
+      "field": "Item_Name",
+      "order": "desc"
+    },
+    "title_asc": {
+      "field": "Item_Name",
+      "order": "asc"
+    },
+    "date_desc": {
+      "field": "Year",
+      "order": "desc"
+    },
+    "date_asc": {
+      "field": "Year",
+      "order": "asc"
+    }
+  },
+  "aggregations": {
+    "Expedition_members": {
+      "title": "Agents",
+      "category": "Event",
+      "size": 1000,
+      "conjunction": false,
+      "type": "simple"
+    },
+    "Year": {
+      "title": "Year",
+      "size": 100,
+      "category": "Event",
+      "conjunction": false,
+      "type": "range"
+    },
+    "Location": {
+      "title": "Mountain",
+      "category": "Location",
+      "size": 1000,
+      "conjunction": false,
+      "type": "simple"
+    },
+    "altitude_span": {
+      "title": "Altitude",
+      "size": 100,
+      "category": "Location",
+      "conjunction": false,
+      "type": "range"
+    },
+    "SOIUSA": {
+      "title": "SOIUSA",
+      "category": "Location",
+      "size": 1000,
+      "conjunction": false,
+      "type": "taxonomy"
+    }, 
+    "Dispute": {
+      "title": "Dispute",
+      "category": "Dispute",
+      "size": 1000,
+      "conjunction": false,
+      "type": "simple"
+    }
+  },
+  "searchableFields": ["Item_Name", "Year", "Location"]
+}
