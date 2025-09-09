@@ -1,7 +1,7 @@
 {
   "project" : {
     "projectShortTitle": "LEDA",
-    "projectThumbnailURL": "./imgs/LEDA_logo.png",
+    "projectThumbnailURL": "LEDA_logo.png",
     "projectTitle": "For an Atlas of Italian Ecological Literature",
     "projectSubtitle":"From the Great Acceleration to the Pandemic",
     "projectDescription":"For an Atlas of Italian Ecological Literature è un progetto biennale (novembre 2023-novembre 2025) realizzato in collaborazione fra l'Università IULM di Milano, l'Università degli Studi di Siena e l'Università di Bologna. <br><br> L'obiettivo è realizzare il primo atlante della letteratura ecocritica italiana: uno strumento interattivo, basato su una struttura ipertestuale, che consentirà di visualizzare, interagire e ragionare sugli spazi di quei testi che hanno tematizzato in chiave critica il rapporto uomo-ambiente. Verranno presi in considerazione testi narrativi che vanno dalla Grande accelerazione alla Pandemia, dunque per un arco temporale di circa ottant'anni.",
@@ -75,37 +75,37 @@
   },
   "aggregations": {
     "Location": {
-      "title": "Spazi geografici",
-      "category": "Spazi narrati",
+      "title": "I luoghi",
+      "category": "Gli spazi narrati",
       "size": 100,
       "conjunction": false,
       "type": "simple"
     },
     "Tipologia dello Spazio": {
-      "title": "Tipologia dello Spazio",
-      "category": "Spazi narrati",
+      "title": "Le tipologie",
+      "category": "Gli spazi narrati",
       "size": 100,
       "conjunction": false,
       "type": "taxonomy"
     },
     "Titolo": {
-      "title": "Titolo",
-      "category": "Opere di riferimento",
+      "title": "I titoli",
+      "category": "I riferimenti letterari",
       "size": 100,
       "conjunction": false,
       "type": "simple"
     },
     "Autore": {
-      "title": "Autori",
+      "title": "Gli autori",
       "size": 100,
-      "category": "Opere di riferimento",
+      "category": "I riferimenti letterari",
       "conjunction": false,
       "type": "simple"
     },
     "Anno": {
-      "title": "Anni di pubblicazione",
+      "title": "Gli anni di pubblicazione",
       "size": 100,
-      "category": "Opere di riferimento",
+      "category": "I riferimenti letterari",
       "conjunction": false,
       "type": "range"
     }

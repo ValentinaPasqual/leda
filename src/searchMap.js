@@ -13,10 +13,16 @@ import { SearchHandler } from './utils/searchHandler.js';
 import { ResultsRenderer } from './utils/resultsRenderer.js';
 import { Utilities } from './utils/facetsUtilities.js';
 
+// Import nav and footer
+import { UniversalNav } from './navigation/universalNav.js';
+import { UniversalFooter } from './navigation/universalFooter.js';
+
 class LEDASearch {
   constructor() {
     this.config = null;
     this.searchEngine = null;
+    this.universalNav = null;
+    this.universalFooter = null;
     this.state = {
       query: '',
       filters: {},
@@ -39,6 +45,12 @@ class LEDASearch {
       this.config = await loadConfiguration();
       const jsonData = await parseData();
       this.config.searchConfig.per_page = jsonData.length;
+
+      const universalNav = new UniversalNav(this.config);
+      universalNav.render();
+
+      const universalFooter = new UniversalFooter(this.config);
+      universalFooter.render();
       
       // Initialize search engine
       this.searchEngine = itemsjs(jsonData, this.config);

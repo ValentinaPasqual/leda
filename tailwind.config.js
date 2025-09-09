@@ -8,92 +8,61 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // PRIMARY COLOR - Users customize this to match their brand (mandatory)
-        primary: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e', // Main green
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
-        },
-        // SECONDARY COLOR (mandatory, can be the same as primary if no shades are needed)
-        secondary: {
-          50: '#fef2f2',
-          100: '#fee2e2',
-          200: '#fecaca',
-          300: '#fca5a5',
-          400: '#f87171',
-          500: '#ef4444', // Main red
-          600: '#dc2626',
-          700: '#b91c1c',
-          800: '#991b1b',
-          900: 'rgba(127, 29, 29, 1)',
-        }
-      },
+  // PRIMARY COLOR - Verde scuro (#1C6F3A)
+  primary: {
+    50: '#f0f8f3',
+    100: '#dcefe1',
+    200: '#bce0c7',
+    300: '#8cc9a1',
+    400: '#5aad74',
+    500: '#389454',
+    600: '#2a7841',
+    700: '#1c6f3a', // Main primary (#1C6F3A)
+    800: '#17582f',
+    900: '#134725',
+  },
+  
+  // SECONDARY COLOR - Arancione/Rosso (#C24C1C)
+  secondary: {
+    50: '#fef6f2',
+    100: '#feeae0',
+    200: '#fdd4c1',
+    300: '#fbb896',
+    400: '#f8956a',
+    500: '#f47447',
+    600: '#e25a2b',
+    700: '#c24c1c', // Main secondary (#C24C1C)
+    800: '#9c3f17',
+    900: '#7d3317',
+  },
+  
+  // ACCENT COLOR - Verde chiaro (#91C682)
+  accent: {
+    50: '#f5fbf3',
+    100: '#e8f5e3',
+    200: '#d3ebc9',
+    300: '#b5daa1',
+    400: '#91c682', // Main accent (#91C682)
+    500: '#73b05e',
+    600: '#5a9147',
+    700: '#48743a',
+    800: '#3c5d32',
+    900: '#334d2b',
+  }
+},
       // CUSTOM FONTS
       fontFamily: {   
-        // MODERN SANS-SERIF - Clean, readable, professional
-        // ['Inter', 'ui-sans-serif', 'system-ui'],              // Very popular, excellent readability
-        // ['Roboto', 'ui-sans-serif', 'system-ui'],             // Google's Material Design font
-        // ['Open Sans', 'ui-sans-serif', 'system-ui'],          // Friendly and legible
-        // ['Lato', 'ui-sans-serif', 'system-ui'],               // Humanist sans-serif
-        // ['Source Sans Pro', 'ui-sans-serif', 'system-ui'],    // Adobe's open-source font
-        // ['Nunito', 'ui-sans-serif', 'system-ui'],             // Rounded, friendly appearance
-        // ['Work Sans', 'ui-sans-serif', 'system-ui'],          // Clean and modern
-        // ['Poppins', 'ui-sans-serif', 'system-ui'],            // Geometric, trendy
-        // ['Manrope', 'ui-sans-serif', 'system-ui'],            // Modern variable font
-        // ['DM Sans', 'ui-sans-serif', 'system-ui'],            // Clean and versatile
-
-        // // GEOMETRIC & STYLISH - Bold, distinctive, attention-grabbing
-        // ['Montserrat', 'ui-sans-serif', 'system-ui'],         // Inspired by urban typography
-        // ['Raleway', 'ui-sans-serif', 'system-ui'],            // Elegant and sophisticated
-        // ['Oswald', 'ui-sans-serif', 'system-ui'],             // Condensed and bold
-        // ['Quicksand', 'ui-sans-serif', 'system-ui'],          // Friendly and rounded
-        // ['Rubik', 'ui-sans-serif', 'system-ui'],              // Slightly rounded corners
-        // ['Barlow', 'ui-sans-serif', 'system-ui'],             // Low-contrast, utilitarian
-        // ['Outfit', 'ui-sans-serif', 'system-ui'],             // Modern and minimal
-        // ['Plus Jakarta Sans', 'ui-sans-serif', 'system-ui'],  // Contemporary Indonesian-inspired
-
-        // // SERIF FONTS - Traditional, elegant, readable for long text
-        // ['Playfair Display', 'ui-serif', 'Georgia'],          // High-contrast, elegant
-        // ['Merriweather', 'ui-serif', 'Georgia'],              // Designed for screens
-        // ['Lora', 'ui-serif', 'Georgia'],                      // Well-balanced contemporary serif
-        // ['Crimson Text', 'ui-serif', 'Georgia'],              // Book-style serif
-        // ['Libre Baskerville', 'ui-serif', 'Georgia'],         // Based on 1941 Baskerville
-        // ['IBM Plex Serif', 'ui-serif', 'Georgia'],            // Corporate but friendly
-        // ['Source Serif Pro', 'ui-serif', 'Georgia'],          // Adobe's serif companion
-        // ['Cormorant Garamond', 'ui-serif', 'Georgia'],        // Display serif
-        // ['Spectral', 'ui-serif', 'Georgia'],                  // Designed for digital reading
-
-        // // MONOSPACE FONTS - Code, technical content, fixed-width
-        // ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular'], // Designed for developers
-        // ['Fira Code', 'ui-monospace', 'SFMono-Regular'],      // Programming font with ligatures
-        // ['Source Code Pro', 'ui-monospace', 'SFMono-Regular'], // Adobe's monospace font
-        // ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular'],  // Part of IBM's font family
-        // ['Roboto Mono', 'ui-monospace', 'SFMono-Regular'],    // Google's monospace
-        // ['Space Mono', 'ui-monospace', 'SFMono-Regular'],     // Quirky monospace
-        // ['Inconsolata', 'ui-monospace', 'SFMono-Regular'],    // Humanist monospace
-
-        // // DISPLAY & HEADING FONTS - Bold, impactful, for headlines only
-        // ['Bebas Neue', 'cursive'],                            // Condensed sans-serif
-        // ['Anton', 'sans-serif'],                              // Bold and condensed
-        // ['Righteous', 'cursive'],                             // Retro-futuristic
-        // ['Fredoka One', 'cursive'],                           // Playful and rounded
-        // ['Bangers', 'cursive'],                               // Comic book style
-        // ['Creepster', 'cursive'],                             // Horror/Halloween theme
-
-        // // VARIABLE FONTS - Modern approach with flexible weights
-        // ['Inter Variable', 'ui-sans-serif', 'system-ui'],     // Variable weight Inter
-        // ['Roboto Flex', 'ui-sans-serif', 'system-ui'],        // Variable Roboto
-        // ['Work Sans Variable', 'ui-sans-serif', 'system-ui'], // Variable Work Sans
-        // ['Manrope Variable', 'ui-sans-serif', 'system-ui'],   // Variable Manrope 
-        'headings':  ['Libre Baskerville', 'ui-serif', 'Georgia'],
-        'body': ['Rubik', 'ui-sans-serif', 'system-ui'],
+        // FONT ATTIVI (modificabili dall'utente)
+        'headings': ['Playfair Display', 'ui-serif', 'Georgia'],       // Font per titoli principali
+        'body': ['Inter', 'ui-sans-serif', 'system-ui'],              // Font per testo corpo
+        
+        // FONT DISPONIBILI (commentati - decommenta per usarli)
+        // 'inter': ['Inter', 'ui-sans-serif', 'system-ui'],              // Moderno e leggibile
+        // 'poppins': ['Poppins', 'ui-sans-serif', 'system-ui'],          // Geometrico e trendy
+        // 'playfair': ['Playfair Display', 'ui-serif', 'Georgia'],       // Elegante per titoli
+        // 'merriweather': ['Merriweather', 'ui-serif', 'Georgia'],       // Perfetto per testo lungo
+        // 'jetbrains': ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular'], // Miglior monospace
+        // 'montserrat': ['Montserrat', 'ui-sans-serif', 'system-ui'],    // Bold per headlines
       },
     },
   },

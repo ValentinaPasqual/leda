@@ -1,13 +1,18 @@
 // views/TaxonomyView.js
 import * as d3 from "d3";
+import { createMapUrlWithFilter } from '../utils/urlHelper.js';
+
+const base = import.meta.env.BASE_URL 
 
 export class TaxonomyView {
-  constructor(data, indexKey) {
+  constructor(data, indexKey, indexInfo) {
     this.data = data;
     this.indexKey = indexKey;
+    this.indexInfo = indexInfo || {};
     this.hierarchyData = this.buildHierarchy(data, indexKey);
-    this.container = null;
     this.activeTab = 'nested-list';
+    this.currentSearchTerm = '';
+    this.expandedItems = new Set(); // Inizialmente vuoto, ma tutti i nodi saranno aperti
   }
 
   // ===============================
@@ -17,15 +22,16 @@ export class TaxonomyView {
     const root = {};
 
     data.forEach(item => {
-      // Split su ',' e su '>' per tassonomie annidate
       const rawValues = String(item[indexKey] || "Non specificato").split(',');
       rawValues.forEach(val => {
         const path = val.split('>').map(s => s.trim());
         let current = root;
+        
         path.forEach(segment => {
           if (!current[segment]) current[segment] = {};
           current = current[segment];
         });
+        
         if (!current._items) current._items = [];
         current._items.push(item);
       });
@@ -34,156 +40,186 @@ export class TaxonomyView {
     return root;
   }
 
-  convertHierarchyToD3Format(obj, name = "root") {
-    let children = [];
-    let value = 0;
+  // ===============================
+  // COMPONENTI SIDEBAR
+  // ===============================
 
-    for (const [key, val] of Object.entries(obj)) {
-      if (key === "_items") continue;
-
-      const child = this.convertHierarchyToD3Format(val, key);
-      children.push(child);
-      value += child.value;
-    }
-
-    // Aggiungi il conteggio locale se ci sono _items
-    if (Array.isArray(obj._items)) {
-      value += obj._items.length;
-    }
-
-    // Se non ci sono figli e non ci sono _items, è una foglia di valore 0
-    if (children.length === 0 && !Array.isArray(obj._items)) {
-      return { name, children: [], value: 0 };
-    }
-
-    return { name, children, value };
+  generateHeader() {
+    const header = document.createElement('div');
+    header.className = 'mb-6';
+    header.innerHTML = `
+      <span class="font-medium border-b-2 border-primary-600 pb-1">${this.indexInfo.category || 'Tassonomia'}</span>
+      <h1 class="text-3xl font-bold text-slate-800 my-2">Vista: <span class="text-secondary-700">${this.indexInfo.name || this.indexKey}</span></h1>
+    `;
+    return header;
   }
 
-  // ===============================
-  // CONTROLLI UI - TABS ELEGANTI
-  // ===============================
-  createTabs() {
-    const tabsContainer = document.createElement('div');
-    tabsContainer.className = 'border-b border-gray-200 mb-8';
-
-    const tabsList = document.createElement('nav');
-    tabsList.className = 'flex space-x-8';
-
+  generateTabsMenu() {
+    const container = document.createElement('div');
+    container.className = 'mb-6';
+    
+    const title = document.createElement('h3');
+    title.className = 'text-sm font-medium text-slate-700 mb-2';
+    title.textContent = 'Visualizzazione';
+    
+    const buttons = document.createElement('div');
+    buttons.className = 'flex flex-col gap-2';
+    
     const tabs = [
       { id: 'nested-list', label: 'Lista Annidata', icon: '📋' },
       { id: 'treemap', label: 'Treemap', icon: '🔲' },
       { id: 'sunburst', label: 'Sunburst', icon: '☀️' }
     ];
 
+    const tabButtons = [];
+
     tabs.forEach(tab => {
-      const tabButton = document.createElement('button');
-      tabButton.className = this.getTabClasses(tab.id);
-      tabButton.innerHTML = `
-        <span class="mr-2">${tab.icon}</span>
-        ${tab.label}
-      `;
-      
-      tabButton.onclick = () => this.switchTab(tab.id);
-      tabsList.appendChild(tabButton);
+      const button = this.createTabButton(tab.label, tab.icon, this.activeTab === tab.id, () => {
+        this.switchTab(tab.id);
+        this.setActiveButton(button, tabButtons);
+      });
+      tabButtons.push(button);
+      buttons.appendChild(button);
     });
-
-    tabsContainer.appendChild(tabsList);
-    return tabsContainer;
-  }
-
-  getTabClasses(tabId) {
-    const baseClasses = 'inline-flex items-center px-4 py-3 border-b-2 font-medium text-sm transition-colors';
     
-    if (this.activeTab === tabId) {
-      return `${baseClasses} border-blue-600 text-blue-600 bg-blue-50`;
-    } else {
-      return `${baseClasses} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300`;
-    }
+    container.appendChild(title);
+    container.appendChild(buttons);
+    return container;
   }
+
+  // ===============================
+  // COMPONENTI CONTENUTO
+  // ===============================
+
+  generateTaxonomyContent() {
+    const wrapper = document.createElement("div");
+    wrapper.className = "taxonomy-content-wrapper";
+    
+    this.renderActiveView(wrapper);
+    
+    return wrapper;
+  }
+
+  // ===============================
+  // UTILITY PER BOTTONI E CONTROLLI
+  // ===============================
+
+  createTabButton(text, icon, active, onClick) {
+    const button = document.createElement('button');
+    button.className = active 
+      ? 'flex items-center gap-2 w-full px-3 py-2 text-sm bg-primary-600 text-white rounded hover:bg-primary-700'
+      : 'flex items-center gap-2 w-full px-3 py-2 text-sm bg-slate-200 text-slate-700 rounded hover:bg-slate-300';
+    button.innerHTML = `<span>${icon}</span><span>${text}</span>`;
+    button.onclick = onClick;
+    return button;
+  }
+
+  setActiveButton(activeButton, allButtons) {
+    allButtons.forEach(btn => {
+      btn.className = 'flex items-center gap-2 w-full px-3 py-2 text-sm bg-slate-200 text-slate-700 rounded hover:bg-slate-300';
+    });
+    activeButton.className = 'flex items-center gap-2 w-full px-3 py-2 text-sm bg-primary-600 text-white rounded hover:bg-primary-700';
+  }
+
+  // ===============================
+  // CONTROLLO TABS E RENDERING
+  // ===============================
 
   switchTab(tabId) {
     this.activeTab = tabId;
-    
-    // Aggiorna le classi dei tab
-    const tabs = this.container.querySelectorAll('nav button');
-    tabs.forEach((tab, index) => {
-      const tabIds = ['nested-list', 'treemap', 'sunburst'];
-      tab.className = this.getTabClasses(tabIds[index]);
-    });
+    this.refreshContent();
+  }
 
-    // Renderizza la visualizzazione appropriata
-    switch(tabId) {
+  renderActiveView(container) {
+    container.innerHTML = '';
+    
+    switch(this.activeTab) {
       case 'nested-list':
-        this.renderNestedList();
+        this.renderNestedList(container);
         break;
       case 'treemap':
-        this.renderTreemap();
+        this.renderTreemap(container);
         break;
       case 'sunburst':
-        this.renderSunburst();
+        this.renderSunburst(container);
         break;
     }
   }
 
+  refreshContent() {
+    const container = document.querySelector('.taxonomy-content-wrapper');
+    if (container) {
+      this.renderActiveView(container);
+    }
+  }
+
   // ===============================
-  // NAVIGAZIONE ALLA MAPPA CON FILTRI
+  // RICERCA E FILTRI
   // ===============================
+
+  filterBySearch(searchTerm) {
+    this.currentSearchTerm = searchTerm.toLowerCase();
+    this.refreshContent();
+  }
+
+  shouldShowItem(key, items, currentPath) {
+    if (!this.currentSearchTerm) return true;
+    
+    if (key.toLowerCase().includes(this.currentSearchTerm)) return true;
+    
+    if (items && items.some(item => 
+      (item.Name && item.Name.toLowerCase().includes(this.currentSearchTerm)) ||
+      (item.Location && item.Location.toLowerCase().includes(this.currentSearchTerm))
+    )) return true;
+    
+    if (currentPath.toLowerCase().includes(this.currentSearchTerm)) return true;
+    
+    return false;
+  }
+
+  // ===============================
+  // NAVIGAZIONE ALLA MAPPA
+  // ===============================
+
   goToMapWithFilter(taxonomyValue) {
-    // Simula il comportamento di handleStateChange per attivare il filtro
     const filterAction = {
       type: "FACET_CHANGE",
-      facetType: this.indexKey, // Es: "Tipologia dello Spazio"
-      value: taxonomyValue,     // Es: "Aperto > Naturale"
+      facetType: this.indexKey,
+      value: taxonomyValue,
       checked: true
     };
 
-    console.log('handleStateChange called with action:', filterAction);
-    console.log(`Updating filter: ${this.indexKey}, value: ${taxonomyValue}, checked: true`);
-
-    // Se esiste una funzione globale handleStateChange, chiamala
     if (typeof window.handleStateChange === 'function') {
       window.handleStateChange(filterAction);
     }
 
-    // Naviga alla mappa con parametri URL
-    const params = new URLSearchParams();
-    params.set('filter', this.indexKey);
-    params.set('value', taxonomyValue);
+    const mapUrl = createMapUrlWithFilter(this.indexKey, taxonomyValue);
     
-    // Cambia la pagina corrente alla mappa
-    const mapUrl = `#map?${params.toString()}`;
-    
-    // Se esiste un router/sistema di navigazione, usalo
     if (typeof window.navigateToMap === 'function') {
       window.navigateToMap(filterAction);
     } else {
-      // Fallback: cambia l'hash dell'URL
-      window.location.hash = mapUrl;
+      window.location = mapUrl;
     }
   }
 
   // ===============================
-  // VISUALIZZAZIONE: Lista Annidata Elegante
+  // VISUALIZZAZIONE: Lista Annidata Sempre Espansa
   // ===============================
-  renderNestedList() {
-    const oldViz = document.getElementById("viz");
-    if (oldViz) oldViz.remove();
 
-    const wrapper = document.createElement("div");
-    wrapper.id = "viz";
-    wrapper.className = "bg-white rounded-lg border border-gray-200 p-6 shadow-sm";
-
+  renderNestedList(container) {
     const buildList = (obj, level = 0, parentPath = '') => {
-      const container = document.createElement("div");
+      const listContainer = document.createElement("div");
       
       Object.entries(obj).forEach(([key, value]) => {
         if (key === "_items") return;
 
-        const itemContainer = document.createElement("div");
-        itemContainer.className = `mb-3 ${level > 0 ? 'ml-6' : ''}`;
-
-        // Costruisci il path completo per questo elemento
         const currentPath = parentPath ? `${parentPath} > ${key}` : key;
+        const items = value._items || [];
+        
+        if (!this.shouldShowItem(key, items, currentPath)) return;
+
+        const itemContainer = document.createElement("div");
+        itemContainer.className = "overflow-hidden";
 
         // Conteggio ricorsivo
         const countItems = (node) => {
@@ -195,115 +231,175 @@ export class TaxonomyView {
         };
 
         const count = countItems(value);
+        const hasChildren = Object.keys(value).some(k => k !== "_items");
+        const itemId = `item-${level}-${key.replace(/\s+/g, '-')}`;
         
         // Header dell'elemento
         const header = document.createElement("div");
-        header.className = `flex items-center justify-between p-3 rounded-lg ${this.getListItemClasses(level)}`;
+        header.className = `flex items-center justify-between pl-4 py-3 ${this.getListItemClasses(level)} ${hasChildren ? 'cursor-pointer hover:bg-opacity-80' : ''}`;
         
-        const titleContainer = document.createElement("div");
-        titleContainer.className = "flex items-center space-x-3";
-        
-        // Icona basata sul livello
-        const icon = document.createElement("span");
-        icon.className = "flex-shrink-0 text-lg";
-        icon.textContent = this.getIconForLevel(level);
+        if (hasChildren) {
+          header.onclick = () => this.toggleAccordion(itemId);
+        }
+
+        const left = document.createElement("div");
+        left.className = "flex items-center space-x-3";
         
         const title = document.createElement("span");
         title.className = `font-medium ${this.getTitleSizeForLevel(level)}`;
         title.textContent = key;
         
-        const rightContainer = document.createElement("div");
-        rightContainer.className = "flex items-center space-x-2";
+        left.appendChild(title);
+        
+        const right = document.createElement("div");
+        right.className = "flex items-center space-x-2";
         
         const badge = document.createElement("span");
-        badge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800";
+        badge.className = "text-xs text-secondary-500 bg-secondary-100 px-2 py-0.5 rounded-full";
         badge.textContent = count.toString();
 
-        // Bottone per andare alla mappa (solo se ci sono elementi)
+        right.appendChild(badge);
+
+        // Chevron per espansione (sempre ruotato se ha figli, dato che tutto è espanso)
+        if (hasChildren) {
+          const chevron = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          chevron.setAttribute('class', 'w-4 h-4 text-slate-400 transform transition-transform rotate-180');
+          chevron.setAttribute('fill', 'none');
+          chevron.setAttribute('stroke', 'currentColor');
+          chevron.setAttribute('viewBox', '0 0 24 24');
+          chevron.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>';
+          right.appendChild(chevron);
+        }
+
+        // Bottone per andare alla mappa
         if (count > 0) {
-          const mapButton = document.createElement("button");
-          mapButton.className = "inline-flex items-center px-2 py-1 text-xs font-medium text-white bg-green-600 hover:bg-green-700 rounded transition-colors";
-          mapButton.innerHTML = "🗺️ Mappa";
+          const mapButton = document.createElement("a");
+          mapButton.href = createMapUrlWithFilter(this.indexKey, currentPath);
+          mapButton.className = "p-1 text-secondary-600 hover:text-secondary-700";
           mapButton.onclick = (e) => {
             e.stopPropagation();
-            this.goToMapWithFilter(currentPath);
           };
-          rightContainer.appendChild(mapButton);
+          mapButton.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+            </svg>
+          `;
+          right.appendChild(mapButton);
         }
-
-        rightContainer.appendChild(badge);
-
-        titleContainer.appendChild(icon);
-        titleContainer.appendChild(title);
-        header.appendChild(titleContainer);
-        header.appendChild(rightContainer);
-
+        
+        header.appendChild(left);
+        header.appendChild(right);
         itemContainer.appendChild(header);
 
-        // Contenuti figli
-        const childContainer = buildList(value, level + 1, currentPath);
-        if (childContainer.children.length > 0) {
-          const childWrapper = document.createElement("div");
-          childWrapper.className = "mt-3 border-l-2 border-gray-100 pl-4";
-          childWrapper.appendChild(childContainer);
-          itemContainer.appendChild(childWrapper);
+        // Contenuti figli - SEMPRE VISIBILI
+        if (hasChildren) {
+          const content = document.createElement("div");
+          content.id = itemId;
+          content.className = "ml-6"; // Rimossa la classe 'hidden'
+
+          const childContainer = buildList(value, level + 1, currentPath);
+          if (childContainer.children.length > 0) {
+            content.appendChild(childContainer);
+          }
+          itemContainer.appendChild(content);
         }
 
-        container.appendChild(itemContainer);
+        listContainer.appendChild(itemContainer);
       });
 
-      return container;
+      return listContainer;
     };
 
-    wrapper.appendChild(buildList(this.hierarchyData));
-    this.container.appendChild(wrapper);
+    const wrapper = document.createElement("div");
+    wrapper.className = "bg-white rounded-lg shadow-sm";
+
+    const listContent = buildList(this.hierarchyData);
+    if (listContent.children.length === 0) {
+      wrapper.innerHTML = `
+        <div class="text-center py-8 text-slate-500 p-6">
+          <p>Nessun risultato trovato</p>
+        </div>
+      `;
+    } else {
+      wrapper.appendChild(listContent);
+    }
+
+    container.appendChild(wrapper);
   }
 
-  getListItemClasses(level) {
-    const baseClasses = "border transition-colors";
-    switch(level) {
-      case 0: return `${baseClasses} bg-blue-50 border-blue-200 hover:bg-blue-100`;
-      case 1: return `${baseClasses} bg-purple-50 border-purple-200 hover:bg-purple-100`;
-      case 2: return `${baseClasses} bg-green-50 border-green-200 hover:bg-green-100`;
-      default: return `${baseClasses} bg-gray-50 border-gray-200 hover:bg-gray-100`;
+  toggleAccordion(itemId) {
+    const content = document.getElementById(itemId);
+    const chevron = content?.previousElementSibling?.querySelector('svg:last-child');
+    
+    if (!content || !chevron) return;
+    
+    const isHidden = content.classList.contains('hidden');
+    
+    content.classList.toggle('hidden');
+    
+    // Corregge la rotazione del chevron
+    if (isHidden) {
+      chevron.classList.add('rotate-180');
+    } else {
+      chevron.classList.remove('rotate-180');
     }
   }
 
-  getIconForLevel(level) {
-    const icons = ['📁', '📂', '📄', '📋', '🔖'];
-    return icons[level] || '•';
+  getListItemClasses(level) {
+    const levelClasses = {
+      0: 'bg-primary-50 border-l-4 border-primary-500',
+      1: 'bg-secondary-50 border-l-4 border-secondary-500',
+      2: 'bg-accent-50 border-l-4 border-accent-500',
+    };
+    return levelClasses[level] || 'bg-slate-50 border-l-4 border-slate-300';
   }
 
   getTitleSizeForLevel(level) {
     switch(level) {
-      case 0: return 'text-lg text-blue-900';
-      case 1: return 'text-base text-purple-900';
-      case 2: return 'text-sm text-green-900';
-      default: return 'text-sm text-gray-900';
+      case 0: return 'text-lg text-primary-900';
+      case 1: return 'text-base text-secondary-900';
+      case 2: return 'text-sm text-accent-900';
+      default: return 'text-sm text-slate-700';
     }
   }
 
   // ===============================
-  // VISUALIZZAZIONE: Treemap Elegante
+  // CONVERSIONE PER D3
   // ===============================
-  renderTreemap() {
-    const oldViz = document.getElementById("viz");
-    if (oldViz) oldViz.remove();
 
+  convertHierarchyToD3Format(obj, name = "root") {
+    let children = [];
+    
+    for (const [key, val] of Object.entries(obj)) {
+      if (key === "_items") continue;
+      const child = this.convertHierarchyToD3Format(val, key);
+      children.push(child);
+    }
+
+    let value = 0;
+    
+    if (Array.isArray(obj._items) && obj._items.length > 0) {
+      value = obj._items.length;
+    }
+
+    return { name, children, value };
+  }
+
+  // ===============================
+  // VISUALIZZAZIONE: Treemap 
+  // ===============================
+
+  renderTreemap(container) {
     const wrapper = document.createElement("div");
-    wrapper.id = "viz";
-    wrapper.className = "bg-white rounded-lg border border-gray-200 p-6 shadow-sm";
-    this.container.appendChild(wrapper);
-
-    const width = 800;
+    wrapper.className = "bg-white rounded-lg shadow-sm p-6 flex justify-center";
+    
+    const width = Math.min(800, container.clientWidth - 48);
     const height = 500;
 
-    // Crea root gerarchico D3
     const root = d3.hierarchy(this.convertHierarchyToD3Format(this.hierarchyData))
       .sum(d => d.value)
       .sort((a, b) => b.value - a.value);
 
-    // Applica layout Treemap
     d3.treemap()
       .size([width, height])
       .paddingInner(2)
@@ -314,7 +410,6 @@ export class TaxonomyView {
       .attr("height", height)
       .style("border-radius", "8px");
 
-    // Scala colori elegante
     const colorScale = d3.scaleOrdinal()
       .domain([0, 1, 2, 3, 4])
       .range(['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444']);
@@ -325,7 +420,6 @@ export class TaxonomyView {
       .append("g")
       .attr("transform", d => `translate(${d.x0},${d.y0})`);
 
-    // Rettangoli con gradient
     nodes.append("rect")
       .attr("width", d => d.x1 - d.x0)
       .attr("height", d => d.y1 - d.y0)
@@ -335,7 +429,6 @@ export class TaxonomyView {
       .attr("rx", 4)
       .attr("ry", 4);
 
-    // Etichette eleganti
     nodes.append("text")
       .attr("x", 6)
       .attr("y", 18)
@@ -351,7 +444,6 @@ export class TaxonomyView {
       .attr("font-size", "11px")
       .attr("font-weight", "500");
 
-    // Tooltip elegante
     const tooltip = d3.select(wrapper)
       .append("div")
       .style("position", "absolute")
@@ -380,29 +472,30 @@ export class TaxonomyView {
       tooltip.style("opacity", 0);
       d3.select(event.currentTarget).select("rect").attr("opacity", 1);
     });
+
+    container.appendChild(wrapper);
   }
 
   // ===============================
-  // VISUALIZZAZIONE: Sunburst Elegante
+  // VISUALIZZAZIONE: Sunburst
   // ===============================
-  renderSunburst() {
-    const oldViz = document.getElementById("viz");
-    if (oldViz) oldViz.remove();
-    
-    const wrapper = document.createElement("div");
-    wrapper.id = "viz";
-    wrapper.className = "bg-white rounded-lg border border-gray-200 p-6 shadow-sm flex justify-center";
-    this.container.appendChild(wrapper);
 
+  renderSunburst(container) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "bg-white rounded-lg shadow-sm p-6 flex justify-center";
+    
     const width = 500, radius = width / 2;
 
     const root = d3.partition()
       .size([2 * Math.PI, radius - 20])
       (d3.hierarchy(this.convertHierarchyToD3Format(this.hierarchyData)).sum(d => d.value));
 
+    const maxAngleUsed = d3.max(root.descendants(), d => d.x1);
+    const angleScale = (2 * Math.PI) / maxAngleUsed;
+
     const arc = d3.arc()
-      .startAngle(d => d.x0)
-      .endAngle(d => d.x1)
+      .startAngle(d => d.x0 * angleScale)
+      .endAngle(d => d.x1 * angleScale)
       .innerRadius(d => Math.max(0, d.y0))
       .outerRadius(d => d.y1);
 
@@ -412,11 +505,9 @@ export class TaxonomyView {
       .append("g")
       .attr("transform", `translate(${radius},${radius})`);
 
-    // Scala colori più sofisticata
     const colorScale = d3.scaleOrdinal()
       .range(['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#14B8A6', '#F97316']);
 
-    // Tooltip elegante
     const tooltip = d3.select(wrapper)
       .append("div")
       .style("position", "absolute")
@@ -431,7 +522,7 @@ export class TaxonomyView {
       .style("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.1)");
 
     svg.selectAll("path")
-      .data(root.descendants().filter(d => d.depth))
+      .data(root.descendants())
       .enter()
       .append("path")
       .attr("d", arc)
@@ -455,7 +546,6 @@ export class TaxonomyView {
         d3.select(this).attr("opacity", 1);
       });
 
-    // Etichette radiali per elementi più grandi
     svg.selectAll("text")
       .data(root.descendants().filter(d => d.depth && (d.x1 - d.x0) > 0.2))
       .enter()
@@ -476,23 +566,23 @@ export class TaxonomyView {
       .attr("font-size", "10px")
       .attr("fill", "#374151")
       .attr("font-weight", "500");
+
+    container.appendChild(wrapper);
   }
 
-  render(container) {
-    this.container = container;
-    
-    // Aggiungi contenitore principale con stile
-    const mainContainer = document.createElement('div');
-    mainContainer.className = 'space-y-6';
-    
-    // Crea i tab
-    const tabs = this.createTabs();
-    mainContainer.appendChild(tabs);
+  // ===============================
+  // INTERFACCIA PRINCIPALE
+  // ===============================
 
-    // Aggiungi il contenitore principale al container
-    container.appendChild(mainContainer);
-
-    // Visualizzazione di default - Lista annidata
-    this.renderNestedList();
+  generateViewComponents() {
+    return {
+      sidebar: [
+        this.generateHeader(),
+        this.generateTabsMenu()
+      ],
+      content: [
+        this.generateTaxonomyContent()
+      ]
+    };
   }
 }

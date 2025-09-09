@@ -570,53 +570,99 @@ export class NavBarRenderer {
         }
     }
 
-    /**
-     * Initialize panel states (closed by default)
-     */
-    initializePanelStates() {
-        this.elements.filtersPanel.classList.add('panel-closed');
-        this.elements.resultsPanel.classList.add('panel-closed-right');
-        this.elements.toggleFilters.classList.remove('active');
-        this.elements.toggleResults.classList.remove('active');
-    }
 
-    /**
-     * Toggle a specific panel (filters or results)
-     * @param {string} panelType - 'filters' or 'results'
-     */
-    togglePanel(panelType) {
-        if (panelType === 'filters') {
-            const isClosing = !this.elements.filtersPanel.classList.contains('panel-closed');
-            this.elements.filtersPanel.classList.toggle('panel-closed');
-            this.elements.toggleFilters.classList.toggle('active', !isClosing);
-            
-            // Emit custom event for external handling
-            this.emitEvent('panelToggled', { 
-                type: 'filters', 
-                isOpen: !isClosing 
-            });
-        } else if (panelType === 'results') {
-            const isClosing = !this.elements.resultsPanel.classList.contains('panel-closed-right');
-            this.elements.resultsPanel.classList.toggle('panel-closed-right');
-            this.elements.toggleResults.classList.toggle('active', !isClosing);
-            
-            // Emit custom event for external handling
-            this.emitEvent('panelToggled', { 
-                type: 'results', 
-                isOpen: !isClosing 
-            });
+/**
+ * Initialize panel states (OPEN by default)
+ */
+initializePanelStates() {
+    // Remove the closed classes to keep panels open
+    this.elements.filtersPanel.classList.remove('panel-closed');
+    this.elements.resultsPanel.classList.remove('panel-closed-right');
+    
+    // Add the active class to buttons to show they are active
+    this.elements.toggleFilters.classList.add('active');
+    this.elements.toggleResults.classList.add('active');
+    
+    // Optionally add the panel-open class for explicit styling
+    this.elements.filtersPanel.classList.add('panel-open');
+    this.elements.resultsPanel.classList.add('panel-open');
+}
+
+/**
+ * Toggle a specific panel (filters or results) - FIXED VERSION
+ * @param {string} panelType - 'filters' or 'results'
+ */
+togglePanel(panelType) {
+    if (panelType === 'filters') {
+        const isCurrentlyOpen = !this.elements.filtersPanel.classList.contains('panel-closed');
+        
+        if (isCurrentlyOpen) {
+            // Close the panel
+            this.elements.filtersPanel.classList.add('panel-closed');
+            this.elements.filtersPanel.classList.remove('panel-open');
+            this.elements.toggleFilters.classList.remove('active');
+        } else {
+            // Open the panel
+            this.elements.filtersPanel.classList.remove('panel-closed');
+            this.elements.filtersPanel.classList.add('panel-open');
+            this.elements.toggleFilters.classList.add('active');
         }
+        
+        // Emit custom event for external handling
+        this.emitEvent('panelToggled', { 
+            type: 'filters', 
+            isOpen: !isCurrentlyOpen 
+        });
+        
+    } else if (panelType === 'results') {
+        const isCurrentlyOpen = !this.elements.resultsPanel.classList.contains('panel-closed-right');
+        
+        if (isCurrentlyOpen) {
+            // Close the panel
+            this.elements.resultsPanel.classList.add('panel-closed-right');
+            this.elements.resultsPanel.classList.remove('panel-open');
+            this.elements.toggleResults.classList.remove('active');
+        } else {
+            // Open the panel
+            this.elements.resultsPanel.classList.remove('panel-closed-right');
+            this.elements.resultsPanel.classList.add('panel-open');
+            this.elements.toggleResults.classList.add('active');
+        }
+        
+        // Emit custom event for external handling
+        this.emitEvent('panelToggled', { 
+            type: 'results', 
+            isOpen: !isCurrentlyOpen 
+        });
     }
+}
 
-    /**
-     * Close all panels
-     */
-    closeAllPanels() {
-        this.elements.filtersPanel.classList.add('panel-closed');
-        this.elements.resultsPanel.classList.add('panel-closed-right');
-        this.elements.toggleFilters.classList.remove('active');
-        this.elements.toggleResults.classList.remove('active');
-    }
+/**
+ * Close all panels
+ */
+closeAllPanels() {
+    this.elements.filtersPanel.classList.add('panel-closed');
+    this.elements.filtersPanel.classList.remove('panel-open');
+    this.elements.resultsPanel.classList.add('panel-closed-right');
+    this.elements.resultsPanel.classList.remove('panel-open');
+    this.elements.toggleFilters.classList.remove('active');
+    this.elements.toggleResults.classList.remove('active');
+}
+
+/**
+ * Setup responsive behavior for mobile devices (modified to keep panels open)
+ */
+setupResponsiveBehavior() {
+    // Handle window resize - but don't automatically close panels
+    window.addEventListener('resize', () => {
+        // You can add responsive behavior here if needed
+        // but panels will stay open by default
+        console.log('Window resized, panels remain open');
+    });
+
+    // No automatic panel closing on mobile - panels stay open
+    // Users can manually close them if needed
+}
 
     /**
      * Handle clear all filters action - Enhanced with proper interface reset
