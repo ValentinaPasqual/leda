@@ -75,7 +75,7 @@
   },
   "aggregations": {
     "Location": {
-      "title": "I luoghi",
+      "title": "Gli spazi",
       "category": "Gli spazi narrati",
       "size": 100,
       "conjunction": false,

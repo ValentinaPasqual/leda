@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LEDA</title>
   <script type="module" crossorigin src="/leda/assets/js/main.js"></script>
-  <link rel="modulepreload" crossorigin href="/leda/assets/js/dataParser-D6eLBq9c.js">
-  <link rel="modulepreload" crossorigin href="/leda/assets/js/universalFooter-1kHL3tmt.js">
-  <link rel="modulepreload" crossorigin href="/leda/assets/js/initMap-BHWTVqeN.js">
-  <link rel="stylesheet" crossorigin href="/leda/assets/css/universalFooter.css">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/configLoader-Bcc6pGxk.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/universalFooter-iP1Is5-i.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/initMap-CQU7qRfu.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/dataParser-Bx_3sRyQ.js">
   <link rel="stylesheet" crossorigin href="/leda/assets/css/initMap.css">
-  <link rel="stylesheet" crossorigin href="/leda/assets/css/main.css">
+  <link rel="stylesheet" crossorigin href="/leda/assets/css/universalFooter.css">
+  <link rel="stylesheet" crossorigin href="/leda/assets/css/fonts.css">
 </head>
 <body class="bg-gray-50 overflow-hidden" id="index-page">
     
@@ -94,7 +95,7 @@
     Navigazione su mappa
   </div>
             <h1 class="text-2xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-secondary-200 bg-clip-text text-transparent">
-                Esplora il Territorio
+                Esplora i Luoghi
             </h1>
             <p class="text-l md:text-xl text-white/90 leading-relaxed" data-content="map-hero-description">
                 Scopri dati territoriali attraverso strumenti di visualizzazione avanzati e analisi geospaziali in tempo reale
@@ -124,20 +125,6 @@
 </div>
     </div>
     
-    <!-- Floating indicators -->
-    <div class="absolute bottom-8 left-8 bg-white/10 backdrop-blur-md p-3 rounded-full border border-white/20 animate-pulse z-20">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-        </svg>
-    </div>
-    
-    <div class="absolute bottom-8 right-8 bg-white/10 backdrop-blur-md p-3 rounded-full border border-white/20 animate-bounce z-20">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-        </svg>
-    </div>
-    
     <!-- Pattern decorativo -->
     <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full z-10"></div>
     <div class="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-primary-500/20 to-transparent rounded-tr-full z-10"></div>
@@ -159,7 +146,7 @@
 
         <!-- Index Cards Container -->
 <section class="section-fullscreen bg-gray-50" data-section-id="2">
-    <div id="index-cards-container" class="w-full py-8"></div>
+    <div id="index-cards-container" class="w-full"></div>
 </section>
     </div>
 

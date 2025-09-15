@@ -1,4 +1,4 @@
-// Isrc/index.js
+// src/index.js
 import { initMap } from './utils/initMap.js';
 import { parseData } from './utils/dataParser.js';
 import { loadConfiguration } from './utils/configLoader.js';
@@ -92,6 +92,22 @@ function initializeScrollytelling() {
     let isScrolling = false;
     let isManualScroll = false;
 
+    sectionButtons.forEach((button) => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault(); // Previene comportamenti di default
+            
+            const targetSection = parseInt(button.getAttribute('data-section'));
+            
+            // Verifica che la sezione target sia valida
+            if (!isNaN(targetSection) && targetSection >= 0 && targetSection < sections.length) {
+                console.log(`Navigazione verso sezione ${targetSection} tramite bottone`);
+                goToSection(targetSection);
+            } else {
+                console.warn(`Sezione target non valida: ${targetSection}`);
+            }
+        });
+    });
+
 function ensureContainerHeight() {
     if (sectionsContainer) {
         sectionsContainer.style.height = '100vh';
@@ -179,24 +195,6 @@ function ensureContainerHeight() {
     indicators.forEach((indicator, index) => {
         indicator.addEventListener('click', () => {
             goToSection(index);
-        });
-    });
-
-    // Event listeners per i link di navigazione
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const sectionIndex = parseInt(link.getAttribute('data-section'));
-            goToSection(sectionIndex);
-        });
-    });
-
-    // Event listeners per i bottoni delle sezioni
-    sectionButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            const sectionIndex = parseInt(button.getAttribute('data-section'));
-            goToSection(sectionIndex);
         });
     });
 
@@ -408,462 +406,95 @@ async function initializeMap(config, data) {
   }
 }
 
-// Funzione per generare la sezione "In evidenza sulla mappa"
-function generateFeaturedLocations(data) {
-  // Seleziona solo gli elementi con in_evidence impostato a true
-  const featuredItems = data.filter(item => item.in_evidence === true);
-  
-  // Se non ci sono elementi in evidenza, non mostrare la sezione
-  if (featuredItems.length === 0) return null;
-  
-  // Crea il container principale
-  const container = document.createElement('div');
-  container.className = 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12';
-  
-  // Aggiungi il titolo della sezione
-  const title = document.createElement('h2');
-  title.className = 'text-3xl font-bold text-gray-900 mb-8';
-  title.textContent = 'Luoghi d\'interesse';
-  container.appendChild(title);
-  
-  // Crea la griglia per le schede
-  const grid = document.createElement('div');
-  grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
-  container.appendChild(grid);
-  
-  // Genera una scheda per ogni elemento in evidenza
-  featuredItems.forEach(item => {
-    // Crea la scheda
-    const card = document.createElement('div');
-    card.className = 'bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200 card-hover transition duration-300';
-    
-    // Crea il contenuto della scheda
-    const content = document.createElement('div');
-    content.className = 'p-6';
-    
-    // Intestazione con nome e anno
-    const header = document.createElement('div');
-    header.className = 'flex justify-between items-center mb-2';
-    
-    const name = document.createElement('h3');
-    name.className = 'text-xl font-bold';
-    name.textContent = item.Name || 'Luogo senza nome';
-    
-    const year = document.createElement('span');
-    year.className = 'text-sm bg-indigo-100 text-indigo-800 px-2 py-1 rounded';
-    year.textContent = item.Date || '';
-    
-    header.appendChild(name);
-    if (item.Date) {
-      header.appendChild(year);
-    }
-    content.appendChild(header);
-    
-    // Descrizione
-    const description = document.createElement('p');
-    description.className = 'text-gray-600 mb-4';
-    description.textContent = item.in_evidence_description || '';
-    content.appendChild(description);
-    
-    // Link per esplorare
-    const link = document.createElement('a');
-    link.href = `#${item.id || ''}`;
-    link.className = 'text-indigo-600 font-medium hover:text-indigo-800 inline-flex items-center';
-
-    content.appendChild(link);
-    card.appendChild(content);
-    
-    // Aggiungi la scheda alla griglia
-    grid.appendChild(card);
-  });
-  
-  return container;
-}
-
-// Funzione per inizializzare la sezione delle località in evidenza
-async function initializeFeaturedLocations(data) {
-  try {
-      // Trova l'elemento container per le località in evidenza
-      const featuredContainer = document.getElementById('featured-locations-container');
-      if (featuredContainer) {
-        const featuredSection = generateFeaturedLocations(data);
-        if (featuredSection) {
-          featuredContainer.appendChild(featuredSection);
-          console.log('Sezione "In evidenza sulla mappa" generata con successo');
-        } else {
-          console.log('Nessun elemento in evidenza trovato nei dati');
-        }
-      } else {
-        console.warn('Container per le località in evidenza non trovato (ID: featured-locations-container)');
-        
-        // Cerchiamo di trovare un punto logico dove inserire la sezione
-        const mapContainer = document.querySelector('.map-container');
-        if (mapContainer) {
-          // Creiamo un container per la sezione e lo inseriamo dopo la mappa
-          const newFeaturedContainer = document.createElement('div');
-          newFeaturedContainer.id = 'featured-locations-container';
-          mapContainer.parentNode.insertBefore(newFeaturedContainer, mapContainer.nextSibling);
-          
-          // Ora generiamo la sezione
-          const featuredSection = generateFeaturedLocations(data);
-          if (featuredSection) {
-            newFeaturedContainer.appendChild(featuredSection);
-            console.log('Sezione "In evidenza sulla mappa" generata e inserita automaticamente');
-          }
-        }
-      }
-  } catch (error) {
-    console.error('Errore durante l\'inizializzazione delle località in evidenza:', error);
-  }
-}
-
-function generateIndexCards(config) {
+// Preview semplice e responsive per la homepage
+function generateIndexPreview(config) {
   // Verifica configurazione
   if (!config.aggregations || typeof config.aggregations !== 'object') {
     console.warn('Nessuna configurazione aggregations trovata');
     return null;
   }
   
-  // Converte aggregations in array
-  const aggregationsArray = Object.entries(config.aggregations).map(([key, value]) => ({
-    name: key,
-    ...value
-  }));
-  
+  const aggregationsArray = Object.entries(config.aggregations);
   if (aggregationsArray.length === 0) {
     console.warn('Nessuna aggregation trovata');
     return null;
   }
-  
-  // Raggruppa per categoria
-  const groupedByCategory = aggregationsArray.reduce((groups, aggregation) => {
-    const category = aggregation.category || 'Altre categorie';
-    if (!groups[category]) {
-      groups[category] = [];
-    }
-    groups[category].push(aggregation);
-    return groups;
-  }, {});
-  
-  // Container principale con i tuoi colori
-  const container = document.createElement('div');
-  container.className = 'w-full bg-gradient-to-br from-primary-50 via-white to-secondary-50 relative overflow-hidden';
-  
-  // Elementi decorativi originali ma più piccoli
-  const decorativeElement1 = document.createElement('div');
-  decorativeElement1.className = 'absolute top-0 left-0 w-48 h-48 bg-primary-200 rounded-full opacity-20 -translate-x-1/2 -translate-y-1/2';
-  container.appendChild(decorativeElement1);
-  
-  const decorativeElement2 = document.createElement('div');
-  decorativeElement2.className = 'absolute bottom-0 right-0 w-64 h-64 bg-secondary-200 rounded-full opacity-10 translate-x-1/3 translate-y-1/3';
-  container.appendChild(decorativeElement2);
-  
-  // Contenuto principale centrato nella viewport con spazio per nav e footer
-  const mainContent = document.createElement('div');
-  mainContent.className = 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-16';
-  
-  // Layout a 4 colonne: 1 titolo + 3 categorie (con scroll se ce ne sono di più)
-  const layoutContainer = document.createElement('div');
-  layoutContainer.className = 'flex gap-6 h-[calc(100vh-200px)]';
-  
-  // Prima colonna: Titolo e descrizione (fissa, larga)
-  const titleColumn = createTitleColumn();
-  layoutContainer.appendChild(titleColumn);
-  
-  // Container per le colonne delle categorie con scroll
-  const categoriesContainer = document.createElement('div');
-  categoriesContainer.className = 'flex gap-4 flex-1 overflow-x-auto pb-4';
-  categoriesContainer.style.scrollBehavior = 'smooth';
-  
-  // Genera tutte le colonne delle categorie (sempre larghezza fissa per scroll)
-  Object.entries(groupedByCategory).forEach(([categoryName, aggregations], index) => {
-    const column = createCategoryColumn(categoryName, aggregations, index);
-    categoriesContainer.appendChild(column);
-  });
-  
-  layoutContainer.appendChild(categoriesContainer);
-  mainContent.appendChild(layoutContainer);
-  container.appendChild(mainContent);
-  
-  return container;
-}
 
-// Funzione per creare la colonna del titolo (fissa a sinistra)
-function createTitleColumn() {
-  const titleColumn = document.createElement('div');
-  titleColumn.className = 'w-80 flex-shrink-0 bg-gradient-to-br from-primary-600 to-primary-800 rounded-2xl p-8 text-white relative overflow-hidden';
+  // Container principale centrato 100vh
+  const container = document.createElement('div');
+  container.className = 'w-full min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center relative overflow-hidden';
   
-  // Elementi decorativi nel titolo
-  const decorative1 = document.createElement('div');
-  decorative1.className = 'absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full';
-  titleColumn.appendChild(decorative1);
+  // Elementi decorativi semplici
+  const deco1 = document.createElement('div');
+  deco1.className = 'absolute top-10 left-10 w-20 h-20 bg-primary-200 rounded-full opacity-20';
+  container.appendChild(deco1);
   
-  const decorative2 = document.createElement('div');
-  decorative2.className = 'absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-white/5 to-transparent rounded-tr-full';
-  titleColumn.appendChild(decorative2);
+  const deco2 = document.createElement('div');
+  deco2.className = 'absolute bottom-10 right-10 w-24 h-24 bg-secondary-200 rounded-full opacity-15';
+  container.appendChild(deco2);
+  
+  // Contenuto centrato
+  const content = document.createElement('div');
+  content.className = 'text-center px-6 max-w-4xl mx-auto relative z-10';
   
   // Badge
   const badge = document.createElement('div');
-  badge.className = 'inline-flex items-center bg-white/20 text-white px-3 py-1.5 rounded-full text-xs font-medium mb-6 relative z-10';
+  badge.className = 'inline-flex items-center bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-medium mb-6';
   badge.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
     </svg>
     Navigazione per indici
   `;
-  titleColumn.appendChild(badge);
   
-  // Titolo principale
-  const title = document.createElement('h1');
-  title.className = 'text-3xl font-bold mb-4 leading-tight relative z-10';
-  title.textContent = 'Esplora per categorie';
-  titleColumn.appendChild(title);
+  // Titolo
+  const title = document.createElement('h2');
+  title.className = 'pb-6 text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary-700 to-secondary-700 bg-clip-text text-transparent';
+  title.textContent = 'Esplora le categorie';
   
-  // Sottotitolo
-  const subtitle = document.createElement('p');
-  subtitle.className = 'text-white/80 leading-relaxed relative z-10';
-  subtitle.textContent = 'Naviga attraverso le diverse categorie di contenuti per scoprire informazioni organizzate e strutturate secondo le tue esigenze.';
-  titleColumn.appendChild(subtitle);
+  // Descrizione
+  const description = document.createElement('p');
+  description.className = 'text-xl sm:text-2xl text-gray-600 mb-8 lg:mb-12';
+  description.textContent = 'Scopri contenuti organizzati per categoria attraverso i gli indici strutturati';
   
-  return titleColumn;
+  // CTA Button
+  const ctaButton = document.createElement('a');
+  ctaButton.href = 'pages/indici.html';
+  ctaButton.className = 'inline-flex items-center bg-primary-600 hover:bg-gradient-to-r hover:from-primary-600 hover:to-secondary-600 text-white px-8 py-4 lg:px-12 lg:py-6 rounded-xl font-semibold text-lg lg:text-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 group';
+  
+  ctaButton.innerHTML = `
+    <span class="mr-3">Esplora tutti gli indici</span>
+    <svg class="w-5 h-5 lg:w-6 lg:h-6 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5-5 5M6 12h12"></path>
+    </svg>
+  `;
+  
+  // Assembla tutto
+  content.appendChild(badge);
+  content.appendChild(title);
+  content.appendChild(description);
+  content.appendChild(ctaButton);
+  container.appendChild(content);
+  
+  return container;
 }
 
-function createCategoryColumn(categoryName, aggregations, index) {
-  // I tuoi colori originali per le colonne
-  const columnColors = [
-    {
-      gradient: 'from-accent-500 to-accent-700',
-      shadowColor: 'shadow-accent-500/20',
-      borderColor: 'border-accent-200',
-      glowColor: 'shadow-accent-500/30'
-    },
-    {
-      gradient: 'from-accent-600 to-accent-800', 
-      shadowColor: 'shadow-accent-500/20',
-      borderColor: 'border-accent-200',
-      glowColor: 'shadow-accent-500/30'
-    },
-    {
-      gradient: 'from-accent-400 to-accent-600',
-      shadowColor: 'shadow-accent-500/20', 
-      borderColor: 'border-accent-300',
-      glowColor: 'shadow-accent-500/30'
-    }
-  ];
-  
-  const colorScheme = columnColors[index % 3];
-  
-  // Colonna con larghezza fissa per scroll orizzontale
-  const column = document.createElement('div');
-  column.className = `w-80 flex-shrink-0 bg-white rounded-xl overflow-hidden shadow-lg ${colorScheme.shadowColor} hover:${colorScheme.glowColor} border ${colorScheme.borderColor} transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 h-full flex flex-col`;
-  
-  // Header con i tuoi pattern
-  const header = document.createElement('div');
-  header.className = `bg-gradient-to-r ${colorScheme.gradient} px-5 py-4 relative overflow-hidden`;
-  
-  // I tuoi pattern decorativi originali
-  const pattern = document.createElement('div');
-  pattern.className = 'absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full';
-  header.appendChild(pattern);
-  
-  const pattern2 = document.createElement('div');
-  pattern2.className = 'absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-white/5 to-transparent rounded-tr-full';
-  header.appendChild(pattern2);
-  
-  // Titolo della categoria
-  const categoryTitle = document.createElement('h3');
-  categoryTitle.className = 'text-lg font-semibold text-white relative z-10';
-  categoryTitle.textContent = categoryName;
-  header.appendChild(categoryTitle);
-  
-  // Counter delle aggregazioni
-  const counter = document.createElement('div');
-  counter.className = 'text-white/80 text-xs mt-1 relative z-10';
-  counter.textContent = `${aggregations.length} ${aggregations.length === 1 ? 'elemento' : 'elementi'}`;
-  header.appendChild(counter);
-  
-  column.appendChild(header);
-  
-  // Container delle card con scroll verticale
-  const cardsContainer = document.createElement('div');
-  cardsContainer.className = 'overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 flex-1';
-  
-  // Genera le card
-  aggregations.forEach(aggregation => {
-    const card = createAggregationCard(aggregation);
-    cardsContainer.appendChild(card);
-  });
-  
-  column.appendChild(cardsContainer);
-  return column;
-}
-
-// Mantiene le tue card originali ma più compatte
-function createAggregationCard(aggregation) {
-  // I tuoi colori originali
-  let headerBgClass = 'bg-primary-800';
-  let buttonTextColor = 'text-primary-600';
-  let buttonHoverBg = 'hover:bg-gradient-to-r hover:from-white hover:to-primary-200';
-  
-  switch (aggregation.type) {
-    case 'simple':
-      headerBgClass = 'bg-gradient-to-r from-primary-600 to-primary-800';
-      buttonTextColor = 'text-primary-600';
-      buttonHoverBg = 'hover:bg-gradient-to-r hover:from-white hover:to-primary-200';
-      break;
-    case 'range':
-      headerBgClass = 'bg-gradient-to-r from-secondary-600 to-secondary-800';
-      buttonTextColor = 'text-secondary-600';
-      buttonHoverBg = 'hover:bg-gradient-to-r hover:from-white hover:to-secondary-200';
-      break;
-    case 'taxonomy':
-      headerBgClass = 'bg-gradient-to-r from-accent-600 to-accent-800';
-      buttonTextColor = 'text-accent-600';
-      buttonHoverBg = 'hover:bg-gradient-to-r hover:from-white hover:to-accent-200';
-      break;
-    default:
-      headerBgClass = 'bg-gradient-to-r from-primary-600 to-primary-800';
-      buttonTextColor = 'text-primary-600';
-      buttonHoverBg = 'hover:bg-gradient-to-r hover:from-white hover:to-primary-200';
-  }
-  
-  // Card compatta
-  const card = document.createElement('div');
-  card.className = 'bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-300 transform flex flex-col group';
-  
-  // Header della card con i tuoi SVG originali
-  const header = document.createElement('div');
-  header.className = `${headerBgClass} px-4 py-4 relative overflow-hidden flex-grow flex items-center justify-between`;
-  
-  // I tuoi SVG di background originali
-  const backgroundSvg = document.createElement('div');
-  backgroundSvg.className = 'absolute right-0 top-0 bottom-0 flex items-center justify-center opacity-15 pointer-events-none group-hover:opacity-25 transition-opacity duration-300';
-  backgroundSvg.style.transform = 'translateX(25%)';
-  
-  let svgContent = '';
-  switch (aggregation.type) {
-    case 'simple':
-      svgContent = `
-        <svg viewBox="0 0 100 100" class="w-20 h-20 text-white">
-          <rect x="10" y="20" width="80" height="8" rx="4" fill="currentColor"/>
-          <rect x="10" y="35" width="60" height="8" rx="4" fill="currentColor"/>
-          <rect x="10" y="50" width="70" height="8" rx="4" fill="currentColor"/>
-          <rect x="10" y="65" width="50" height="8" rx="4" fill="currentColor"/>
-          <circle cx="90" cy="24" r="3" fill="currentColor"/>
-          <circle cx="90" cy="39" r="3" fill="currentColor"/>
-          <circle cx="90" cy="54" r="3" fill="currentColor"/>
-          <circle cx="90" cy="69" r="3" fill="currentColor"/>
-        </svg>
-      `;
-      break;
-    case 'range':
-      svgContent = `
-        <svg viewBox="0 0 100 100" class="w-20 h-20 text-white">
-          <line x1="10" y1="85" x2="90" y2="85" stroke="currentColor" stroke-width="2"/>
-          <line x1="10" y1="85" x2="10" y2="15" stroke="currentColor" stroke-width="2"/>
-          <rect x="15" y="65" width="12" height="20" fill="currentColor" rx="2"/>
-          <rect x="32" y="45" width="12" height="40" fill="currentColor" rx="2"/>
-          <rect x="49" y="35" width="12" height="50" fill="currentColor" rx="2"/>
-          <rect x="66" y="55" width="12" height="30" fill="currentColor" rx="2"/>
-          <rect x="83" y="25" width="12" height="60" fill="currentColor" rx="2"/>
-        </svg>
-      `;
-      break;
-    case 'taxonomy':
-      svgContent = `
-        <svg viewBox="0 0 100 100" class="w-20 h-20 text-white">
-          <circle cx="50" cy="20" r="8" fill="currentColor"/>
-          <line x1="50" y1="28" x2="50" y2="40" stroke="currentColor" stroke-width="3"/>
-          <line x1="30" y1="40" x2="70" y2="40" stroke="currentColor" stroke-width="3"/>
-          <line x1="30" y1="40" x2="30" y2="50" stroke="currentColor" stroke-width="3"/>
-          <line x1="70" y1="40" x2="70" y2="50" stroke="currentColor" stroke-width="3"/>
-          <circle cx="30" cy="55" r="6" fill="currentColor"/>
-          <circle cx="70" cy="55" r="6" fill="currentColor"/>
-          <line x1="30" y1="61" x2="30" y2="70" stroke="currentColor" stroke-width="2"/>
-          <line x1="70" y1="61" x2="70" y2="70" stroke="currentColor" stroke-width="2"/>
-          <line x1="20" y1="70" x2="80" y2="70" stroke="currentColor" stroke-width="2"/>
-          <circle cx="20" cy="75" r="4" fill="currentColor"/>
-          <circle cx="40" cy="75" r="4" fill="currentColor"/>
-          <circle cx="60" cy="75" r="4" fill="currentColor"/>
-          <circle cx="80" cy="75" r="4" fill="currentColor"/>
-        </svg>
-      `;
-      break;
-    default:
-      svgContent = `
-        <svg viewBox="0 0 100 100" class="w-20 h-20 text-white">
-          <circle cx="35" cy="35" r="15" fill="none" stroke="currentColor" stroke-width="4"/>
-          <circle cx="35" cy="35" r="6" fill="currentColor"/>
-          <circle cx="65" cy="65" r="20" fill="none" stroke="currentColor" stroke-width="4"/>
-          <circle cx="65" cy="65" r="8" fill="currentColor"/>
-          <rect x="32" y="20" width="6" height="10" fill="currentColor"/>
-          <rect x="32" y="40" width="6" height="10" fill="currentColor"/>
-          <rect x="20" y="32" width="10" height="6" fill="currentColor"/>
-          <rect x="40" y="32" width="10" height="6" fill="currentColor"/>
-        </svg>
-      `;
-  }
-  
-  backgroundSvg.innerHTML = svgContent;
-  header.appendChild(backgroundSvg);
-  
-  // Titolo dell'header
-  const headerTitle = document.createElement('h4');
-  headerTitle.className = 'text-lg font-bold text-white text-left relative z-10 flex-shrink-0 group-hover:scale-105 transition-transform duration-300';
-  headerTitle.textContent = aggregation.title || aggregation.name || 'Categoria';
-  header.appendChild(headerTitle);
-  
-  card.appendChild(header);
-  
-  // Footer della card minimalista con solo freccia
-  const footer = document.createElement('div');
-  footer.className = 'bg-gray-50 px-4 py-2 border-t border-gray-200 flex justify-end';
-  
-  // Link con solo freccia
-  const link = document.createElement('a');
-  const encodedIndex = encodeURIComponent(aggregation.name);
-  const encodedView = encodeURIComponent(aggregation.type);
-  link.href = `pages/indice.html?index=${encodedIndex}&view=${encodedView}`;
-  link.className = `inline-flex items-center justify-center w-8 h-8 bg-white ${buttonTextColor} rounded-full ${buttonHoverBg} transition-all duration-300 shadow-md hover:shadow-lg border border-gray-200 group hover:scale-110`;
-  
-  // Solo icona freccia
-  const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  arrow.setAttribute('class', 'w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300');
-  arrow.setAttribute('fill', 'none');
-  arrow.setAttribute('stroke', 'currentColor');
-  arrow.setAttribute('viewBox', '0 0 24 24');
-  const arrowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  arrowPath.setAttribute('stroke-linecap', 'round');
-  arrowPath.setAttribute('stroke-linejoin', 'round');
-  arrowPath.setAttribute('stroke-width', '2');
-  arrowPath.setAttribute('d', 'M13 7l5 5-5 5M6 12h12');
-  arrow.appendChild(arrowPath);
-  link.appendChild(arrow);
-  
-  footer.appendChild(link);
-  card.appendChild(footer);
-  
-  return card;
-}
-
-// Funzione di inizializzazione
-async function initializeIndexCards(config) {
+// Funzione per inserire nel DOM
+async function initializeIndexPreview(config) {
   try {
-    const indexContainer = document.getElementById('index-cards-container');
-    if (indexContainer) {
-      const indexSection = generateIndexCards(config);
-      if (indexSection) {
-        indexContainer.innerHTML = '';
-        indexContainer.appendChild(indexSection);
-        console.log('Layout a 4 colonne con scroll orizzontale generato con successo');
-      } else {
-        console.log('Nessuna aggregation trovata nella configurazione');
+    const container = document.getElementById('index-cards-container');
+    if (container) {
+      const preview = generateIndexPreview(config);
+      if (preview) {
+        container.innerHTML = '';
+        container.appendChild(preview);
+        console.log('Preview degli indici generata con successo');
       }
     } else {
-      console.warn('Container per le schede degli indici non trovato (ID: index-cards-container)');
+      console.warn('Container index-cards-container non trovato');
     }
   } catch (error) {
-    console.error('Errore durante l\'inizializzazione delle schede degli indici:', error);
+    console.error('Errore preview indici:', error);
   }
 }
 
@@ -885,7 +516,7 @@ async function initializeApp() {
     updateProjectDescription(config);
     
     // Inizializza le schede degli indici
-    await initializeIndexCards(config);
+    await initializeIndexPreview(config);
     
     // Carica e processa i dati
     const data = await parseData();
@@ -893,9 +524,6 @@ async function initializeApp() {
     
     // Inizializza la mappa
     await initializeMap(config, data);
-    
-    // Inizializza le sezioni della pagina con layout a 2 colonne
-    await initializeFeaturedLocations(data);
 
     // FIX: Inizializza lo scrollytelling dopo che tutto è caricato
     setTimeout(() => {

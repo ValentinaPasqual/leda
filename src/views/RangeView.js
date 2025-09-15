@@ -10,7 +10,7 @@ export class RangeView {
     this.indexKey = indexKey;
     this.indexInfo = indexInfo || {};
     this.rangeData = this.buildRangeData(data, indexKey);
-    this.activeTab = 'timeline';
+    this.activeTab = 'range-list';
     this.currentSearchTerm = '';
     this.expandedItems = new Set();
     this.selectedRange = null;
@@ -149,8 +149,8 @@ export class RangeView {
     buttons.className = 'flex flex-col gap-2';
     
     const tabs = [
-      { id: 'range-list', label: 'Lista Range', icon: '📋' },
-      { id: 'timeline', label: 'Timeline', icon: '📊' },
+      { id: 'range-list', label: 'Lista degli intervalli', icon: '📋' },
+      { id: 'timeline', label: 'Grafico di andamento', icon: '📊' },
       { id: 'histogram', label: 'Istogramma', icon: '📈' },
     ];
 
@@ -536,7 +536,6 @@ export class RangeView {
       const rangeInfo = document.createElement("div");
       rangeInfo.innerHTML = `
         <div class="font-semibold text-lg text-primary-900">${bucket.key}</div>
-        <div class="text-sm text-slate-600">Valori: ${Array.from(bucket.values).sort((a, b) => a - b).join(', ')}</div>
       `;
 
       left.appendChild(rangeInfo);

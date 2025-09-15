@@ -26,6 +26,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         mappa: resolve(__dirname, 'pages/mappa.html'),
         indice: resolve(__dirname, 'pages/indice.html'),
+        indici: resolve(__dirname, 'pages/indici.html'),
         narrative: resolve(__dirname, 'pages/narrative.html'),
         pages: resolve(__dirname, 'pages/record.html')
       },

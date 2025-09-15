@@ -277,9 +277,8 @@ export class UniversalFooter {
     getNavigationLinks() {
         return [
             { text: 'Home', path: 'index.html', section: '0' },
-            { text: 'Mappa', path: 'index.html', section: '1' },
-            { text: 'Ricerca', path: 'index.html', section: '2' },
-            { text: 'Docs', path: '#' },
+            { text: 'Documentazione', path: '#', section: '0' },
+            { text: 'Contatti', path: '#' },
         ];
     }
 

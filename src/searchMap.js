@@ -334,9 +334,7 @@ class LEDASearch {
   // State management
   async handleStateChange(action) {
     console.log('handleStateChange called with action:', action);
-    
-    // Removed progress loader code
-    
+        
     try {
       switch (action.type) {
         case 'FACET_CHANGE':

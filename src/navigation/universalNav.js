@@ -46,9 +46,9 @@ export class UniversalNav {
         const nav = this.createNavElement();
         
         const navItems = [
-            { text: 'Home', path: 'index.html', section: '0' },
-            { text: 'Mappa', path: 'index.html', section: '1' },
-            { text: 'Indici', path: 'index.html', section: '2' },
+            { text: 'Home', path: 'index.html'},
+            { text: 'Mappa', path: 'pages/mappa.html'},
+            { text: 'Indici', path: 'pages/indici.html'},
         ];
 
         const navHTML = this.generateNavHTML(navItems);
@@ -73,7 +73,7 @@ export class UniversalNav {
                 
             return `
                 <a href="${this.getRelativePath('index.html')}">
-                    <img src="${imagePath}" alt="Logo" class="h-20 object-contain">
+                    <img src="${imagePath}" alt="Logo" class="h-10 object-contain">
                 </a>
             `;
         } else {
@@ -108,68 +108,55 @@ export class UniversalNav {
 
         return `
             <div class="flex justify-between items-center h-20">
-                <!-- Logo -->
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center justify-center">
-                        ${this.generateLogoHTML()}
-                    </div>
-                </div>
+    <!-- Logo -->
+    <div class="flex items-center space-x-4">
+        <div class="flex items-center justify-center">
+            ${this.generateLogoHTML()}
+        </div>
+    </div>
 
-                <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-8">
-                    ${desktopNav}
-                </div>
+    <!-- Desktop Navigation -->
+    <div class="hidden md:flex items-center space-x-8">
+        ${desktopNav}
+    </div>
 
-                <!-- Mobile Menu + CTA -->
-                <div class="flex items-center space-x-4">
-                    <a href="#" class="hidden md:block text-primary-600 hover:text-primary-800 font-medium transition duration-200">Contatti</a>
-                    <a href="#" class="hidden md:block bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                        Documentazione
-                    </a>
-                    
-                    <!-- Mobile Menu Toggle -->
-                    <div class="md:hidden relative">
-                        <input type="checkbox" id="menu-toggle" class="hidden peer">
-                        <label for="menu-toggle" class="cursor-pointer text-gray-600 hover:text-primary-600 transition duration-200 peer-checked:text-primary-600">
-                            <svg class="h-6 w-6 peer-checked:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                            <svg class="h-6 w-6 hidden peer-checked:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </label>
-                        
-                        <div class="hidden peer-checked:block absolute right-0 top-12 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
-                            ${mobileNav}
-                            <div class="border-t border-gray-200 my-2"></div>
-                            <a href="#" class="block px-4 py-3 text-primary-600 hover:text-primary-800 font-medium hover:bg-gray-50 transition duration-200">Contatti</a>
-                            <div class="px-4 py-2">
-                                <a href="#" class="block bg-primary-600 hover:bg-primary-700 text-white px-4 py-3 rounded-lg font-semibold text-center transition duration-200 shadow-lg">
-                                    Documentazione
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Mobile Menu Toggle -->
+    <div class="md:hidden relative">
+        <input type="checkbox" id="menu-toggle" class="hidden peer">
+        <label for="menu-toggle" class="cursor-pointer text-gray-600 hover:text-primary-600 transition duration-200 peer-checked:text-primary-600">
+            <svg class="h-6 w-6 peer-checked:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <svg class="h-6 w-6 hidden peer-checked:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </label>
+        
+        <div class="hidden peer-checked:block absolute right-0 top-12 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+            ${mobileNav}
+        </div>
+    </div>
+</div>
         `;
     }
 
     isActivePath(targetPath) {
-        const currentFile = basename(this.currentPath);
-        const targetFile = basename(targetPath);
-        
-        if (currentFile === 'index.html' && targetFile === 'index.html') {
+    const currentFile = basename(this.currentPath);
+    const targetFile = basename(targetPath);
+    
+    // Per index.html, verifica anche che siamo nella directory corretta
+    if (currentFile === 'index.html' && targetFile === 'index.html') {
+        // Se il targetPath è semplicemente 'index.html', significa che è la home page
+        if (targetPath === 'index.html') {
+            // Verifica che siamo nella directory principale del progetto
             const currentDir = dirname(this.currentPath);
-            const targetDir = dirname(this.getRelativePath(targetPath));
-            
-            const normalizedCurrentDir = currentDir.replace(/\/$/, '') || '/';
-            const normalizedTargetDir = targetDir.replace(/\/$/, '') || '/';
-            
-            return normalizedCurrentDir === normalizedTargetDir;
+            const projectDir = '/' + (this.config?.project?.projectShortTitle?.toLowerCase() || '');
+            return currentDir === projectDir;
         }
-        
-        return currentFile === targetFile;
+    }
+    
+    // Per tutti gli altri file, confronta semplicemente i nomi
+    return currentFile === targetFile;
     }
 
     createNavElement() {
