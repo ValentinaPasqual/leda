@@ -1,4 +1,4 @@
-// utilities.js
+// facetsUtilities.js
 export class Utilities {
   
   /**

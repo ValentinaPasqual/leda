@@ -11,7 +11,8 @@
   "datasetConfig": {
     "multivalue_rows" : {
       "Tipologia del luogo": ", ",
-      "Tipologia dello Spazio": "; "
+      "Tipologia dello Spazio": "; ",
+      "Modo":","
     }
   },
   "result_cards": {
@@ -24,19 +25,19 @@
     "initialView": [41.8719, 12.5674],
     "initialZoom": 6,
     "tileLayers": {
-      "Default": {
-        "tileLayer": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        "attribution": "© OpenStreetMap contributors"
-      },
-      "Stadia.StamenTerrain" : {
-        "tileLayer": "https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png",
-        "attribution": "© OpenStreetMap contributors 222"
-        },
-      "Stadia.StamenTonerLite" : {
-        "tileLayer": "https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}{r}.png", 
-	      "attribution": "&copy; <a href='https://www.stadiamaps.com/' target='_blank'>Stadia Maps</a> &copy; <a href='https://www.stamen.com/' target='_blank'>Stamen Design</a> &copy; <a href='https://openmaptiles.org/' target='_blank'>OpenMapTiles</a> &copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
-      }
+    "Default": {
+      "tileLayer": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "attribution": "© OpenStreetMap contributors"
+    },
+    "Terrain": {
+      "tileLayer": "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+      "attribution": "© OpenTopoMap (CC-BY-SA)"
+    },
+    "CartoDB_Positron": {
+      "tileLayer": "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+      "attribution": "© OpenStreetMap © CartoDB"
     }
+  }
   },
   "map_popups": {
     "show_polygons": "True",
@@ -108,6 +109,13 @@
       "category": "I riferimenti letterari",
       "conjunction": false,
       "type": "range"
+    },
+    "Modo": {
+      "title": "I modi",
+      "size": 100,
+      "category": "I riferimenti letterari",
+      "conjunction": false,
+      "type": "simple"
     }
   },
   "searchableFields": ["Titolo", "Anno", "Autore"]

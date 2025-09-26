@@ -27,8 +27,8 @@ export default defineConfig({
         mappa: resolve(__dirname, 'pages/mappa.html'),
         indice: resolve(__dirname, 'pages/indice.html'),
         indici: resolve(__dirname, 'pages/indici.html'),
-        narrative: resolve(__dirname, 'pages/narrative.html'),
-        pages: resolve(__dirname, 'pages/record.html')
+        /*narrative: resolve(__dirname, 'pages/narrative.html'),
+        pages: resolve(__dirname, 'pages/record.html')*/
       },
       output: {
         // The path prefixing is handled automatically by Vite

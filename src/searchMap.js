@@ -1,16 +1,20 @@
+// searchMap.js
+
 import itemsjs from 'itemsjs';
 import './styles/tailwind.css'
 import { parseData } from './utils/dataParser.js';
 import { loadConfiguration } from './utils/configLoader.js';
-import { initMap } from './utils/initMap.js';
-import { navBarRenderer } from './utils/navBarRenderer.js';
 
-// Import the modules for facets Handling
-import { FacetRenderer } from './utils/facetRenderer.js';
-import { RangeRenderer } from './utils/rangeRenderer.js';
-import { TaxonomyRenderer } from './utils/taxonomyRenderer.js';
+// Import of the modules for the map and the map navigation bar 
+import { initMap } from './utils/initMap.js';
+import { navBarRenderer } from './map_components/navbar/navbarRenderer.js';
+
+// Import the modules for facets Handling and Rendering
+import { FacetRenderer } from './map_components/facetRenderer.js';
+import { RangeRenderer } from './map_components/rangeRenderer.js';
+import { TaxonomyRenderer } from './map_components/taxonomyRenderer.js';
 import { SearchHandler } from './utils/searchHandler.js';
-import { ResultsRenderer } from './utils/resultsRenderer.js';
+import { ResultsRenderer } from './map_components/resultsRenderer.js';
 import { Utilities } from './utils/facetsUtilities.js';
 
 // Import nav and footer

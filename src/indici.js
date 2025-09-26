@@ -1,3 +1,5 @@
+// indici.js
+
 import { loadConfiguration } from './utils/configLoader.js';
 import { UniversalNav } from './navigation/universalNav.js';
 import { UniversalFooter } from './navigation/universalFooter.js';

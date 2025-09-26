@@ -73,6 +73,10 @@ body#map-page #map {
   max-width: 20rem;
 }
 
+.facet-hidden {
+  display: none !important;
+}
+
 #filters-panel {overflow:scroll}
 
 .facet-category, .results-container {
@@ -240,6 +244,64 @@ input[type="checkbox"]:checked::before {
 .result-highlighted {
   @apply ring-2 ring-primary-400 shadow-lg;
   box-shadow: 0 0 20px rgba(var(--secondary));
+}
+
+/* TAXONOMY STYLE IN FACETS */
+/* Per i checkbox Tailwind/Bootstrap con stato indeterminate */
+input[type="checkbox"].form-checkbox:indeterminate {
+  background-image: none;     /* rimuovi l'icona di default */
+  position: relative;
+  @apply bg-secondary-200 border-secondary-200 ; 
+
+}
+
+input[type="checkbox"].form-checkbox:indeterminate::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  transform: translate(-50%, -50%);
+  @apply bg-secondary-400 ; 
+
+}
+/* Spaziatura verticale tra elementi */
+.space-y-1 > * + * {
+  margin-top: 2px;
+}
+
+/* Container figli - indentazione con linea verticale */
+.taxonomy-item .children {
+  margin-left: 12px;
+  margin-top: 2px;
+  padding-left: 2px;
+  border-left: 1px solid #e5e7eb;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Elementi nascosti */
+.children.hidden {
+  display: none;
+}
+
+.taxonomy-item > .facet-option {
+  display: grid; grid-template-columns: 0px auto 1fr auto; gap: 2px; align-items: center;
+}
+
+.taxonomy-item > .facet-option > * {
+  align-self: start;
+}
+
+/* Contenitore flex */
+.taxonomy-item .flex.items-center {
+  display: flex;
+  align-items: flex-start; /* Allineamento top */
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+  padding-bottom: 0.5rem;
 }
 
 /* Bottom navbar */
@@ -734,3 +796,6 @@ header {
     height: calc(100dvh - 80px);
   }
 }
+
+
+
