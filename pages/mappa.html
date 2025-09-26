@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEDA Search</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="data:;base64,=" />
+  <script type="module" crossorigin src="/leda/assets/js/mappa.js"></script>
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/universalFooter-C2U-GN5J.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/dataParser-B8qsNdIx.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/initMap-C4-fR1Ni.js">
+  <link rel="stylesheet" crossorigin href="/leda/assets/css/universalFooter.css">
+  <link rel="stylesheet" crossorigin href="/leda/assets/css/initMap.css">
+  <link rel="stylesheet" crossorigin href="/leda/assets/css/mappa.css">
+</head>
+<body class="h-screen flex flex-col" id="map-page">
+
+    <!-- MAIN CONTENT -->
+    <section class="main flex-1 relative overflow-hidden">
+        <!-- Filters Panel -->
+        <div id="filters-panel" class="overlay-panel panel-closed absolute left-0 top-0 bottom-0 w-30 z-50 shadow-lg overflow-auto">
+        
+            <!-- Dynamic facets container -->
+            <div id="facets-container">
+                <template id="facet-template">
+                    <div class="facet-group mb-4">
+                        <h3 class="font-semibold mb-2"></h3>
+                        <div class="facet-options space-y-2">
+                            <!-- Facet options will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div id="map" class="absolute inset-0"></div>
+
+        <!-- Results Panel -->
+        <div id="results-panel" class="overlay-panel panel-closed-right absolute right-0 top-0 bottom-0 w-30 z-50 shadow-lg overflow-auto">
+            
+            <div class="results-container">
+                <div class="search-sort-container">
+                    <!-- Search Input -->
+                    <div class="mb-4">
+                        <input type="text" id="search-input" 
+                            class="w-full p-2 border rounded" 
+                            placeholder="Cerca...">
+                    </div>
+
+                    <!-- Sort -->
+                    <div class="mb-4">
+                            <select id="sort-select" class="w-full p-2 border rounded-lg">
+                                <!-- Sort options will be populated by JavaScript -->
+                            </select>
+                    </div>
+                </div>
+                    
+                <div id="results" class="space-y-4">
+                    <!-- Results will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="bottom-navbar bg-white shadow-lg border-t border-primary-100 w-full z-40 transition-all duration-300 p-2 h-18 flex-shrink-0">
+        <div class="flex items-center justify-between max-w-screen-xl mx-auto">
+            
+            <!-- Left section - Filters -->
+            <div class="flex items-center space-x-3">
+                <button id="toggle-filters" class="nav-button flex items-center space-x-2 px-4 py-2 rounded-full shadow-lg hover:shadow-xl">
+                    <i class="fas fa-filter text-lg"></i>
+                    <span class="font-medium">Filtri</span>
+                </button>
+                
+                <!-- Active filters indicator -->
+                <div id="active-filters-badge" class="bg-secondary-100 text-secondary-800 text-xs font-semibold px-2 py-1 rounded-full">
+                    <span id="active-filters-count"></span> attivi
+                </div>
+                <button id="clear-all-btn" class="hidden nav-button px-3 py-2">
+                    <i class="fas fa-times mr-1"></i>
+                    Cancella tutto
+                </button>
+            </div>
+
+            <!-- Center section - Quick actions -->
+            <div class="flex items-center space-x-2">
+                <button id="toggle-legend-btn" class="nav-button px-3 py-2 rounded-full text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100">
+                    <i class="fas fa-map-signs mr-1"></i>
+                    Legenda
+                </button>
+                
+                <button id="map-layer-selector" class="nav-button px-3 py-2 rounded-full text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100">
+                    <i class="fas fa-crosshairs mr-1"></i>
+                    Livelli
+                </button>
+
+                <button id="map-markers-selector" class="nav-button px-3 py-2 rounded-full text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100">
+                    <i class="fas fa-crosshairs mr-1"></i>
+                    Markers
+                </button>
+
+            </div>
+
+            <!-- Right section - Results -->
+            <div class="flex items-center space-x-3">
+                <!-- Results counter -->
+                <div class="flex flex-col space-y-2">
+                    <div id="results-counter" class="bg-secondary-100 text-secondary-800 text-xs font-semibold px-2 py-1 rounded-full">
+                        <span id="results-count">0</span> luoghi
+                    </div>
+                    
+                    <div id="unique-results-counter" class="bg-primary-100 text-primary-800 text-xs font-semibold px-2 py-1 rounded-full">
+                        <span id="unique-results-count">0</span> riferimenti
+                    </div>
+                </div>
+
+                <button id="toggle-results" class="nav-button flex items-center space-x-2 px-4 py-2 rounded-full shadow-lg hover:shadow-xl">
+                    <span class="font-medium">Riferimenti</span>
+                    <i class="fas fa-list text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+
+      
+</body>
+</html>
