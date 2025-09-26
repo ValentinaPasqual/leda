@@ -4,7 +4,7 @@
   "scripts": {
     "start": "vite",
     "dev": "vite --host",
-    "deploy": "npm run build && push-dir --dir=dist --branch=gh-pages --cleanup",
+    "deploy": "npm run build && git subtree push --prefix=dist origin gh-pages",
     "build": "vite build",
     "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/assets/css/tailwind.css --watch",
     "preview": "vite preview"

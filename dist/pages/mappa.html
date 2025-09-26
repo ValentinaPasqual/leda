@@ -4,24 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LEDA Search</title>
-    <link href="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.js"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" href="data:;base64,=" />
   <script type="module" crossorigin src="/leda/assets/js/mappa.js"></script>
-  <link rel="modulepreload" crossorigin href="/leda/assets/js/configLoader-Bcc6pGxk.js">
-  <link rel="modulepreload" crossorigin href="/leda/assets/js/universalFooter-iP1Is5-i.js">
-  <link rel="modulepreload" crossorigin href="/leda/assets/js/dataParser-Bx_3sRyQ.js">
-  <link rel="modulepreload" crossorigin href="/leda/assets/js/initMap-CQU7qRfu.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/universalFooter-C2U-GN5J.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/dataParser-B8qsNdIx.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/initMap-C4-fR1Ni.js">
   <link rel="stylesheet" crossorigin href="/leda/assets/css/universalFooter.css">
   <link rel="stylesheet" crossorigin href="/leda/assets/css/initMap.css">
+  <link rel="stylesheet" crossorigin href="/leda/assets/css/mappa.css">
 </head>
-<body class="overflow-hidden" id="map-page">
+<body class="h-screen flex flex-col" id="map-page">
 
-    <section class="main">
+    <!-- MAIN CONTENT -->
+    <section class="main flex-1 relative overflow-hidden">
         <!-- Filters Panel -->
-        <div id="filters-panel" class="overlay-panel panel-closed fixed left-0 w-30 h-full z-10 shadow-lg overflow-auto">
+        <div id="filters-panel" class="overlay-panel panel-closed absolute left-0 top-0 bottom-0 w-30 z-50 shadow-lg overflow-auto">
         
             <!-- Dynamic facets container -->
             <div id="facets-container">
@@ -37,10 +36,10 @@
         </div>
 
         <!-- Map -->
-        <div id="map"></div>
+        <div id="map" class="absolute inset-0"></div>
 
         <!-- Results Panel -->
-        <div id="results-panel" class="overlay-panel panel-closed-right fixed right-0 w-30 h-full z-10 shadow-lg overflow-auto">
+        <div id="results-panel" class="overlay-panel panel-closed-right absolute right-0 top-0 bottom-0 w-30 z-50 shadow-lg overflow-auto">
             
             <div class="results-container">
                 <div class="search-sort-container">
@@ -66,8 +65,8 @@
         </div>
     </section>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="bottom-navbar fixed bottom-0 left-0 right-0 w-full z-50 px-4 py-3">
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="bottom-navbar bg-white shadow-lg border-t border-primary-100 w-full z-40 transition-all duration-300 p-2 h-18 flex-shrink-0">
         <div class="flex items-center justify-between max-w-screen-xl mx-auto">
             
             <!-- Left section - Filters -->
