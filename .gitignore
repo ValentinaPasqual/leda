@@ -7,7 +7,9 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Installed libs + deploy folder
 node_modules
+dist/
 *.local
 
 # Editor directories and files
