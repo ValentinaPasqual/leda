@@ -12,53 +12,61 @@ Verso occidente	Europa non specificato	bosco, mare	Aperto > Naturale > Arboreo >
 Recuenco - La nutrice	Non specificato (forse Sud America?)	montagna	Aperto > Naturale > Rilievo > Montagna						38.7200, -24.2200
 Recuenco - Il rafter	Non specificato (forse Sud America?)	interno	Chiuso > Edificio						38.7200, -24.220
 Paese d'ombre	Villacidro	campagna, paese, bosco	Aperto > Naturale > Rurale > Campagna; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco					39919	39.4569925,8.7367219
-Dissipatio H.G.	Zurigo 	città, montagna, paese	Aperto > Urbano > Città; Aperto > Naturale > Rilievo > Montagna; Aperto > Urbano > Paese			Crispoli		1682248	47.3744489,8.5410422
-Dissipatio H.G.	Widmad								38.7200, -24.2200
-Dissipatio H.G.	Lewrosen								38.7200, -24.220
-Visto da Seveso	Seveso	città	Aperto > Urbano > Città					45608	45.6434655,9.1373787
-Una lepre con la faccia di bambina	Seveso	città	Aperto > Urbano > Città					45608	45.6434655,9.1373787
-Il re del magazzino	Campagna lombarda intorno al fiume Lambro 	campagna, paese, pianura, fiume	Aperto > Naturale > Rurale > Campagna; Aperto > Urbano > Paese; Aperto > Naturale > Irriguo > Pianura; Aperto > Naturale > Acquatico > Fiume					570545	45.5302185,9.2659323
-Il superstite	Maremma Toscana	campagna, paese, pianura	Aperto > Naturale > Rurale > Campagna; Aperto > Urbano > Paese; Aperto > Naturale > Irriguo > Pianura			Campagna toscana ma tutta l’Italia è coinvolta dall’apocalisse		4279861	42.6303496,11.1095079
-Il pianeta irritabile	Terra	città, campagna	Aperto > Urbano > Città; Aperto > Naturale > Rurale > Campagna					267187327	34.9656724,32.4248003
-Il paradiso degli animali	Alta Maremma	pianura	Aperto > Naturale > Irriguo > Pianura						
-Uomini, boschi e api	Hindenburg	montagna, pianura, paese, bosco, fiume	Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Irriguo > Pianura; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Acquatico > Fiume					3641174	52.7533929,11.9288673
-Uomini, boschi e api	Roccia del Piandot	montagna, pianura, paese, bosco, fiume	Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Irriguo > Pianura; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Acquatico > Fiume						
-Uomini, boschi e api	Sasso della Campanula	montagna, pianura, paese, bosco, fiume	Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Irriguo > Pianura; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Acquatico > Fiume						
-Uomini, boschi e api	Klagenfurt	montagna, pianura, paese, bosco, fiume	Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Irriguo > Pianura; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Acquatico > Fiume					105870	46.6239430,14.3075976
-Uomini, boschi e api	Gorizia	montagna, pianura, paese, bosco, fiume	Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Irriguo > Pianura; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Acquatico > Fiume			(ma tutti i toponimi sono nella stessa zona...)		179075	45.9441278,13.6252288
-Uomini, boschi e api	Altipiano di Asiago	montagna, pianura, paese, bosco, fiume	Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Irriguo > Pianura; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Acquatico > Fiume					18558498	45.5568695,10.2232761
-Ferragosto di morte 	Maremma Toscana	città, paese, campagna	Aperto > Urbano > Città; Aperto > Urbano > Paese; Aperto > Naturale > Rurale > Campagna			Firenze; Pisa; Cecina; Volterra		4279861	42.6303496,11.1095079
-Il mondo senza nessuno	Maremma Toscana	paese, città, campagna	Aperto > Urbano > Paese; Aperto > Urbano > Città; Aperto > Naturale > Rurale > Campagna			Firenze; Pisa; Cecina; Volterra		4279861	42.6303496,11.1095079
-L'acqua di Malo	Malo 	paese, fiume, bosco, campagna	Aperto > Urbano > Paese; Aperto > Naturale > Acquatico > Fiume; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Rurale > Campagna					45550	45.6602960,11.4074930
-La casa nel bosco	Italia, sicuramente, forse Campania? Sicuramente non Roma	interno, paese, bosco	Chiuso > Edificio; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco						
-Il libro degli animali	Altipiano di Asiago	montagna, bosco, fiume	Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Acquatico > Fiume					18558498	45.5568695,10.2232761
-Arboreto selvatico	Altipiano di Asiago	paese, montagna, pianura, bosco	Aperto > Urbano > Paese; Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Irriguo > Pianura; Aperto > Naturale > Arboreo > Bosco					18558498	45.5568695,10.2232761
-Sentieri sotto la neve	Altipiano di Asiago	montagna, paese, bosco, pianura	Aperto > Naturale > Rilievo > Montagna; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Irriguo > Pianura					18558498	45.5568695,10.2232761
-I quindicimila passi	Vicenza	città, bosco	Aperto > Urbano > Città; Aperto > Naturale > Arboreo > Bosco					44580	45.6348591,11.4063543
-Gomorra	Napoli							40767	40.8358846,14.2487679
-Gomorra	Aberdeen							1900654	57.1482429,-2.0928095
-Gomorra	Caserta							40940	41.2035192,14.1168624
-Gomorra	Casal di Principe							41007	41.0114120,14.1248250
-Gomorra	San Cipriano d'Aversa							40978	40.9988120,14.1317260
-Gomorra	Casapesenna	paese, città	Aperto > Urbano > Paese; Aperto > Urbano > Città					40979	40.9915120,14.1361260
-Sirene	nuova baja california	città, mare	Aperto > Urbano > Città; Aperto > Naturale > Acquatico > Mare						
-L'ubicazione del bene	Milano	città	Aperto > Urbano > Città			Cortesforza (inventato)		44915	45.4641943,9.1896346
+Lo smeraldo	Genova	città		Presente	Spazio reale	Il protagonista attraversa tutta l'Italia, fermandosi in molti luoghi: se ne riportano qui tre emblematici della rappresentazione del contesto urbano e uno del piccolo borgo di Acquapendente, perché significativi di una differenza di trattamento da parte dell'autore nei confronti del Nord Italia e del Sud Italia, dell'Italia urbana e di quella rurale. 	Menzione esplicita	44875	44.4072600,8.9338624
+Lo smeraldo	Roma	città		Presente	Spazio reale	Il protagonista attraversa tutta l'Italia, fermandosi in molti luoghi: se ne riportano qui tre emblematici della rappresentazione del contesto urbano e uno del piccolo borgo di Acquapendente, perché significativi di una differenza di trattamento da parte dell'autore nei confronti del Nord Italia e del Sud Italia, dell'Italia urbana e di quella rurale. 	Menzione esplicita	41485	41.8933203,12.4829321
+Lo smeraldo	Napoli	città		Presente	Spazio reale	Il protagonista attraversa tutta l'Italia, fermandosi in molti luoghi: se ne riportano qui tre emblematici della rappresentazione del contesto urbano e uno del piccolo borgo di Acquapendente, perché significativi di una differenza di trattamento da parte dell'autore nei confronti del Nord Italia e del Sud Italia, dell'Italia urbana e di quella rurale. 	Menzione esplicita	40767	40.8358846,14.2487679
+Lo smeraldo	Acquapendente	paese		Presente	Spazio reale	Il protagonista attraversa tutta l'Italia, fermandosi in molti luoghi: se ne riportano qui tre emblematici della rappresentazione del contesto urbano e uno del piccolo borgo di Acquapendente, perché significativi di una differenza di trattamento da parte dell'autore nei confronti del Nord Italia e del Sud Italia, dell'Italia urbana e di quella rurale. 	Menzione esplicita		
+Dissipatio H.G.	Zurigo	città, montagna, paese	Aperto > Urbano > Città; Aperto > Naturale > Rilievo > Montagna; Aperto > Urbano > Paese	Presente	Spazio reale	Crispoli	Menzione esplicita	1682248	47.3744489,8.5410422
+Dissipatio H.G.	Widmad	città, montagna, paese		Presente	Spazio reale		Menzione esplicita		38.7200, -24.2200
+Dissipatio H.G.	Lewrosen	città, paese, montagna		Presente	Spazio reale		Menzione esplicita		38.7200, -24.220
+Visto da Seveso	Seveso	città	Aperto > Urbano > Città	Presente	Spazio reale		Menzione esplicita	45608	45.6434655,9.1373787
+Una lepre con la faccia di bambina	Seveso	città	Aperto > Urbano > Città	Presente	Spazio reale		Menzione esplicita	45608	45.6434655,9.1373787
+Il re del magazzino	Campagna lombarda intorno al fiume Lambro 	campagna, paese, pianura, fiume	Aperto > Naturale > Rurale > Campagna; Aperto > Urbano > Paese; Aperto > Naturale > Irriguo > Pianura; Aperto > Naturale > Acquatico > Fiume	Presente	Spazio reale		Menzione esplicita	570545	45.5302185,9.2659323
+Il superstite	Maremma Toscana	campagna, paese, pianura	Aperto > Naturale > Rurale > Campagna; Aperto > Urbano > Paese; Aperto > Naturale > Irriguo > Pianura	Presente	Spazio reale	Campagna toscana ma tutta l’Italia è coinvolta dall’apocalisse	Menzione esplicita	4279861	42.6303496,11.1095079
+Il pianeta irritabile	Terra	città, campagna	Aperto > Urbano > Città; Aperto > Naturale > Rurale > Campagna	Futuro	Spazio reale	La catastrofe si svolge in luoghi imprecisati del pianeta Terra, non vi è nessun riferimento a geografie esplicite	Deduzione dalla descrizione del luogo	267187327	34.9656724,32.4248003
+Il paradiso degli animali	Alta Maremma	pianura	Aperto > Naturale > Irriguo > Pianura	Presente	Spazio reale		Menzione esplicita		
+Uomini, boschi e api	Klagenfurt	montagna, pianura, paese, bosco, fiume	Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Irriguo > Pianura; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Acquatico > Fiume	Presente	Spazio reale	La narrazione è ricchissima di menzioni di toponimi, che sono tutti nella stessa zona tra il Friuli e l'Austria	Menzione esplicita	105870	46.6239430,14.3075976
+Uomini, boschi e api	Gorizia	montagna, pianura, paese, bosco, fiume	Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Irriguo > Pianura; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Acquatico > Fiume	Presente	Spazio reale	La narrazione è ricchissima di menzioni di toponimi, che sono tutti nella stessa zona tra il Friuli e l'Austria	Menzione esplicita	179075	45.9441278,13.6252288
+Uomini, boschi e api	Altipiano di Asiago	montagna, pianura, paese, bosco, fiume	Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Irriguo > Pianura; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Acquatico > Fiume	Presente	Spazio reale	La narrazione è ricchissima di menzioni di toponimi, che sono tutti nella stessa zona tra il Friuli e l'Austria	Menzione esplicita	18558498	45.5568695,10.2232761
+Ferragosto di morte 	Maremma Toscana	città, paese, campagna	Aperto > Urbano > Città; Aperto > Urbano > Paese; Aperto > Naturale > Rurale > Campagna	Presente	Spazio reale	Firenze; Pisa; Cecina; Volterra	Menzione esplicita	4279861	42.6303496,11.1095079
+Il mondo senza nessuno	Maremma Toscana	paese, città, campagna	Aperto > Urbano > Paese; Aperto > Urbano > Città; Aperto > Naturale > Rurale > Campagna	Presente	Spazio reale	Firenze; Pisa; Cecina; Volterra	Menzione esplicita	4279861	42.6303496,11.1095079
+L'acqua di Malo	Malo 	paese, fiume, bosco, campagna	Aperto > Urbano > Paese; Aperto > Naturale > Acquatico > Fiume; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Rurale > Campagna	Presente	Spazio reale		Menzione esplicita	45550	45.6602960,11.4074930
+La casa nel bosco	Italia, sicuramente, forse Campania? Sicuramente non Roma	interno, paese, bosco	Chiuso > Edificio; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco	Presente	Spazio reale	Lo spazio non è indicato ma è sicuramente italiano, forse campano, non romano	Deduzione dalla biografia dell’autore		
+Narratori delle pianure		città, campagna, pianura		Presente	Spazio reale				
+Verso la foce	Gadesco	città, campagna, pianura, fiume		Presente	Spazio reale	Trattandosi di un viaggio verso la foce del Po, Celati attraversa molti piccoli paesi, città e borghi ai piedi del fiume. Qui se ne presentano alcuni a titolo esemplificativo.			
+Verso la foce	Codigoro	città, campagna, pianura, fiume		Presente	Spazio reale	Trattandosi di un viaggio verso la foce del Po, Celati attraversa molti piccoli paesi, città e borghi ai piedi del fiume. Qui se ne presentano alcuni a titolo esemplificativo.			
+Verso la foce	Piacenza	città, campagna, pianura, fiume		Presente	Spazio reale	Trattandosi di un viaggio verso la foce del Po, Celati attraversa molti piccoli paesi, città e borghi ai piedi del fiume. Qui se ne presentano alcuni a titolo esemplificativo.			
+Verso la foce	Guastalla	città, campagna, pianura, fiume		Presente	Spazio reale	Trattandosi di un viaggio verso la foce del Po, Celati attraversa molti piccoli paesi, città e borghi ai piedi del fiume. Qui se ne presentano alcuni a titolo esemplificativo.			
+Verso la foce	Ferrara	città, campagna, pianura, fiume		Presente	Spazio reale	Trattandosi di un viaggio verso la foce del Po, Celati attraversa molti piccoli paesi, città e borghi ai piedi del fiume. Qui se ne presentano alcuni a titolo esemplificativo.			
+Traversata delle pianure		campagna, pianura, fiume							
+Il libro degli animali	Altipiano di Asiago	montagna, bosco, fiume	Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Acquatico > Fiume	Presente	Spazio reale			18558498	45.5568695,10.2232761
+Arboreto selvatico	Altipiano di Asiago	paese, montagna, pianura, bosco	Aperto > Urbano > Paese; Aperto > Naturale > Rilievo > Montagna; Aperto > Naturale > Irriguo > Pianura; Aperto > Naturale > Arboreo > Bosco	Presente	Spazio reale			18558498	45.5568695,10.2232761
+Sentieri sotto la neve	Altipiano di Asiago	montagna, paese, bosco, pianura	Aperto > Naturale > Rilievo > Montagna; Aperto > Urbano > Paese; Aperto > Naturale > Arboreo > Bosco; Aperto > Naturale > Irriguo > Pianura	Presente	Spazio reale			18558498	45.5568695,10.2232761
+I quindicimila passi	Vicenza	città, bosco	Aperto > Urbano > Città; Aperto > Naturale > Arboreo > Bosco	Presente	Spazio reale			44580	45.6348591,11.4063543
+Gomorra	Napoli			Presente	Spazio reale			40767	40.8358846,14.2487679
+Gomorra	Aberdeen			Presente	Spazio reale			1900654	57.1482429,-2.0928095
+Gomorra	Caserta			Presente	Spazio reale			40940	41.2035192,14.1168624
+Gomorra	Casal di Principe			Presente	Spazio reale			41007	41.0114120,14.1248250
+Gomorra	San Cipriano d'Aversa			Presente	Spazio reale			40978	40.9988120,14.1317260
+Gomorra	Casapesenna	paese, città	Aperto > Urbano > Paese; Aperto > Urbano > Città	Presente	Spazio reale			40979	40.9915120,14.1361260
+Sirene	nuova baja california	città, mare	Aperto > Urbano > Città; Aperto > Naturale > Acquatico > Mare	Futuro	Spazio fittizio	Il romanzo è ambientato a Nuova Baja California, non esistente, ma il luogo è solo nominato e non ha alcun ruolo per la narrazione: essa potrebbe avvenire ovunque.			
+L'ubicazione del bene	Milano	città	Aperto > Urbano > Città	Presente	Spazio reale dal nome fittizio	Cortesforza è un luogo inventato dall'autore che però si trova nell'hinterland milanese, come menzionato nello stesso romanzo.		44915	45.4641943,9.1896346
 Bambini bonsai	Genova	città, interno	Aperto > Urbano > Città					44875	44.4072600,8.9338624
-Cinacittà	Roma	città	Aperto > Urbano > Città					41485	41.8933203,12.4829321
+Cinacittà	Roma	città	Aperto > Urbano > Città	Futuro	Spazio reale			41485	41.8933203,12.4829321
 Il viaggio dell'orsa									
 Violazione	Bologna	città, campagna	Aperto > Urbano > Città; Aperto > Naturale > Rurale > Campagna					43172	44.4938203,11.3426327
-Isolatria	Arcipelago de La Maddalena	mare	Aperto > Naturale > Acquatico > Mare					7454306	41.2127826,9.4066598
-La vita in tempo di pace	Sharm el Sheik	interno, mare	Aperto > Naturale > Acquatico > Mare			Aereporto		872858698	25.4688226,56.3433687
-La vita in tempo di pace	Milano	città	Aperto > Urbano > Città					44915	45.4641943,9.1896346
-La vita in tempo di pace	Mar Egeo	mare	Aperto > Naturale > Acquatico > Mare			Capo Atreide, Lago di Kalamia		4594226	38.0622276,25.7205887
-La vita in tempo di pace	Atene	città	Aperto > Urbano > Città					441183	37.9755648,23.7348324
-La vita in tempo di pace	Roma	città	Aperto > Urbano > Città					41485	41.8933203,12.4829321
+Isolatria	Arcipelago de La Maddalena	mare, isola	Aperto > Naturale > Acquatico > Mare	Presente	Spazio reale			7454306	41.2127826,9.4066598
+La vita in tempo di pace	Sharm el Sheik	interno, mare	Aperto > Naturale > Acquatico > Mare		Spazio reale	Aeroporto		872858698	25.4688226,56.3433687
+La vita in tempo di pace	Milano	città	Aperto > Urbano > Città		Spazio reale			44915	45.4641943,9.1896346
+La vita in tempo di pace	Mar Egeo	mare	Aperto > Naturale > Acquatico > Mare		Spazio reale dal nome fittizio	Capo Atreide, Lago di Kalamia		4594226	38.0622276,25.7205887
+La vita in tempo di pace	Atene	città	Aperto > Urbano > Città		Spazio reale			441183	37.9755648,23.7348324
+La vita in tempo di pace	Roma	città	Aperto > Urbano > Città		Spazio reale dal nome fittizio			41485	41.8933203,12.4829321
 La lucina		montagna	Aperto > Naturale > Rilievo > Montagna						
-Condominio oltremare	Rimini	mare, città	Aperto > Naturale > Acquatico > Mare; Aperto > Urbano > Città					42661	43.9465433,12.6307490
-Condominio oltremare	Riviera Romagnola	mare, città	Aperto > Naturale > Acquatico > Mare; Aperto > Urbano > Città						
-Condominio oltremare	Cervia	mare, città	Aperto > Naturale > Acquatico > Mare; Aperto > Urbano > Città					42959	44.2609836,12.3495462
-Condominio oltremare	Lido delle Nazioni a Comacchio	mare, città	Aperto > Naturale > Acquatico > Mare; Aperto > Urbano > Città					248100655	44.7426066,12.2412215
-Condominio oltremare	Lago delle Nazioni	mare, città	Aperto > Naturale > Acquatico > Mare; Aperto > Urbano > Città					25332893	44.7688281,12.2412809
+Condominio oltremare	Rimini	mare, città	Aperto > Naturale > Acquatico > Mare; Aperto > Urbano > Città	Presente	Spazio reale		Menzione esplicita	42661	43.9465433,12.6307490
+Condominio oltremare	Riviera Romagnola	mare, città	Aperto > Naturale > Acquatico > Mare; Aperto > Urbano > Città	Presente	Spazio reale		Menzione esplicita		
+Condominio oltremare	Cervia	mare, città	Aperto > Naturale > Acquatico > Mare; Aperto > Urbano > Città	Presente	Spazio reale		Menzione esplicita	42959	44.2609836,12.3495462
+Condominio oltremare	Lido delle Nazioni a Comacchio	mare, città	Aperto > Naturale > Acquatico > Mare; Aperto > Urbano > Città	Presente	Spazio reale		Menzione esplicita	248100655	44.7426066,12.2412215
+Condominio oltremare	Lago delle Nazioni	mare, città	Aperto > Naturale > Acquatico > Mare; Aperto > Urbano > Città	Presente	Spazio reale		Menzione esplicita	25332893	44.7688281,12.2412809
 Anna	Palermo	campagna, città, mare	Aperto > Naturale > Rurale > Campagna; Aperto > Urbano > Città; Aperto > Naturale > Acquatico > Mare					39513	38.1112268,13.3524434
 Anna	Torre Normanna	campagna, città, mare	Aperto > Naturale > Rurale > Campagna; Aperto > Urbano > Città; Aperto > Naturale > Acquatico > Mare					443171345	40.6204066,16.1472078
 Anna	Cefalù	campagna, città, mare	Aperto > Naturale > Rurale > Campagna; Aperto > Urbano > Città; Aperto > Naturale > Acquatico > Mare					39444	38.0349570,14.0244562
@@ -107,7 +115,7 @@ La festa nera
 Divorare il cielo	Speziale	campagna	Aperto > Naturale > Rurale > Campagna					4452527394	40.7913913,17.4598637
 La casa mangia le parole	Roma	città	Aperto > Urbano > Città					41485	41.8933203,12.4829321
 L'olmo grande	Friuli Venezia Giulia	campagna	Aperto > Naturale > Rurale > Campagna					179296	46.1510420,13.0559040
-Una notte sull'alpe della luna	Appennino	montagna	Aperto > Naturale > Rilievo > Montagna					823645399	42.9778013,13.0796986
+Una notte sull'alpe della luna	Appennino	montagna	Aperto > Naturale > Rilievo > Montagna	Presente	Spazio reale			823645399	42.9778013,13.0796986
 L'albero della fortuna	Calabria	paese	Aperto > Urbano > Paese					1783980	39.0565974,16.5249864
 Il fico di Betania	Palestina	città	Aperto > Urbano > Città			Territori Palestinesi!		1703814	31.4624210,34.2627215
 La colomba sul pino e la vecchia sotto il fico	Liguria	città, bosco	Aperto > Urbano > Città; Aperto > Naturale > Arboreo > Bosco					301482	44.4777617,8.7026296
