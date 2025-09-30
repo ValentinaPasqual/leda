@@ -84,7 +84,7 @@ export class RangeRenderer {
     return `
       <div class="space-y-3">
         <!-- Play Controls -->
-        <div class="flex items-center justify-center gap-2 pb-3 border-b border-gray-200">
+        <div class="play-controls flex items-center justify-center gap-2 pb-3 border-b border-gray-200">
           <button id="${facetKey}-play-btn" class="group relative w-8 h-8 bg-gradient-to-r from-primary-400 to-primary-700 text-white text-xs rounded-full transition-colors duration-200 hover:from-primary-600 hover:to-primary-700 shadow-md hover:shadow-lg flex items-center justify-center" type="button">
             <div class="w-0 h-0 border-l-[5px] border-l-white border-y-[3px] border-y-transparent ml-0.5"></div>
             <span class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">Play</span>
@@ -564,7 +564,15 @@ export class RangeRenderer {
 
   /* Renders the RANGE type facet in the DOM - MODIFIED TO HANDLE BOTH RAW AND FILTERED */
   _renderRangeFacet(facetGroup, facetKey, facetConfig, aggregations, checkedState, state, onStateChange) {
+
+    
     const rawBuckets = aggregations[facetKey] || [];
+
+      console.log(`=== RangeRenderer for ${facetKey} ===`);
+  console.log('Received state:', state);
+  console.log('state.filters:', state?.filters);
+  console.log('state.filters[facetKey]:', state?.filters?.[facetKey]);
+  console.log('=====================================');
 
     // Filter only buckets that have count > 0 (documents after filters)
     const filteredBuckets = rawBuckets.filter(bucket => bucket.doc_count > 0);

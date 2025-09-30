@@ -5,14 +5,15 @@ export class TaxonomyRenderer {
     this.originalFacetData = null;
   }
 
-  renderTaxonomy(container, facetData, facetKey, checkedState) {
+  renderTaxonomy(container, facetData, facetKey, state) {
     const hierarchy = this._buildHierarchy(facetData);
     this._calculateTotalCounts(hierarchy);
     
     container.className = 'taxonomy-container max-w-full overflow-x-auto max-h-80 overflow-y-auto';
-    container.innerHTML = this._createTaxonomyHTML(hierarchy, [], 0, facetKey, checkedState);
+    const currentFilters = state.filters || {};
+    container.innerHTML = this._createTaxonomyHTML(hierarchy, [], 0, facetKey, currentFilters[facetKey] || []);
     
-    this._setCheckboxStates(container, hierarchy, checkedState[facetKey] || []);
+    this._setCheckboxStates(container, hierarchy, currentFilters[facetKey] || []);
     this._addEventListeners(container, hierarchy, facetKey);
   }
 
@@ -76,8 +77,7 @@ export class TaxonomyRenderer {
     setStatesRecursively(hierarchy);
   }
 
-  _createTaxonomyHTML(node, path = [], level = 0, facetKey, checkedState) {
-    const checkedPaths = checkedState[facetKey] || [];
+  _createTaxonomyHTML(node, path = [], level = 0, facetKey, checkedPaths) {
     let html = '<div class="space-y-1">';
 
     Object.entries(node).forEach(([key, value]) => {
@@ -101,7 +101,7 @@ export class TaxonomyRenderer {
             </div>
             <span class="text-xs text-secondary-500 bg-secondary-100 px-2 py-0.5 rounded-full flex-shrink-0">${value.docCount}</span>
           </label>
-          ${this._createChildrenContainer(hasChildren, fullPath, shouldExpand, value.children, currentPath, level + 1, facetKey, checkedState)}
+          ${this._createChildrenContainer(hasChildren, fullPath, shouldExpand, value.children, currentPath, level + 1, facetKey, checkedPaths)}
         </div>`;
     });
 
@@ -117,10 +117,10 @@ export class TaxonomyRenderer {
       </button>` : '<div class="w-5 h-5 flex-shrink-0"></div>';
   }
 
-  _createChildrenContainer(hasChildren, fullPath, shouldExpand, children, currentPath, level, facetKey, checkedState) {
+  _createChildrenContainer(hasChildren, fullPath, shouldExpand, children, currentPath, level, facetKey, checkedPaths) {
     return hasChildren ? 
       `<div class="children ${shouldExpand ? '' : 'hidden'}" data-parent="${fullPath}">
-        ${this._createTaxonomyHTML(children, currentPath, level, facetKey, checkedState)}
+        ${this._createTaxonomyHTML(children, currentPath, level, facetKey, checkedPaths)}
       </div>` : '';
   }
 
@@ -271,11 +271,11 @@ export class TaxonomyRenderer {
     }
   }
 
-  _renderTaxonomyFacet(facetGroup, facetKey, facetConfig, aggregations, checkedState, onStateChange) {
+  _renderTaxonomyFacet(facetGroup, facetKey, facetConfig, aggregations, checkedState, state, onStateChange) {    
     const taxonomyContainer = document.createElement('div');
     const facetData = aggregations[facetKey] || [];
 
-    this.renderTaxonomy(taxonomyContainer, facetData, facetKey, checkedState);
+    this.renderTaxonomy(taxonomyContainer, facetData, facetKey, state);
 
     taxonomyContainer.addEventListener('taxonomyChange', (e) => {
       const { facetKey, path, checked } = e.detail;

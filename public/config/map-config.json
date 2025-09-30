@@ -19,7 +19,8 @@
     "card_title": "Titolo", 
     "card_subtitle": "Autore",
     "card_subtitle_2": "Anno",
-    "card_description": "Descrizione Ecocritica"
+    "card_description": "Descrizione Ecocritica",
+    "popup_description": "Note sullo spazio"
   },
   "map": {
     "initialView": [41.8719, 12.5674],
@@ -74,17 +75,31 @@
       "order": "asc"
     }
   },
-  "aggregations": {
-    "Location": {
-      "title": "Gli spazi",
+  "aggregations": {   
+    "Tipologia dello Spazio": {
+      "title": "Le tipologie",
+      "category": "Gli spazi narrati",
+      "size": 100,
+      "conjunction": false,
+      "type": "taxonomy"
+    },
+    "Temporalità dello Spazio": {
+      "title": "I tempo",
       "category": "Gli spazi narrati",
       "size": 100,
       "conjunction": false,
       "type": "simple"
     },
-    "Tipologia dello Spazio": {
-      "title": "Le tipologie",
+    "Definizione dello spazio": {
+      "title": "Riferimento spaziale",
       "category": "Gli spazi narrati",
+      "size": 100,
+      "conjunction": false,
+      "type": "simple"
+    },
+    "Temi Ecologici": {
+      "title": "I temi ecologici",
+      "category": "I riferimenti letterari",
       "size": 100,
       "conjunction": false,
       "type": "taxonomy"
@@ -114,6 +129,13 @@
       "title": "I modi",
       "size": 100,
       "category": "I riferimenti letterari",
+      "conjunction": false,
+      "type": "simple"
+    },
+    "Interpretazione": {
+      "title": "Motivazione dell'interpretazione",
+      "size": 100,
+      "category": "Le interpretazioni",
       "conjunction": false,
       "type": "simple"
     }

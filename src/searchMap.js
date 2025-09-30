@@ -90,40 +90,65 @@ class LEDASearch {
     }
   }
 
-  // NUOVO: Metodo per applicare filtri dall'URL
-  applyUrlFilters() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const filterKey = urlParams.get('filter');
-    const filterValue = urlParams.get('value');
+applyUrlFilters() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const filterKey = urlParams.get('filter');
+  const filterValue = urlParams.get('value');
+  
+  console.log('Checking URL parameters:', { filterKey, filterValue });
+  
+  if (filterKey && filterValue) {
+    console.log(`Applying URL filter: ${filterKey} = ${filterValue}`);
     
-    console.log('Checking URL parameters:', { filterKey, filterValue });
-    
-    if (filterKey && filterValue) {
-      console.log(`Applying URL filter: ${filterKey} = ${filterValue}`);
+    if (this.config.aggregations && this.config.aggregations[filterKey]) {
+      // Determina il tipo di filtro
+      const facetConfig = this.config.aggregations[filterKey];
+      let processedValue = filterValue;
       
-      // Verifica che il filtro esista nella configurazione
-      if (this.config.aggregations && this.config.aggregations[filterKey]) {
-        // Applica il filtro
-        setTimeout(() => {
-          this.handleStateChange({
-            type: 'FACET_CHANGE',
-            facetType: filterKey,
-            value: filterValue,
-            checked: true
-          });
-          
-          console.log(`Filter applied: ${filterKey} = ${filterValue}`);
-          this.showFilterNotification(filterKey, filterValue);
-          
-          // Opzionale: rimuovi i parametri dall'URL
-          // window.history.replaceState({}, document.title, window.location.pathname);
-        }, 1500); // Delay per assicurarsi che tutto sia inizializzato
-      } else {
-        console.warn(`Filter key '${filterKey}' not found in configuration`);
-        this.showNotification(`Filtro '${filterKey}' non trovato`, 'warning');
+      // Se è un range, converti la stringa in array [min, max]
+      if (facetConfig.type === 'range') {
+        // Aspetta formato "min-max" o "min,max"
+        const parts = filterValue.includes('-') 
+          ? filterValue.split('-').map(v => parseInt(v.trim(), 10))
+          : filterValue.split(',').map(v => parseInt(v.trim(), 10));
+        
+        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+          processedValue = parts; // [min, max]
+        } else {
+          console.error(`Invalid range format: ${filterValue}`);
+          return;
+        }
       }
+      
+      // Applica il filtro direttamente allo stato
+      if (facetConfig.type === 'range') {
+        // Per i range, sostituisci direttamente (non è un array di valori)
+        this.state.filters[filterKey] = processedValue;
+      } else {
+        // Per facet normali, aggiungi all'array
+        if (!this.state.filters[filterKey]) {
+          this.state.filters[filterKey] = [];
+        }
+        if (!this.state.filters[filterKey].includes(processedValue)) {
+          this.state.filters[filterKey].push(processedValue);
+        }
+      }
+      
+      console.log('State filters after URL application:', this.state.filters);
+      
+      // Esegui la ricerca
+      setTimeout(async () => {
+        await this.performSearch();
+        
+        console.log(`Filter applied and search completed: ${filterKey} = ${filterValue}`);
+        this.showFilterNotification(filterKey, filterValue);
+      }, 1500);
+    } else {
+      console.warn(`Filter key '${filterKey}' not found in configuration`);
+      this.showNotification(`Filtro '${filterKey}' non trovato`, 'warning');
     }
   }
+}
 
   // NUOVO: Metodo per mostrare notifica filtro applicato
   showFilterNotification(filterKey, filterValue) {
@@ -336,55 +361,55 @@ class LEDASearch {
   }
 
   // State management
-  async handleStateChange(action) {
-    console.log('handleStateChange called with action:', action);
-        
-    try {
-      switch (action.type) {
-        case 'FACET_CHANGE':
-          this.updateFilters(action.facetType, action.value, action.checked);
-          break;
-        case 'RANGE_CHANGE':
-          this.state.filters[action.facetKey] = action.value;
-          break;
-        case 'QUERY_CHANGE':
-          this.state.query = action.query;
-          break;
-        case 'SORT_CHANGE':
-          this.state.sort = action.sort;
-          break;
-      }
+async handleStateChange(action) {
+  console.log('handleStateChange called with action:', action);
       
-      console.log('State updated, triggering search. New state:', this.state);
-      
-      // Force a new search by bypassing the loading check
-      this.isLoading = false;
-      
-      const results = this.searchHandler.performSearch(this.state, {
-        onMarkersUpdate: (items) => this.renderMarkers(items),
-        onResultsUpdate: (items) => this.resultsRenderer.updateResultsList(items, this.config, {
-          filters: this.state.filters,
-          query: this.state.query,
-          sort: this.state.sort
-        }),
-        onAggregationsUpdate: (aggregations) => this.renderFacets(aggregations)
-      });
-
-    // Calculate unique pivot_ID count - FIX: Calculate it here
-      const uniqueResultsCount = this.calculateUniqueResultsCount(results.items);
-      
-      // Update navbar with both counts - FIX: Use the calculated value
-      this.updateNavBar(results.items?.length || 0, { 
-        uniqueResultsCount: uniqueResultsCount 
-      });
-      
-      console.log('Filter search completed:', results.items?.length || 0, 'items found');
-      
-    } catch (error) {
-      console.error('Error in handleStateChange:', error);
+  try {
+    switch (action.type) {
+      case 'FACET_CHANGE':
+        this.updateFilters(action.facetType, action.value, action.checked);
+        break;
+      case 'RANGE_CHANGE':
+        this.state.filters[action.facetKey] = action.value;
+        break;
+      case 'QUERY_CHANGE':
+        this.state.query = action.query;
+        break;
+      case 'SORT_CHANGE':
+        this.state.sort = action.sort;
+        break;
     }
-    // Removed finally block with hideProgressLoader()
+    
+    console.log('State updated, triggering search. New state:', this.state);
+    
+    // Force a new search by bypassing the loading check
+    this.isLoading = false;
+    
+    // ⬇️ AGGIUNGI await QUI
+const results = this.searchHandler.performSearch(this.state, {
+  onMarkersUpdate: (items) => this.renderMarkers(items),
+  onResultsUpdate: (items) => {    
+    this.resultsRenderer.updateResultsList(items, this.config, {
+      filters: this.state.filters,
+      query: this.state.query,
+      sort: this.state.sort
+    });
+  },
+  onAggregationsUpdate: (aggregations) => this.renderFacets(aggregations)
+});
+
+const uniqueResultsCount = this.calculateUniqueResultsCount(results.items);
+    
+    this.updateNavBar(results.items?.length || 0, { 
+      uniqueResultsCount: uniqueResultsCount 
+    });
+    
+    console.log('Filter search completed:', results.items?.length || 0, 'items found');
+    
+  } catch (error) {
+    console.error('Error in handleStateChange:', error);
   }
+}
 
   // Check if any filters are currently active
   hasActiveFilters() {
@@ -402,26 +427,28 @@ class LEDASearch {
   }
 
   updateFilters(facetType, value, checked) {
-    console.log(`Updating filter: ${facetType}, value: ${value}, checked: ${checked}`);
-    
-    if (checked) {
-      if (!this.state.filters[facetType]) {
-        this.state.filters[facetType] = [];
+      console.log(`Updating filter: ${facetType}, value: ${value}, checked: ${checked}`);
+      
+      if (checked) {
+        if (!this.state.filters[facetType]) {
+          this.state.filters[facetType] = [];
+        }
+        
+        // Controlla se il valore esiste già prima di aggiungerlo [fix per taxonomy]
+        if (!this.state.filters[facetType].includes(value)) {
+          this.state.filters[facetType].push(value);
+        } 
+      } else {
+        this.state.filters[facetType] = 
+          this.state.filters[facetType]?.filter(v => v !== value) || [];
       }
-      this.state.filters[facetType].push(value);
-    } else {
-      this.state.filters[facetType] = 
-        this.state.filters[facetType]?.filter(v => v !== value) || [];
-    }
-    
-    console.log('Updated filters:', this.state.filters);
   }
 
   // Event binding
   bindEvents() {
     this.setupSearchInput();
     this.setupSortSelect();
-    this.setupMapEvents();
+    // this.setupMapEvents();
   }
 
   bindNavBarEvents() {
@@ -459,15 +486,15 @@ class LEDASearch {
     }
   }
 
-  setupMapEvents() {
-    // Debounced map move handler
-    const debouncedMapMove = Utilities.debounce(async () => {
-      // Removed progress loader calls
-      await this.performSearch();
-    }, 500);
+  // setupMapEvents() {
+  //   // Debounced map move handler
+  //   const debouncedMapMove = Utilities.debounce(async () => {
+  //     // Removed progress loader calls
+  //     await this.performSearch();
+  //   }, 500);
     
-    this.map.on('moveend', debouncedMapMove);
-  }
+  //   this.map.on('moveend', debouncedMapMove);
+  // }
 
   // Utility methods
   focusOnMap(lat, lng, zoom = 15) {
@@ -477,9 +504,14 @@ class LEDASearch {
   }
 
   renderFacets(aggregations) {
-    this.facetRenderer.renderFacets(aggregations, this.state, (action) => this.handleStateChange(action));
+    // Passa anche lo stato corrente al renderer
+    this.facetRenderer.renderFacets(
+      aggregations, 
+      this.state, 
+      (action) => this.handleStateChange(action)
+    );
   }
-
+  
   updateNavBar(resultsCount = 0, options = {}) {
       this.navBar.updateFromSearchState(this.state, resultsCount, options);
   }

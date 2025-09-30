@@ -107,7 +107,6 @@ body#map-page #map {
 }
 
 .facet-category-title::after {
-  content: '▼';
   position: absolute;
   right: 1.25rem;
   top: 50%;
@@ -242,8 +241,7 @@ input[type="checkbox"]:checked::before {
 }
 
 .result-highlighted {
-  @apply ring-2 ring-primary-400 shadow-lg;
-  box-shadow: 0 0 20px rgba(var(--secondary));
+  @apply ring-2 ring-primary-400 shadow-lg shadow-secondary-500/20;
 }
 
 /* TAXONOMY STYLE IN FACETS */
@@ -524,6 +522,16 @@ header {
   stroke-width: 4;
   fill-opacity: 0.15;
 }
+
+ .custom-popup-wrapper {
+    pointer-events: auto !important;
+  }
+  .leaflet-popup {
+    pointer-events: auto !important;
+  }
+  .leaflet-popup-content-wrapper {
+    pointer-events: auto !important;
+  }
 
 .leaflet-popup-content-wrapper {
   padding: 0;

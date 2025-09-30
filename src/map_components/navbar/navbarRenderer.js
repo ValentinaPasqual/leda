@@ -1,11 +1,11 @@
 /**
  * Navigation Bar Renderer Module
- * Handles navigation bar functionality with separated concerns
+ * Handles navigation bar functionalities on the map
  */
 
 import '../../styles/tailwind.css'
 import { DOMUtils, EventUtils, FilterUtils, NotificationUtils, ResetUtils } from './navbarUtils.js';
-import { ActiveFiltersPopupManager, LayerSelectionPopupManager, MarkersSelectionPopupManager } from './functionalitiesManager.js';
+import { ActiveFiltersPopupManager, LayerSelectionPopupManager, MarkersSelectionPopupManager, LegendPopupManager } from './functionalitiesManager.js';
 
 export class NavBarRenderer {
     constructor() {
@@ -14,8 +14,7 @@ export class NavBarRenderer {
             activeFiltersCount: 0,
             resultsCount: 0,
             uniqueResultsCount: 0,
-            isInitialized: false,
-            isMobileMenuOpen: false
+            isInitialized: false
         };
         this.currentFilters = {};
         this.currentQuery = '';
@@ -26,7 +25,8 @@ export class NavBarRenderer {
         this.popupManagers = {
             activeFilters: null,
             layers: null,
-            markers: null
+            markers: null, 
+            legend: null,
         };
         
         this.init();
@@ -39,310 +39,36 @@ export class NavBarRenderer {
         this.initializeElements();
         this.initializeConfiguration();
         this.initializePanelStates();
-        this.createMobileMenu();
         this.bindEventHandlers();
         this.setupResponsiveBehavior();
-        this.styleClearAllButton();
-        
+
         this.state.isInitialized = true;
     }
 
     /**
      * Initialize DOM elements
      */
-    initializeElements() {
-        this.elements = {
-            filtersPanel: document.getElementById('filters-panel'),
-            resultsPanel: document.getElementById('results-panel'),
-            toggleFilters: document.getElementById('toggle-filters'),
-            toggleResults: document.getElementById('toggle-results'),
-            activeFiltersBadge: document.getElementById('active-filters-badge'),
-            activeFiltersCount: document.getElementById('active-filters-count'),
-            resultsCounter: document.getElementById('results-counter'),
-            resultsCount: document.getElementById('results-count'),
-            uniqueResultsCounter: document.getElementById('unique-results-counter'),
-            uniqueResultsCount: document.getElementById('unique-results-count'),
-            clearAllBtn: document.getElementById('clear-all-btn'),
-            layerButton: document.getElementById('map-layer-selector'),
-            markersButton: document.getElementById('map-markers-selector'),
-            toggleLegendBtn: document.getElementById('toggle-legend-btn')
-        };
-    }
+initializeElements() {
+    this.elements = {
+        filtersPanel: document.getElementById('filters-panel'),
+        resultsPanel: document.getElementById('results-panel'),
+        toggleFilters: document.getElementById('toggle-filters'),
+        toggleResults: document.getElementById('toggle-results'),
+        activeFiltersBadge: document.getElementById('active-filters-badge'),
+        activeFiltersCount: document.getElementById('active-filters-count'),
+        resultsCounter: document.getElementById('results-counter'),
+        resultsCount: document.getElementById('results-count'),
+        uniqueResultsCounter: document.getElementById('unique-results-counter'),
+        uniqueResultsCount: document.getElementById('unique-results-count'),
+        clearAllBtn: document.getElementById('clear-all-btn'),
+        layerButton: document.getElementById('map-layer-selector'),
+        markersButton: document.getElementById('map-markers-selector'),
+        // bottom nav references (possono non esistere in HTML; verranno create se mancanti)
+        bottomNav: document.getElementById('bottom-nav') || document.querySelector('nav#bottom-nav') || document.querySelector('nav'),
+        bottomNavContent: document.getElementById('bottom-nav-content')
+    };
+}
 
-    /**
-     * Create mobile hamburger menu
-     */
-    createMobileMenu() {
-        // Create hamburger button
-        const hamburgerBtn = document.createElement('button');
-        hamburgerBtn.id = 'mobile-menu-toggle';
-        hamburgerBtn.className = 'md:hidden p-2 text-gray-600 hover:text-gray-800 focus:outline-none';
-        hamburgerBtn.innerHTML = `
-            <div class="w-6 h-6 flex flex-col justify-center items-center">
-                <span class="block w-5 h-0.5 bg-current mb-1 transition-all duration-200"></span>
-                <span class="block w-5 h-0.5 bg-current mb-1 transition-all duration-200"></span>
-                <span class="block w-5 h-0.5 bg-current transition-all duration-200"></span>
-            </div>
-        `;
-
-        // Create mobile menu overlay
-        const mobileMenu = document.createElement('div');
-        mobileMenu.id = 'mobile-menu';
-        mobileMenu.className = 'md:hidden fixed inset-0 bg-black bg-opacity-50 z-50 hidden';
-        
-        // Create mobile menu content
-        const mobileMenuContent = document.createElement('div');
-        mobileMenuContent.className = 'fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto';
-        mobileMenuContent.innerHTML = `
-            <div class="p-4 border-b">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-lg font-semibold">Pannello di Controllo</h3>
-                    <button id="mobile-menu-close" class="p-2 text-gray-600 hover:text-gray-800">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="p-4 space-y-4">
-                <div id="mobile-menu-items" class="space-y-3"></div>
-            </div>
-        `;
-
-        mobileMenu.appendChild(mobileMenuContent);
-
-        // Insert elements into navbar
-        const navbar = document.querySelector('nav, .navbar, [role="navigation"]') || document.body.firstElementChild;
-        if (navbar) {
-            navbar.appendChild(hamburgerBtn);
-            document.body.appendChild(mobileMenu);
-        }
-
-        // Store references
-        this.elements.hamburgerBtn = hamburgerBtn;
-        this.elements.mobileMenu = mobileMenu;
-        this.elements.mobileMenuContent = mobileMenuContent;
-        this.elements.mobileMenuItems = document.getElementById('mobile-menu-items');
-
-        this.populateMobileMenu();
-    }
-
-    /**
-     * Populate mobile menu with existing DOM elements
-     */
-    populateMobileMenu() {
-        if (!this.elements.mobileMenuItems) return;
-
-        // Store original elements and their parents for restoration
-        this.originalPositions = {};
-        
-        // Gruppo FILTRI [layout 2 colonne]
-        const filtersGroup = document.createElement('div');
-        filtersGroup.className = 'mobile-group mb-4 pb-4';
-
-        const filtersContainer = document.createElement('div');
-        filtersContainer.className = 'flex gap-4';
-
-        const leftColumnFilters = document.createElement('div');
-        leftColumnFilters.className = 'flex-1';
-
-        if (this.elements.toggleFilters) {
-            this.moveElementToMobile(this.elements.toggleFilters, leftColumnFilters);
-        }
-
-        const rightColumnFilters = document.createElement('div');
-        rightColumnFilters.className = 'flex-1 flex flex-col gap-2';
-
-        if (this.elements.activeFiltersBadge) {
-            this.moveElementToMobile(this.elements.activeFiltersBadge, rightColumnFilters);
-        }
-
-        if (this.elements.clearAllBtn) {
-            this.moveElementToMobile(this.elements.clearAllBtn, rightColumnFilters);
-        }
-
-        filtersContainer.appendChild(leftColumnFilters);
-        filtersContainer.appendChild(rightColumnFilters);
-        filtersGroup.appendChild(filtersContainer);
-
-        this.elements.mobileMenuItems.appendChild(filtersGroup);
-        
-        // Gruppo 2: RISULTATI [layout 2 colonne]
-        const resultsGroup = document.createElement('div');
-        resultsGroup.className = 'mobile-group mb-4 pb-4';
-
-        const resultsContainer = document.createElement('div');
-        resultsContainer.className = 'flex gap-4';
-
-        const leftColumnResults = document.createElement('div');
-        leftColumnResults.className = 'flex-1';
-
-        if (this.elements.toggleResults) {
-            this.moveElementToMobile(this.elements.toggleResults, leftColumnResults);
-        }
-
-        const rightColumnResults = document.createElement('div');
-        rightColumnResults.className = 'flex-1 flex flex-col gap-2';
-
-        if (this.elements.resultsCounter) {
-            this.moveElementToMobile(this.elements.resultsCounter, rightColumnResults);
-        }
-
-        if (this.elements.uniqueResultsCounter) {
-            this.moveElementToMobile(this.elements.uniqueResultsCounter, rightColumnResults);
-        }
-
-        resultsContainer.appendChild(leftColumnResults);
-        resultsContainer.appendChild(rightColumnResults);
-        resultsGroup.appendChild(resultsContainer);
-
-        this.elements.mobileMenuItems.appendChild(resultsGroup);
-                
-        // Spazio
-        const spacer = document.createElement('div');
-        spacer.className = 'h-4';
-        this.elements.mobileMenuItems.appendChild(spacer);
-        
-        // Altri elementi singoli [legenda, strati cartografici, markers]
-        const otherElements = [
-            this.elements.layerButton,
-            this.elements.markersButton,
-            this.elements.toggleLegendBtn
-        ];
-        
-        otherElements.forEach(element => {
-            if (element && element.parentNode) {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'mobile-menu-item w-full mb-2';
-                this.moveElementToMobile(element, wrapper);
-                this.elements.mobileMenuItems.appendChild(wrapper);
-            }
-        });
-
-        this.bindMobileMenuEvents();
-    }
-    
-    /**
-     * Move element to mobile menu
-     */
-    moveElementToMobile(element, targetContainer) {
-        if (!element || !element.parentNode || !targetContainer) return;
-        
-        // Store original position
-        this.originalPositions[element.id] = {
-            parent: element.parentNode,
-            nextSibling: element.nextElementSibling,
-            originalClasses: element.className
-        };
-
-        // Move element maintaining original style
-        targetContainer.appendChild(element);
-    }
-
-    /**
-     * Style mobile elements - Mantiene grafica originale, sposta gli elementi al menù hambrurger
-     */
-    styleMobileElements() {
-        // Non fare niente - mantieni la grafica originale degli elementi
-        // Gli elementi mantengono la loro grafica originale
-    }
-
-    /**
-     * Bind mobile menu events
-     */
-    bindMobileMenuEvents() {
-        // Chiudi hamburger quando clicchi toggle-filters o toggle-results
-        this.elements.mobileMenuItems.addEventListener('click', (e) => {
-            const clickedElement = e.target.closest('button, [onclick]');
-            if (clickedElement) {
-                // Chiudi SEMPRE l'hamburger per toggle-filters e toggle-results
-                if (['toggle-filters', 'toggle-results'].includes(clickedElement.id)) {
-                    setTimeout(() => this.closeMobileMenu(), 100);
-                } else {
-                    // Per gli altri elementi chiudi dopo un delay più lungo
-                    setTimeout(() => this.closeMobileMenu(), 300);
-                }
-            }
-        });
-    }
-
-    /**
-     * Restore elements to their original positions (for desktop)
-     */
-    restoreOriginalPositions() {
-        Object.entries(this.originalPositions).forEach(([elementId, position]) => {
-            const element = document.getElementById(elementId);
-            if (element && position.parent) {
-                // Restore original classes EXACTLY as they were
-                element.className = position.originalClasses;
-                
-                // Move back to original position
-                if (position.nextSibling) {
-                    position.parent.insertBefore(element, position.nextSibling);
-                } else {
-                    position.parent.appendChild(element);
-                }
-            }
-        });
-        
-        // Clear mobile menu
-        if (this.elements.mobileMenuItems) {
-            this.elements.mobileMenuItems.innerHTML = '';
-        }
-    }
-
-    /**
-     * Toggle mobile menu
-     */
-    toggleMobileMenu() {
-        if (this.state.isMobileMenuOpen) {
-            this.closeMobileMenu();
-        } else {
-            this.openMobileMenu();
-        }
-    }
-
-    /**
-     * Open mobile menu
-     */
-    openMobileMenu() {
-        this.state.isMobileMenuOpen = true;
-        this.elements.mobileMenu.classList.remove('hidden');
-        
-        setTimeout(() => {
-            this.elements.mobileMenuContent.style.transform = 'translateX(0)';
-        }, 10);
-
-        // Transform hamburger to X
-        const spans = this.elements.hamburgerBtn.querySelectorAll('span');
-        spans[0].style.transform = 'rotate(45deg) translate(6px, 6px)';
-        spans[1].style.opacity = '0';
-        spans[2].style.transform = 'rotate(-45deg) translate(6px, -6px)';
-    }
-
-    /**
-     * Close mobile menu
-     */
-    closeMobileMenu() {
-        this.state.isMobileMenuOpen = false;
-        this.elements.mobileMenuContent.style.transform = 'translateX(100%)';
-        
-        setTimeout(() => {
-            this.elements.mobileMenu.classList.add('hidden');
-        }, 300);
-
-        // Reset hamburger
-        const spans = this.elements.hamburgerBtn.querySelectorAll('span');
-        spans[0].style.transform = '';
-        spans[1].style.opacity = '';
-        spans[2].style.transform = '';
-    }
-
-    /**
-     * Update mobile menu elements (they're the same DOM elements, so no separate update needed)
-     */
-    updateMobileCounters() {
-        // No need to update separately - using the same DOM elements
-        // The cloned elements in mobile menu will reflect the same state
-    }
 
     /**
      * Initialize configuration and popup managers
@@ -372,16 +98,13 @@ export class NavBarRenderer {
         // Markers selection popup
         this.popupManagers.markers = new MarkersSelectionPopupManager(this.mapInstance);
         this.popupManagers.markers.init();
-    }
 
-    /**
-     * Style the clear all button
-     */
-    styleClearAllButton() {
-        if (this.elements.clearAllBtn) {
-            this.elements.clearAllBtn.className = 'ml-2 px-3 py-1 bg-pink-100 hover:bg-pink-200 text-red-500 text-xs rounded-full';
-            this.elements.clearAllBtn.innerHTML = '<i class="fas fa-times mr-1"></i>Cancella tutto';
-        }
+        // Legend  popup - Usa Timeout per prendere tutti gli elementi già caricati nel DOM nella spiegazione
+        setTimeout(() => {
+            this.popupManagers.legend = new LegendPopupManager(this.mapInstance);
+            this.popupManagers.legend.init();
+        }, 5000);
+
     }
 
     /**
@@ -415,7 +138,6 @@ export class NavBarRenderer {
             DOMUtils.hideElement(this.elements.clearAllBtn);
         }
         
-        this.updateMobileCounters();
         EventUtils.emit('navbar:activeFiltersChanged', { count });
     }
 
@@ -441,7 +163,6 @@ export class NavBarRenderer {
             DOMUtils.hideElement(this.elements.uniqueResultsCounter);
         }
         
-        this.updateMobileCounters();
         EventUtils.emit('navbar:resultsCountChanged', { 
             totalCount: count,
             uniqueResultsCount: uniqueResultsCount 
@@ -477,7 +198,7 @@ export class NavBarRenderer {
      * Bind all event handlers
      */
     bindEventHandlers() {
-        // Panel toggles (sempre visibili)
+        // Panel toggles
         this.elements.toggleFilters?.addEventListener('click', () => {
             this.togglePanel('filters');
         });
@@ -486,29 +207,9 @@ export class NavBarRenderer {
             this.togglePanel('results');
         });
 
-        // Clear all filters (desktop only)
+        // Clear all filters
         this.elements.clearAllBtn?.addEventListener('click', () => {
             this.handleClearAllFilters();
-        });
-
-        // Mobile menu toggle
-        this.elements.hamburgerBtn?.addEventListener('click', () => {
-            this.toggleMobileMenu();
-        });
-
-        // Mobile menu close
-        const closeBtn = document.getElementById('mobile-menu-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                this.closeMobileMenu();
-            });
-        }
-
-        // Close mobile menu on overlay click
-        this.elements.mobileMenu?.addEventListener('click', (e) => {
-            if (e.target === this.elements.mobileMenu) {
-                this.closeMobileMenu();
-            }
         });
     }
 
@@ -629,27 +330,167 @@ export class NavBarRenderer {
     /**
      * Setup responsive behavior
      */
-    setupResponsiveBehavior() {
-        const handleResize = () => {
-            if (window.innerWidth >= 768) {
-                // Desktop: restore original positions
-                this.restoreOriginalPositions();
-                this.closeMobileMenu();
-            } else {
-                // Mobile: move elements to hamburger menu if not already there
-                if (this.elements.mobileMenuItems && this.elements.mobileMenuItems.children.length === 0) {
-                    this.populateMobileMenu();
-                }
-            }
-        };
+setupResponsiveBehavior() {
+    // inizializza hamburger/menu dinamico
+    this.setupHamburgerMenu();
 
-        window.addEventListener('resize', handleResize);
-
-        // Initial setup
+    // comportamento legacy: chiude i pannelli su schermi piccoli
+    const handleSmallScreens = () => {
         if (window.innerWidth < 768) {
             this.closeAllPanels();
+            // nascondo anche il container desktop se presente
+            this.elements.bottomNavContent?.classList.add('hidden');
+        } else {
+            // su desktop apro (o lascio come prima)
+            this.elements.bottomNavContent?.classList.remove('hidden');
+            this.elements.bottomNavContent?.classList.add('flex');
         }
+    };
+
+    window.addEventListener('resize', handleSmallScreens);
+    // chiamata iniziale
+    handleSmallScreens();
+}
+
+
+
+/**
+ * Crea hamburger + menu mobile (se non esistono) e inizializza layout
+ */
+setupHamburgerMenu() {
+    // crea i nodi se mancano
+    this.createHamburgerAndMobileMenu();
+    // allinea elementi subito
+    this.updateMenuLayout();
+    // resize listener per spostare dentro/fuori
+    window.addEventListener('resize', () => {
+        this.updateMenuLayout();
+    });
+}
+
+/**
+ * Crea DOM per hamburger e mobile menu se non esistono
+ */
+createHamburgerAndMobileMenu() {
+    const bottomNav = this.elements.bottomNav || document.querySelector('nav#bottom-nav') || document.querySelector('nav') || document.body;
+    this.elements.bottomNav = bottomNav;
+
+    // Hamburger button
+    if (!document.getElementById('hamburger-btn')) {
+        const btn = document.createElement('button');
+        btn.id = 'hamburger-btn';
+        btn.className = 'md:hidden p-2 z-60'; // visibile solo su small screens
+        btn.setAttribute('aria-label', 'Apri menu');
+        btn.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <line x1="5" y1="7" x2="19" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+                <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+                <line x1="5" y1="17" x2="19" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+            </svg>
+        `;
+        bottomNav.appendChild(btn);
+
+        btn.addEventListener('click', () => {
+            const mobileMenu = document.getElementById('bottom-nav-mobile-menu');
+            if (mobileMenu) {
+                mobileMenu.classList.toggle('hidden');
+            }
+        });
     }
+
+    // Mobile menu container (appears above bottom nav)
+    if (!document.getElementById('bottom-nav-mobile-menu')) {
+        const menu = document.createElement('div');
+        menu.id = 'bottom-nav-mobile-menu';
+        // posizione fissa sopra la bottom nav; hidden di default
+        menu.className = 'hidden md:hidden fixed bottom-14 left-4 right-4 bg-white shadow-lg p-3 rounded-lg flex flex-col gap-2 z-50';
+        // aggiungo una classe di transizione per fluidità
+        menu.style.transition = 'transform .18s ease, opacity .18s ease';
+        document.body.appendChild(menu);
+    }
+}
+
+/**
+ * Decide se mettere gli elementi nel menu mobile o rimetterli nel bottom nav (desktop)
+ */
+updateMenuLayout() {
+    const isMobile = window.innerWidth < 768;
+    const mobileMenu = document.getElementById('bottom-nav-mobile-menu');
+    let desktopContainer = this.elements.bottomNavContent || document.getElementById('bottom-nav-content');
+
+    // se non esiste container desktop, crealo dentro bottomNav (non rompere layout desktop)
+    if (!desktopContainer) {
+        desktopContainer = document.createElement('div');
+        desktopContainer.id = 'bottom-nav-content';
+        // default: visibile su desktop, nascosto su mobile
+        desktopContainer.className = 'hidden md:flex items-center space-x-3';
+        this.elements.bottomNav?.appendChild(desktopContainer);
+        this.elements.bottomNavContent = desktopContainer;
+    }
+
+    if (isMobile) {
+        // nascondi la porzione desktop (se presente) e sposta dentro mobile menu
+        desktopContainer.classList.remove('flex');
+        desktopContainer.classList.add('hidden');
+        this.moveToMobileMenu(mobileMenu);
+    } else {
+        // desktop: assicurati che il container sia visibile e riporta gli elementi
+        desktopContainer.classList.remove('hidden');
+        desktopContainer.classList.add('flex');
+        this.moveToDesktop(mobileMenu, desktopContainer);
+    }
+}
+
+/**
+ * Sposta i nostri elementi dentro il mobile menu (preservando event listeners)
+ */
+moveToMobileMenu(menu) {
+    if (!menu) return;
+    const ids = [
+        'toggle-filters',
+        'active-filters-badge',
+        'clear-all-btn',
+        'map-layer-selector',
+        'map-markers-selector',
+        'toggle-legend-btn',
+        'results-counter',
+        'unique-results-counter',
+        'toggle-results',
+    ];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.parentNode !== menu) {
+            // aggiungo full width per rendere più comodo il tap su mobile
+            el.classList.add('w-full', 'block');
+            menu.appendChild(el);
+        }
+    });
+    // di default il menu resta nascosto finché non si clicca hamburger
+    menu.classList.add('hidden');
+}
+
+/**
+ * Riporta gli elementi nel container desktop
+ */
+moveToDesktop(menu, desktopContainer) {
+    if (!desktopContainer) return;
+    if (!menu) return;
+
+    // Prendo una copia dei figli perché stiamo spostando nodi
+    const nodes = Array.from(menu.childNodes);
+    nodes.forEach(node => {
+        // ignora nodi non-elemento
+        if (!(node instanceof HTMLElement)) return;
+        // rimuovo classi di full width usate per mobile
+        node.classList.remove('w-full', 'block');
+        desktopContainer.appendChild(node);
+    });
+
+    // nascondi menu mobile
+    menu.classList.add('hidden');
+}
+
+
 
     /**
      * Get current state
@@ -739,7 +580,6 @@ export class NavBarRenderer {
         this.updateResultsCount(0);
         this.popupManagers.activeFilters?.hide();
         this.closeAllPanels();
-        this.closeMobileMenu();
         ResetUtils.resetFacetsInterface();
         ResetUtils.clearSearchInput();
     }
@@ -748,21 +588,13 @@ export class NavBarRenderer {
      * Destroy and cleanup
      */
     destroy() {
-        // Restore original positions before destroying
-        this.restoreOriginalPositions();
-        
         // Destroy popup managers
         Object.values(this.popupManagers).forEach(manager => {
             manager?.destroy();
         });
-
-        // Remove mobile menu elements
-        this.elements.hamburgerBtn?.remove();
-        this.elements.mobileMenu?.remove();
         
         // Clear references
         this.elements = {};
-        this.originalPositions = {};
         this.currentFilters = {};
         this.currentQuery = '';
         this.config = null;

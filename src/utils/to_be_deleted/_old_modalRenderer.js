@@ -1,4 +1,7 @@
 // modalRenderer.js
+
+import { FilterBadgesRenderer } from './filterBadgesRenderer.js';
+
 export class ModalRenderer {
   constructor(mapFocusCallback, config = null) {
     this.mapFocusCallback = mapFocusCallback;
@@ -93,60 +96,9 @@ export class ModalRenderer {
    * Render the selected filters as badges
    */
   _renderSelectedFilters() {
-    if (!this.searchState || !this.searchState.filters) {
-      return '';
-    }
-
-    const filtersHtml = [];
-
-    // Add search query if present
-    if (this.searchState.query && this.searchState.query.trim()) {
-      filtersHtml.push(`
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-secondary-100 text-secondary-800 rounded-full text-sm font-medium">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
-            <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
-          </svg>
-          <span>Ricerca: "${this.searchState.query}"</span>
-        </div>
-      `);
-    }
-
-    // Add filter badges
-    Object.entries(this.searchState.filters).forEach(([facetKey, values]) => {
-      if (Array.isArray(values) && values.length > 0) {
-        values.forEach(value => {
-          filtersHtml.push(`
-            <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-medium">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
-                <path d="M2 3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1a1 1 0 0 1-.293.707L10 8.414V12a1 1 0 0 1-.293.707l-2 2A1 1 0 0 1 6 14v-5.586L2.293 4.707A1 1 0 0 1 2 4V3Z" />
-              </svg>
-              <span>${facetKey}: ${value}</span>
-            </div>
-          `);
-        });
-      } else if (values && !Array.isArray(values)) {
-        // Handle range filters or single values
-        filtersHtml.push(`
-          <div class="inline-flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
-              <path d="M2 3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1a1 1 0 0 1-.293.707L10 8.414V12a1 1 0 0 1-.293.707l-2 2A1 1 0 0 1 6 14v-5.586L2.293 4.707A1 1 0 0 1 2 4V3Z" />
-            </svg>
-            <span>${facetKey}: ${values}</span>
-          </div>
-        `);
-      }
-    });
-
-    if (filtersHtml.length === 0) {
-      return '';
-    }
-
-    return `
-      <div class="flex flex-wrap items-center gap-2 bg-white/80 backdrop-blur-sm rounded-xl px-4 py-3 shadow-md ring-1 ring-gray-200/50 border border-gray-200/30">
-        <div class="text-sm font-medium text-gray-700 mr-2">Filtri attivi:</div>
-        ${filtersHtml.join('')}
-      </div>
-    `;
+    console.log('MODAL - searchState:', this.searchState);
+    const renderer = new FilterBadgesRenderer(this.config);
+    return renderer.render(this.searchState);
   }
 
   async toggleModal(centralWorkIndex) {
@@ -305,7 +257,7 @@ export class ModalRenderer {
           <div class="flex items-center justify-between">
             <!-- Filters section on the left -->
             <div class="filters-section flex-1 mr-6">
-              <!-- Filters will be populated here -->
+              <!-- Filters are populated here -->
             </div>
             
             <!-- Close button on the right -->

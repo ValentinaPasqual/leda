@@ -9,18 +9,23 @@ export class ResultsRenderer {
   }
 
   updateResultsList(items, config, searchState = {}) {
-    const resultsContainer = document.getElementById('results');
-    if (!resultsContainer) {
-      console.error('Results container not found');
-      return;
-    }
+  console.log('🔴 INIZIO updateResultsList'); // ⬅️ questo DEVE apparire
 
-    // Store items and search state for modal use
-    this.items = items;
-    this.searchState = searchState;
+  console.log('ResultsRenderer - searchState ricevuto:', searchState); // ⬅️ AGGIUNGI
+  console.log('ResultsRenderer - searchState.filters:', searchState.filters); // ⬅️ AGGIUNGI
+  
+  const resultsContainer = document.getElementById('results');
+  if (!resultsContainer) {
+    console.error('Results container not found');
+    return;
+  }
 
-    // Group items by pivot_ID
-    const groupedItems = this._groupByIdOpera(items);
+  // Store items and search state for modal use
+  this.items = items;
+  this.searchState = searchState;
+
+  // Group items by pivot_ID
+  const groupedItems = this._groupByIdOpera(items);
     
     // Convert grouped items to array and render
     this.allWorks = Object.values(groupedItems);

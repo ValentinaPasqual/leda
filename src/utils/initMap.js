@@ -19,6 +19,13 @@ function initMap(config) {
 
     window.map = map; 
 
+    const panToMarkerWithOffset = (coords) => {
+    const point = map.project(coords, map.getZoom());
+    const newPoint = L.point(point.x, point.y - map.getSize().y * 0.25);
+    const newLatLng = map.unproject(newPoint, map.getZoom());
+    map.panTo(newLatLng);
+    };
+
     // Special coordinates that get unique treatment
     const SPECIAL_COORDS = [38.7200, -24.2200];
     const SPECIAL_COORDS_KEY = `${SPECIAL_COORDS[0]},${SPECIAL_COORDS[1]}`;
@@ -29,6 +36,7 @@ function initMap(config) {
 
     polygonManager = new PolygonManager(map);
     polygonManager.loadPolygonRepository();
+    
 
     // ===========================================
     // POLYGON TOGGLE SYSTEM - INTEGRATED
@@ -74,7 +82,7 @@ function initMap(config) {
       showCoverageOnHover: true,
       zoomToBoundsOnClick: true,
       spiderfyOnMaxZoom: true,
-      removeOutsideVisibleBounds: true,
+      removeOutsideVisibleBounds: false,
       iconCreateFunction: (cluster) => {
         const count = cluster.getChildCount();
         const svg = `
@@ -264,6 +272,8 @@ function initMap(config) {
             }
 
           marker.bindPopup(() => createPopupContent(group.name, group.items, group.coords, isSpecial, config));
+          // it handles the centering of the popup (focus) in the map
+          marker.on('click', () => panToMarkerWithOffset(coords));
 
           markers.addLayer(marker);
         });
@@ -354,9 +364,12 @@ function initMap(config) {
                 return createPopupContent(group.name, group.items, group.coords, isSpecial, config);
             });
 
+            // Focus sul popup aperto al centro della mappa
+            marker.on('click', () => panToMarkerWithOffset(coords));
+
             if (isSpecial) {
                 specialCircle = L.circle(coords, {
-                    className: 'special',
+                    className: 'special leaflet-marker-icon',
                     fillOpacity: 0.15,
                     radius: 8000,
                     weight: 4
@@ -443,6 +456,10 @@ function initMap(config) {
                 // Ricrea il contenuto del popup ogni volta che viene aperto
                 return createPopupContent(group.name, group.items, group.coords, isSpecial, config);
             });
+
+            // Focus al centro della mappa del popup cliccato
+            circle.on('click', () => panToMarkerWithOffset(coords));
+
 
             // Add special circle if needed
             if (isSpecial) {

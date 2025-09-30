@@ -2,6 +2,7 @@
  * Base Popup Manager
  */
 import { DOMUtils, PositionUtils, EventUtils } from './navbarUtils.js';
+import { FilterBadgesRenderer } from '../../utils/filterBadgesRenderer.js';
 
 class BasePopupManager {
     constructor(triggerId, popupId) {
@@ -149,48 +150,16 @@ export class ActiveFiltersPopupManager extends BasePopupManager {
         return popup;
     }
 
+
     buildFiltersContent() {
-        const { currentFilters, currentQuery, config } = this.navBar;
-
-        if (!currentFilters || Object.keys(currentFilters).length === 0) {
-            return `
-                <div class="flex items-center p-4 rounded-lg bg-gray-50">
-                    <span class="text-sm text-gray-700">Nessun filtro attivo</span>
-                </div>
-            `;
-        }
-
-        let content = '';
-
-        // Add search query if present
-        if (currentQuery && currentQuery.trim()) {
-            content += `
-                <div class="mb-3 p-3 rounded-lg bg-primary-50 border border-primary-100">
-                    <div class="flex items-center">
-                        <svg class="w-4 h-4 text-primary-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                        <div class="flex-1 min-w-0">
-                            <span class="text-sm font-medium text-primary-700">Ricerca:</span>
-                            <span class="text-sm text-primary-600 ml-1 font-mono bg-primary-100 px-2 py-1 rounded text-xs">"${DOMUtils.escapeHtml(currentQuery)}"</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Group filters by category
-        const groupedFilters = this.groupFiltersByCategory();
-        
-        Object.entries(groupedFilters).forEach(([categoryLabel, filterItems]) => {
-            content += this.buildCategorySection(categoryLabel, filterItems);
-        });
-
-        return content || `
-            <div class="flex items-center p-4 rounded-lg bg-gray-50">
-                <span class="text-sm text-gray-700">Nessun filtro attivo</span>
-            </div>
-        `;
+    const searchState = {
+        query: this.navBar.currentQuery,
+        filters: this.navBar.currentFilters
+    };
+    console.log('NAVBAR - searchState:', searchState);
+    
+    const renderer = new FilterBadgesRenderer(this.navBar.config);
+    return renderer.render(searchState);
     }
 
     groupFiltersByCategory() {
@@ -242,7 +211,7 @@ export class ActiveFiltersPopupManager extends BasePopupManager {
 
     buildCategorySection(categoryLabel, filterItems) {
         let section = `
-            <div class="mb-3 p-3 rounded-lg bg-gray-50 border border-gray-200">
+            <div class="mb-3 p-3">
                 <div class="flex items-start">
                     <div class="w-2 h-2 rounded-full bg-indigo-500 mt-2 mr-3 flex-shrink-0"></div>
                     <div class="flex-1 min-w-0">
@@ -304,6 +273,195 @@ export class ActiveFiltersPopupManager extends BasePopupManager {
 }
 
 /**
+ * Legend Popup Manager
+ */
+/**
+ * Legend Popup Manager con tooltip Tailwind migliorati
+ */
+export class LegendPopupManager extends BasePopupManager {
+    constructor(navBarInstance) {
+        super('toggle-legend-btn', 'map-legend-popup');
+        this.navBar = navBarInstance;
+    }
+
+    init() {
+        super.init();
+        if (this.triggerElement) {
+            this.triggerElement.title = 'Clicca per vedere leggere la legenda';
+        }
+    }
+
+    // Get first element safely
+    getElement(selector, fallback = '') {
+        const element = document.querySelector(selector);
+        if (element) {
+            // Clone to avoid moving original
+            const clone = element.cloneNode(true);
+            // Remove IDs to avoid duplicates
+            clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+            if (clone.hasAttribute('id')) clone.removeAttribute('id');
+            return clone;
+        }
+        return document.createTextNode(fallback);
+    }
+
+    // Tooltip builder using DOM nodes (keeps buttons, SVGs, etc.)
+    tooltip(text, contentNode, position = 'top') {
+        const positions = {
+            top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
+            bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
+            left: 'right-full top-1/2 -translate-y-1/2 mr-2',
+            right: 'left-full top-1/2 -translate-y-1/2 ml-2'
+        };
+
+        const arrows = {
+            top: 'top-full left-1/2 -translate-x-1/2 border-l-8 border-r-8 border-t-8 border-transparent border-t-gray-900',
+            bottom: 'bottom-full left-1/2 -translate-x-1/2 border-l-8 border-r-8 border-b-8 border-transparent border-b-gray-900',
+            left: 'left-full top-1/2 -translate-y-1/2 border-t-8 border-b-8 border-l-8 border-transparent border-l-gray-900',
+            right: 'right-full top-1/2 -translate-y-1/2 border-t-8 border-b-8 border-r-8 border-transparent border-r-gray-900'
+        };
+
+        // Wrapper
+        const wrapper = document.createElement('span');
+        wrapper.className = 'relative inline-block group cursor-help';
+
+        // Trigger text
+        const trigger = document.createElement('span');
+        trigger.className = 'text-blue-600 underline decoration-dotted underline-offset-2 hover:text-blue-800 transition-colors';
+        trigger.textContent = text;
+        wrapper.appendChild(trigger);
+
+        // Tooltip container
+        const container = document.createElement('div');
+        container.className = `absolute ${positions[position]} z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 delay-100`;
+
+        const tooltipBox = document.createElement('div');
+        tooltipBox.className = 'bg-gray-900 text-white text-sm rounded-lg py-2 px-3 max-w-xs shadow-xl whitespace-normal relative';
+
+        // Append actual DOM content
+        tooltipBox.appendChild(contentNode.cloneNode(true));
+
+        // Arrow
+        const arrow = document.createElement('div');
+        arrow.className = `absolute w-0 h-0 ${arrows[position]}`;
+        tooltipBox.appendChild(arrow);
+
+        container.appendChild(tooltipBox);
+        wrapper.appendChild(container);
+
+        return wrapper;
+    }
+
+    createPopup() {
+        const popup = this.createBasePopup('Legenda');
+
+        const content = document.createElement('div');
+        content.className = 'space-y-4 max-h-64 overflow-y-auto overflow-x-visible mb-3 p-3';
+
+        // Grab DOM elements
+        const pin = this.getElement('.leaflet-marker-icon svg', document.createTextNode('Pin'));
+        const filtri = this.getElement('#toggle-filters', document.createTextNode('Filtri'));
+        const categorie = this.getElement('h3.facet-category-title', document.createTextNode('Categoria'));
+        const sezioni = this.getElement('.facet-header h3', document.createTextNode('Sezione'));
+        const opzioni = this.getElement('label.facet-option', document.createTextNode('Opzione'));
+        const results = this.getElement('#toggle-results', document.createTextNode('Riferimenti'));
+        const resultsCounter = this.getElement('#results-counter', document.createTextNode('Conteggio riferimenti'));
+        const playControls = this.getElement('.play-controls', document.createTextNode('Play Controls'));
+        const popupMap = this.getElement('.bg-gradient-to-r .from-secondary-500 .via-secondary-600 .to-primary-600 .text-white .p-3 .relative .overflow-hidden', document.createTextNode('PopUp Map'))
+
+        // Build sections
+        const addSection = (htmlText, tooltips = []) => {
+            const div = document.createElement('div');
+            div.className = 'border-t border-gray-200 pt-3 space-y-2';
+            const p = document.createElement('p');
+            p.className = 'text-sm text-gray-700 leading-relaxed';
+            p.innerHTML = htmlText;
+            tooltips.forEach(t => p.appendChild(t));
+            div.appendChild(p);
+            content.appendChild(div);
+        };
+
+        // Intro
+        const intro = document.createElement('div');
+        intro.className = 'space-y-2';
+        const introTitle = document.createElement('p');
+        introTitle.className = 'text-sm font-medium text-gray-800';
+        introTitle.textContent = 'Legenda della mappa';
+        const introDesc = document.createElement('p');
+        introDesc.className = 'text-xs text-gray-600';
+        introDesc.textContent = 'Mostra i diversi elementi presenti sulla mappa.';
+        intro.appendChild(introTitle);
+        intro.appendChild(introDesc);
+        content.appendChild(intro);
+
+        // Map pin section
+        const pinSection = document.createElement('div');
+        pinSection.className = 'border-t border-gray-200 pt-3 space-y-2';
+        const pinP = document.createElement('p');
+        pinP.className = 'text-sm text-gray-700 leading-relaxed';
+        pinP.textContent = 'I ';
+        pinP.appendChild(this.tooltip('pin della mappa', pin, 'top'));
+        pinP.appendChild(document.createTextNode(' indicano i luoghi presenti sulla mappa.'));
+        pinSection.appendChild(pinP);
+        content.appendChild(pinSection);
+
+        // Filters section
+        const filtersSection = document.createElement('div');
+        filtersSection.className = 'border-t border-gray-200 pt-3 space-y-2';
+        const filtersP = document.createElement('p');
+        filtersP.className = 'text-sm text-gray-700 leading-relaxed';
+        filtersP.appendChild(document.createTextNode('I '));
+        filtersP.appendChild(this.tooltip('filtri', filtri, 'right'));
+        filtersP.appendChild(document.createTextNode(' permettono di selezionare elementi rilevanti nella mappa. Sono raggruppati in '));
+        filtersP.appendChild(this.tooltip('categorie', categorie, 'top'));
+        filtersP.appendChild(document.createTextNode(' come '));
+        filtersP.appendChild(this.tooltip('sezioni', sezioni, 'right'));
+        filtersP.appendChild(document.createTextNode('. Ciascuno contiene il valore filtrabile e il relativo '));
+        filtersP.appendChild(this.tooltip('conteggio', opzioni, 'bottom'));
+        filtersP.appendChild(document.createTextNode('.'));
+        filtersSection.appendChild(filtersP);
+
+        const playP = document.createElement('p');
+        playP.className = 'text-sm text-gray-700 leading-relaxed';
+        playP.appendChild(document.createTextNode('I tasti '));
+        playP.appendChild(this.tooltip('Play/Pause', playControls, 'top'));
+        playP.appendChild(document.createTextNode(' controllano la riproduzione temporale.'));
+        filtersSection.appendChild(playP);
+
+        content.appendChild(filtersSection);
+
+        // References section
+        const refSection = document.createElement('div');
+        refSection.className = 'border-t border-gray-200 pt-3 space-y-2';
+        const refP = document.createElement('p');
+        refP.className = 'text-sm text-gray-700 leading-relaxed';
+        refP.appendChild(document.createTextNode('La sezione '));
+        refP.appendChild(this.tooltip('riferimenti', results, 'top'));
+        refP.appendChild(document.createTextNode(' mostra tutti i riferimenti ai luoghi presenti nella mappa. Il '));
+        refP.appendChild(this.tooltip('contatore', resultsCounter, 'top'));
+        refP.appendChild(document.createTextNode(' indica il numero di risultati trovati.'));
+        refSection.appendChild(refP);
+        content.appendChild(refSection);
+
+        // Popup section
+        const popupSection = document.createElement('div');
+        popupSection.className = 'border-t border-gray-200 pt-3';
+        const popupP = document.createElement('p');
+        popupP.className = 'text-sm text-gray-700 leading-relaxed';
+        popupP.appendChild(document.createTextNode('Ogni pin sulla mappa apre un '));
+        popupP.appendChild(this.tooltip('popup informativo', popupMap, 'top'));
+        popupP.appendChild(document.createTextNode(' con dettagli specifici del luogo.'));
+        popupSection.appendChild(popupP);
+        content.appendChild(popupSection);
+
+        popup.appendChild(content);
+        return popup;
+    }
+}
+
+
+
+/**
  * Layer Selection Popup Manager
  */
 export class LayerSelectionPopupManager extends BasePopupManager {
@@ -318,15 +476,14 @@ export class LayerSelectionPopupManager extends BasePopupManager {
         super.init();
         if (this.triggerElement) {
             this.triggerElement.title = 'Clicca per cambiare layer';
-            this.updateButtonText(this.currentLayerName);
         }
     }
 
     createPopup() {
-        const popup = this.createBasePopup('Seleziona Layer');
+        const popup = this.createBasePopup('Seleziona uno strato cartografico');
         
         const content = document.createElement('div');
-        content.className = 'space-y-1 max-h-64 overflow-y-auto overflow-x-hidden mb-3 p-3 rounded-lg bg-gray-50 border border-gray-200';
+        content.className = 'space-y-1 max-h-64 overflow-y-auto overflow-x-hidden mb-3 p-3';
         content.innerHTML = this.buildLayersContent();
 
         popup.appendChild(content);
@@ -380,7 +537,6 @@ export class LayerSelectionPopupManager extends BasePopupManager {
     }
 
     selectLayer(layerName, layerUrl, attribution) {
-        this.updateButtonText(layerName);
         
         if (this.currentTileLayer && window.map) {
             window.map.removeLayer(this.currentTileLayer);
@@ -402,18 +558,6 @@ export class LayerSelectionPopupManager extends BasePopupManager {
             attribution
         });
     }
-
-    updateButtonText(layerName) {
-        const icon = this.triggerElement.querySelector('i') || this.triggerElement.querySelector('.icon');
-        
-        if (icon) {
-            this.triggerElement.innerHTML = '';
-            this.triggerElement.appendChild(icon);
-            this.triggerElement.appendChild(document.createTextNode('Strati cartografici'));
-        } else {
-            this.triggerElement.textContent = layerName;
-        }
-    }
 }
 
 /**
@@ -427,15 +571,15 @@ export class MarkersSelectionPopupManager extends BasePopupManager {
         this.markerTypes = {
             'clusters': {
                 name: 'Clusters geografici',
-                description: 'Raggruppamenti dinamici'
+                description: 'Raggruppamenti dinamici dei luoghi sulla mappa'
             },
             'pins': {
                 name: 'Pin con numeri',
-                description: 'Pin con conteggio occorrenze'
+                description: 'Pin con numero dei riferimenti associati'
             },
             'circles': {
                 name: 'Cerchi Proporzionali',
-                description: 'Cerchi con diametro basato su occorrenze'
+                description: 'Cerchi con diametro basato sul numero di riferimenti associati'
             }
         };
     }
@@ -443,13 +587,12 @@ export class MarkersSelectionPopupManager extends BasePopupManager {
     init() {
         super.init();
         if (this.triggerElement) {
-            this.triggerElement.title = 'Clicca per cambiare tipo di marker';
-            this.updateButtonText(this.markerTypes[this.currentMarkerType].name);
+            this.triggerElement.title = 'Clicca per cambiare tipo di marcatore';
         }
     }
 
     createPopup() {
-        const popup = this.createBasePopup('Tipo di Marker');
+        const popup = this.createBasePopup('Seleziona un tipo di marcatore');
         
         const content = document.createElement('div');
         content.className = 'space-y-1 max-h-64 overflow-y-auto overflow-x-hidden';
@@ -494,17 +637,17 @@ export class MarkersSelectionPopupManager extends BasePopupManager {
     getMarkerIcon(markerType) {
         const icons = {
             'clusters': `
-                <svg class="w-4 h-4 text-primary-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"></path>
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 32 32">
+                    <path d="M27 21.75c-0.795 0.004-1.538 0.229-2.169 0.616l0.018-0.010-2.694-2.449c0.724-1.105 1.154-2.459 1.154-3.913 0-1.572-0.503-3.027-1.358-4.212l0.015 0.021 3.062-3.062c0.57 0.316 1.249 0.503 1.971 0.508h0.002c2.347 0 4.25-1.903 4.25-4.25s-1.903-4.25-4.25-4.25c-2.347 0-4.25 1.903-4.25 4.25v0c0.005 0.724 0.193 1.403 0.519 1.995l-0.011-0.022-3.062 3.062c-1.147-0.84-2.587-1.344-4.144-1.344-0.868 0-1.699 0.157-2.467 0.443l0.049-0.016-0.644-1.17c0.726-0.757 1.173-1.787 1.173-2.921 0-2.332-1.891-4.223-4.223-4.223s-4.223 1.891-4.223 4.223c0 2.332 1.891 4.223 4.223 4.223 0.306 0 0.605-0.033 0.893-0.095l-0.028 0.005 0.642 1.166c-1.685 1.315-2.758 3.345-2.758 5.627 0 0.605 0.076 1.193 0.218 1.754l-0.011-0.049-0.667 0.283c-0.78-0.904-1.927-1.474-3.207-1.474-2.334 0-4.226 1.892-4.226 4.226s1.892 4.226 4.226 4.226c2.334 0 4.226-1.892 4.226-4.226 0-0.008-0-0.017-0-0.025v0.001c-0.008-0.159-0.023-0.307-0.046-0.451l0.003 0.024 0.667-0.283c1.303 2.026 3.547 3.349 6.1 3.349 1.703 0 3.268-0.589 4.503-1.574l-0.015 0.011 2.702 2.455c-0.258 0.526-0.41 1.144-0.414 1.797v0.001c0 2.347 1.903 4.25 4.25 4.25s4.25-1.903 4.25-4.25c0-2.347-1.903-4.25-4.25-4.25v0zM8.19 5c0-0.966 0.784-1.75 1.75-1.75s1.75 0.784 1.75 1.75c0 0.966-0.784 1.75-1.75 1.75v0c-0.966-0.001-1.749-0.784-1.75-1.75v-0zM5 22.42c-0.966-0.001-1.748-0.783-1.748-1.749s0.783-1.749 1.749-1.749c0.966 0 1.748 0.782 1.749 1.748v0c-0.001 0.966-0.784 1.749-1.75 1.75h-0zM27 3.25c0.966 0 1.75 0.784 1.75 1.75s-0.784 1.75-1.75 1.75c-0.966 0-1.75-0.784-1.75-1.75v0c0.001-0.966 0.784-1.749 1.75-1.75h0zM11.19 16c0-0.001 0-0.002 0-0.003 0-2.655 2.152-4.807 4.807-4.807 1.328 0 2.53 0.539 3.4 1.409l0.001 0.001 0.001 0.001c0.87 0.87 1.407 2.072 1.407 3.399 0 2.656-2.153 4.808-4.808 4.808s-4.808-2.153-4.808-4.808c0-0 0-0 0-0v0zM27 27.75c-0.966 0-1.75-0.784-1.75-1.75s0.784-1.75 1.75-1.75c0.966 0 1.75 0.784 1.75 1.75v0c-0.001 0.966-0.784 1.749-1.75 1.75h-0z"></path>
                 </svg>
             `,
             'pins': `
-                <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
                 </svg>
             `,
             'circles': `
-                <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd"></path>
                 </svg>
             `
@@ -527,7 +670,6 @@ export class MarkersSelectionPopupManager extends BasePopupManager {
     }
 
     selectMarkerType(markerType) {
-        this.updateButtonText(this.markerTypes[markerType].name);
         this.currentMarkerType = markerType;
         
         // Apply the selected marker type to the map
@@ -543,17 +685,5 @@ export class MarkersSelectionPopupManager extends BasePopupManager {
             markerType,
             markerName: this.markerTypes[markerType].name
         });
-    }
-
-    updateButtonText(markerName) {
-        const icon = this.triggerElement.querySelector('i') || this.triggerElement.querySelector('.icon');
-        
-        if (icon) {
-            this.triggerElement.innerHTML = '';
-            this.triggerElement.appendChild(icon);
-            this.triggerElement.appendChild(document.createTextNode(` ${markerName}`));
-        } else {
-            this.triggerElement.textContent = markerName;
-        }
     }
 }

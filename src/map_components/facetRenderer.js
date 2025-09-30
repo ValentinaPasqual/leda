@@ -63,9 +63,9 @@ export class FacetRenderer {
         if (facetConfig.type === 'range') {
           this.rangeRenderer._renderRangeFacet(facetGroup, facetKey, facetConfig, aggregations, checkedState, state, onStateChange);
         } else if (facetConfig.type === 'taxonomy') {
-          this.taxonomyRenderer._renderTaxonomyFacet(facetGroup, facetKey, facetConfig, aggregations, checkedState, onStateChange);
+          this.taxonomyRenderer._renderTaxonomyFacet(facetGroup, facetKey, facetConfig, aggregations, checkedState, state, onStateChange)
         } else if (facetConfig.type === 'simple') {
-          this._renderStandardFacet(facetGroup, facetKey, facetConfig, aggregations, checkedState);
+            this._renderStandardFacet(facetGroup, facetKey, facetConfig, aggregations, checkedState, state, onStateChange);
         }
         categoryFacetsContainer.appendChild(facetGroup);
       });
@@ -187,7 +187,7 @@ export class FacetRenderer {
     this._filterFacetOptions(facetGroup, this.searchTerms[facetKey]);
   }
 
-  _renderStandardFacet(facetGroup, facetKey, facetConfig, aggregations, checkedState) {
+  _renderStandardFacet(facetGroup, facetKey, facetConfig, aggregations, checkedState, state, onStateChange) {
     const optionsContainer = document.createElement('div');
     optionsContainer.className = 'facet-options space-y-2';
 
@@ -213,7 +213,8 @@ export class FacetRenderer {
       checkbox.className = 'form-checkbox mr-2';
       checkbox.dataset.facetType = facetKey;
 
-      if (checkedState[facetKey]?.includes(bucket.key)) {
+      const currentFilters = state.filters || {};
+      if (currentFilters[facetKey]?.includes(bucket.key)) {
         checkbox.checked = true;
       }
 

@@ -1,5 +1,4 @@
-// resultsRenderer.js
-
+// Enhanced resultsRenderer.js with Tailwind-customizable styling
 import { ModalRenderer } from './modalRenderer.js';
 
 export class ResultsRenderer {
@@ -10,18 +9,18 @@ export class ResultsRenderer {
   }
 
   updateResultsList(items, config, searchState = {}) {
-    const resultsContainer = document.getElementById('results');
-    if (!resultsContainer) {
-      console.error('Results container not found');
-      return;
-    }
+  const resultsContainer = document.getElementById('results');
+  if (!resultsContainer) {
+    console.error('Results container not found');
+    return;
+  }
 
-    // Store items and search state for modal use
-    this.items = items;
-    this.searchState = searchState;
+  // Store items and search state for modal use
+  this.items = items;
+  this.searchState = searchState;
 
-    // Group items by pivot_ID
-    const groupedItems = this._groupByIdOpera(items);
+  // Group items by pivot_ID
+  const groupedItems = this._groupByIdOpera(items);
     
     // Convert grouped items to array and render
     this.allWorks = Object.values(groupedItems);
