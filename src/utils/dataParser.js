@@ -181,6 +181,12 @@ const dataParser = {
     // Extract headers from the first row and trim whitespace
     const headers = rows[0].split('\t').map(header => header.trim());
     
+    // Get aggregation fields that should have "Non specificato" (excluding range types)
+    const aggregations = this.config?.aggregations || {};
+    const fieldsForNonSpecificato = Object.keys(aggregations).filter(
+      field => aggregations[field].type !== 'range'
+    );
+    
     // Convert each data row to a JSON object
     return rows.slice(1).map(row => {
       const values = row.split('\t');
@@ -188,35 +194,42 @@ const dataParser = {
       
       // Map each value to its corresponding header
       headers.forEach((header, index) => {
-        // Handle the case where cell is not empty
-        if (index < values.length && values[index] !== '') {
-          // Clean the value by removing carriage returns and trimming whitespace
-          const value = values[index].replace(/\r/g, '').trim();
-          
-          // Skip empty values after cleaning
-          if (value === '') return;
-          
-          // Try to parse numbers and booleans
-          if (value.toLowerCase() === 'true') {
-            item[header] = true;
-          } else if (value.toLowerCase() === 'false') {
-            item[header] = false;
-          } else if (!isNaN(value) && value.trim() !== '') {
-            // Special case for join fields - keep as string to ensure consistent matching
-            if (header === 'Location' || header === 'Titolo') {
-              item[header] = value;
-            } else {
-              item[header] = Number(value);
-            }
+        // Get the value or empty string if index is out of bounds
+        const rawValue = index < values.length ? values[index] : '';
+        
+        // Clean the value by removing carriage returns and trimming whitespace
+        const value = rawValue.replace(/\r/g, '').trim();
+        
+        // If empty or missing, check if this field should have "Non specificato"
+        if (value === '') {
+          if (fieldsForNonSpecificato.includes(header)) {
+            item[header] = 'Non specificato';
           } else {
-            item[header] = value;
+            item[header] = '';
           }
-        } 
+          return;
+        }
+        
+        // Try to parse numbers and booleans
+        if (value.toLowerCase() === 'true') {
+          item[header] = true;
+        } else if (value.toLowerCase() === 'false') {
+          item[header] = false;
+        } else if (!isNaN(value) && value.trim() !== '') {
+          // Special case for join fields - keep as string to ensure consistent matching
+          if (header === 'Location' || header === 'Titolo') {
+            item[header] = value;
+          } else {
+            item[header] = Number(value);
+          }
+        } else {
+          item[header] = value;
+        }
       });
       
       return item;
     });
-  },
+  }
 };
 
 // Also export the parseData function for backward compatibility

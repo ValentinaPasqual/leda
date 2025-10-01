@@ -1,560 +1,332 @@
 /**
- * Navigation Bar Renderer Module
- * Handles navigation bar functionalities on the map
+ * Navigation Bar Renderer - Ottimizzato
+ * Coordina tutti i componenti della navbar
  */
 
-import '../../styles/tailwind.css'
-import { DOMUtils, EventUtils, FilterUtils, NotificationUtils, ResetUtils } from './navbarUtils.js';
-import { ActiveFiltersPopupManager, LayerSelectionPopupManager, MarkersSelectionPopupManager, LegendPopupManager } from './functionalitiesManager.js';
+import '../../styles/tailwind.css';
+import { NavBarState } from './navbarState.js';
+import { MobileMenuManager } from './mobileMenuManager.js';
+import { DOMUtils, FilterUtils, NotificationUtils, ResetUtils } from './navbarUtils.js';
+import { 
+    ActiveFiltersPopupManager, 
+    LayerSelectionPopupManager, 
+    MarkersSelectionPopupManager, 
+    LegendPopupManager 
+} from './functionalitiesManager.js';
+
+const ELEMENT_IDS = {
+    filtersPanel: 'filters-panel',
+    resultsPanel: 'results-panel',
+    toggleFilters: 'toggle-filters',
+    toggleResults: 'toggle-results',
+    activeFiltersBadge: 'active-filters-badge',
+    activeFiltersCount: 'active-filters-count',
+    resultsCounter: 'results-counter',
+    resultsCount: 'results-count',
+    uniqueResultsCounter: 'unique-results-counter',
+    uniqueResultsCount: 'unique-results-count',
+    clearAllBtn: 'clear-all-btn',
+    layerButton: 'map-layer-selector',
+    markersButton: 'map-markers-selector',
+    bottomNav: 'bottom-nav',
+    bottomNavContent: 'bottom-nav-content',
+    toggleLegendBtn: 'toggle-legend-btn'
+};
 
 export class NavBarRenderer {
     constructor() {
+        this.state = new NavBarState();
         this.elements = {};
-        this.state = {
-            activeFiltersCount: 0,
-            resultsCount: 0,
-            uniqueResultsCount: 0,
-            isInitialized: false
-        };
-        this.currentFilters = {};
-        this.currentQuery = '';
-        this.config = null;
-        this.mapInstance = null;
-        
-        // Popup managers
-        this.popupManagers = {
-            activeFilters: null,
-            layers: null,
-            markers: null, 
-            legend: null,
-        };
+        this.popups = {};
+        this.mobileMenu = null;
+        this.cleanupFns = [];
         
         this.init();
     }
 
-    /**
-     * Initialize the navigation bar
-     */
-    init() {
-        this.initializeElements();
-        this.initializeConfiguration();
-        this.initializePanelStates();
-        this.bindEventHandlers();
-        this.setupResponsiveBehavior();
+    // Getters per accesso globale
+    get config() { return window.ledaSearch?.config; }
+    get mapInstance() { return window.ledaSearch?.mapInstance; }
+    get currentFilters() { return window.ledaSearch?.state?.filters || {}; }
+    get currentQuery() { return window.ledaSearch?.state?.query || ''; }
 
-        this.state.isInitialized = true;
+    init() {
+        try {
+            this.initElements();
+            this.initState();
+            this.bindEvents();
+            this.initPopups();
+            this.initMobileMenu();
+        } catch (error) {
+            console.error('NavBarRenderer: Initialization error', error);
+        }
     }
 
-    /**
-     * Initialize DOM elements
-     */
-initializeElements() {
-    this.elements = {
-        filtersPanel: document.getElementById('filters-panel'),
-        resultsPanel: document.getElementById('results-panel'),
-        toggleFilters: document.getElementById('toggle-filters'),
-        toggleResults: document.getElementById('toggle-results'),
-        activeFiltersBadge: document.getElementById('active-filters-badge'),
-        activeFiltersCount: document.getElementById('active-filters-count'),
-        resultsCounter: document.getElementById('results-counter'),
-        resultsCount: document.getElementById('results-count'),
-        uniqueResultsCounter: document.getElementById('unique-results-counter'),
-        uniqueResultsCount: document.getElementById('unique-results-count'),
-        clearAllBtn: document.getElementById('clear-all-btn'),
-        layerButton: document.getElementById('map-layer-selector'),
-        markersButton: document.getElementById('map-markers-selector'),
-        // bottom nav references (possono non esistere in HTML; verranno create se mancanti)
-        bottomNav: document.getElementById('bottom-nav') || document.querySelector('nav#bottom-nav') || document.querySelector('nav'),
-        bottomNavContent: document.getElementById('bottom-nav-content')
-    };
-}
+    initElements() {
+        this.elements = Object.fromEntries(
+            Object.entries(ELEMENT_IDS).map(([key, id]) => [
+                key, 
+                document.getElementById(id)
+            ])
+        );
+    }
 
+    initState() {
+        // Sottoscrivi ai cambiamenti di stato
+        const unsubscribe = this.state.subscribe((changes) => this.onStateChange(changes));
+        this.cleanupFns.push(unsubscribe);
 
-    /**
-     * Initialize configuration and popup managers
-     */
-    initializeConfiguration() {
-        DOMUtils.waitForGlobal('ledaSearch', (ledaSearch) => {
-            this.config = ledaSearch.config;
-            this.mapInstance = ledaSearch.mapInstance;
-            this.initializePopupManagers();
+        // Inizializza stato pannelli
+        this.elements.filtersPanel?.setAttribute('data-open', 'true');
+        this.elements.resultsPanel?.setAttribute('data-open', 'true');
+        this.elements.toggleFilters?.setAttribute('data-active', 'true');
+        this.elements.toggleResults?.setAttribute('data-active', 'true');
+        
+        // se non ci sono filtri attivi non mostra il badge "attivi"
+        if (this.state.activeFiltersCount === 0) {
+            this.elements.activeFiltersBadge?.classList.add('hidden');
+            this.elements.clearAllBtn?.classList.add('hidden');
+        }
+    }
+
+    onStateChange(changes) {
+        // Aggiorna UI in base ai cambiamenti di stato
+        if ('activeFiltersCount' in changes) {
+            this.updateFiltersUI(changes.activeFiltersCount.new);
+        }
+
+        if ('resultsCount' in changes || 'uniqueResultsCount' in changes) {
+            this.updateResultsUI(
+                this.state.resultsCount, 
+                this.state.uniqueResultsCount
+            );
+        }
+
+        if ('isFiltersOpen' in changes) {
+            this.updatePanelUI('filters', changes.isFiltersOpen.new);
+        }
+
+        if ('isResultsOpen' in changes) {
+            this.updatePanelUI('results', changes.isResultsOpen.new);
+        }
+
+        // Emetti eventi personalizzati
+        this.emitStateChanges(changes);
+    }
+
+    updateFiltersUI(count) {
+        if (this.elements.activeFiltersCount) {
+            this.elements.activeFiltersCount.textContent = count;
+        }
+        
+        this.elements.activeFiltersBadge?.setAttribute('data-visible', count > 0);
+        this.elements.clearAllBtn?.setAttribute('data-visible', count > 0);
+    }
+
+    updateResultsUI(resultsCount, uniqueResultsCount) {
+        if (this.elements.resultsCount) {
+            this.elements.resultsCount.textContent = resultsCount;
+        }
+        
+        this.elements.resultsCounter?.setAttribute('data-visible', resultsCount > 0);
+        
+        // Gestisci contatore risultati unici
+        let uniqueEl = this.elements.uniqueResultsCount;
+        
+        if (!uniqueEl && uniqueResultsCount > 0 && this.elements.resultsCounter) {
+            uniqueEl = document.createElement('span');
+            uniqueEl.id = ELEMENT_IDS.uniqueResultsCount;
+            uniqueEl.className = 'ml-2 text-xs text-gray-600 bg-blue-100 px-2 py-1 rounded-full';
+            this.elements.resultsCounter.appendChild(uniqueEl);
+            this.elements.uniqueResultsCount = uniqueEl;
+        }
+        
+        if (uniqueEl) {
+            uniqueEl.textContent = `${uniqueResultsCount}`;
+            uniqueEl.setAttribute('data-visible', uniqueResultsCount > 0);
+        }
+    }
+
+    updatePanelUI(panelType, isOpen) {
+        const config = this.getPanelConfig(panelType);
+        if (!config) return;
+
+        config.panel?.setAttribute('data-open', isOpen);
+        config.button?.setAttribute('data-active', isOpen);
+    }
+
+    emitStateChanges(changes) {
+        Object.entries(changes).forEach(([key, change]) => {
+            const eventMap = {
+                activeFiltersCount: 'activeFiltersChanged',
+                resultsCount: 'resultsCountChanged',
+                isFiltersOpen: 'panelToggled',
+                isResultsOpen: 'panelToggled'
+            };
+
+            const eventName = eventMap[key];
+            if (eventName) {
+                document.dispatchEvent(new CustomEvent(`navbar:${eventName}`, {
+                    detail: { 
+                        type: key.replace('is', '').replace('Open', '').toLowerCase(),
+                        ...change 
+                    }
+                }));
+            }
         });
     }
 
-    /**
-     * Initialize popup managers
-     */
-    initializePopupManagers() {
-        // Active filters popup
-        this.popupManagers.activeFilters = new ActiveFiltersPopupManager(this);
-        this.popupManagers.activeFilters.init();
-
-        // Layer selection popup
-        if (this.config && this.config.map && this.config.map.tileLayers) {
-            this.popupManagers.layers = new LayerSelectionPopupManager(this.config.map.tileLayers);
-            this.popupManagers.layers.init();
-        }
-
-        // Markers selection popup
-        this.popupManagers.markers = new MarkersSelectionPopupManager(this.mapInstance);
-        this.popupManagers.markers.init();
-
-        // Legend  popup - Usa Timeout per prendere tutti gli elementi già caricati nel DOM nella spiegazione
-        setTimeout(() => {
-            this.popupManagers.legend = new LegendPopupManager(this.mapInstance);
-            this.popupManagers.legend.init();
-        }, 5000);
-
+    bindEvents() {
+        this.bindElement(this.elements.toggleFilters, () => this.togglePanel('filters'));
+        this.bindElement(this.elements.toggleResults, () => this.togglePanel('results'));
+        this.bindElement(this.elements.clearAllBtn, () => this.clearAllFilters());
     }
 
-    /**
-     * Update from search state
-     */
+    bindElement(element, handler) {
+        if (!element) return;
+        
+        element.addEventListener('click', handler);
+        this.cleanupFns.push(() => element.removeEventListener('click', handler));
+    }
+
+    initPopups() {
+        DOMUtils.waitForGlobal('ledaSearch', () => {
+            this.popups.activeFilters = new ActiveFiltersPopupManager(this);
+            this.popups.activeFilters.init();
+
+            if (this.config?.map?.tileLayers) {
+                this.popups.layers = new LayerSelectionPopupManager(this.config.map.tileLayers);
+                this.popups.layers.init();
+            }
+
+            if (this.mapInstance) {
+                this.popups.markers = new MarkersSelectionPopupManager(this.mapInstance);
+                this.popups.markers.init();
+
+                // Init legend con delay
+                setTimeout(() => {
+                    this.popups.legend = new LegendPopupManager(this);
+                    this.popups.legend.init();
+                }, 5000);
+            }
+        });
+    }
+
+    initMobileMenu() {
+        this.mobileMenu = new MobileMenuManager(this.elements);
+        this.cleanupFns.push(() => this.mobileMenu?.destroy());
+    }
+
+    // API Pubbliche
+
     updateFromSearchState(searchState, resultsCount = 0, options = {}) {
         if (!searchState) return;
 
-        this.currentFilters = { ...searchState.filters };
-        this.currentQuery = searchState.query || '';
+        let filtersCount = FilterUtils.calculateActiveFiltersCount(searchState.filters);
+        if (searchState.query?.trim()) filtersCount += 1;
 
-        const uniqueResultsCount = options.uniqueResultsCount || 0;
-        const filtersCount = FilterUtils.calculateActiveFiltersCount(searchState.filters);
-        
-        this.updateActiveFiltersCount(filtersCount);
-        this.updateResultsCount(resultsCount, uniqueResultsCount);
-    }
-
-    /**
-     * Update active filters count display
-     */
-    updateActiveFiltersCount(count) {
-        this.state.activeFiltersCount = count;
-        this.elements.activeFiltersCount.textContent = count;
-        
-        if (count > 0) {
-            DOMUtils.showElement(this.elements.activeFiltersBadge);
-            DOMUtils.showElement(this.elements.clearAllBtn);
-        } else {
-            DOMUtils.hideElement(this.elements.activeFiltersBadge);
-            DOMUtils.hideElement(this.elements.clearAllBtn);
-        }
-        
-        EventUtils.emit('navbar:activeFiltersChanged', { count });
-    }
-
-    /**
-     * Update results count display
-     */
-    updateResultsCount(count, uniqueResultsCount = 0) {
-        this.state.resultsCount = count;
-        this.state.uniqueResultsCount = uniqueResultsCount;
-
-        this.elements.resultsCount.textContent = count;
-        this.updateUniqueResultsDisplay(uniqueResultsCount);
-        
-        if (count > 0) {
-            DOMUtils.showElement(this.elements.resultsCounter);
-        } else {
-            DOMUtils.hideElement(this.elements.resultsCounter);
-        }
-
-        if (uniqueResultsCount > 0 && this.elements.uniqueResultsCounter) {
-            DOMUtils.showElement(this.elements.uniqueResultsCounter);
-        } else if (this.elements.uniqueResultsCounter) {
-            DOMUtils.hideElement(this.elements.uniqueResultsCounter);
-        }
-        
-        EventUtils.emit('navbar:resultsCountChanged', { 
-            totalCount: count,
-            uniqueResultsCount: uniqueResultsCount 
+        this.state.update({
+            activeFiltersCount: filtersCount,
+            resultsCount: resultsCount,
+            uniqueResultsCount: options.uniqueResultsCount || 0
         });
     }
 
-    /**
-     * Update unique results count display
-     */
-    updateUniqueResultsDisplay(uniqueResultsCount) {
-        let uniqueResultsElement = document.getElementById('unique-results-count');
-        
-        if (!uniqueResultsElement) {
-            uniqueResultsElement = document.createElement('span');
-            uniqueResultsElement.id = 'unique-results-count';
-            uniqueResultsElement.className = 'ml-2 text-xs text-gray-600 bg-blue-100 px-2 py-1 rounded-full';
-            
-            const resultsCounter = this.elements.resultsCounter;
-            if (resultsCounter) {
-                resultsCounter.appendChild(uniqueResultsElement);
-            }
-        }
-        
-        if (uniqueResultsCount > 0) {
-            uniqueResultsElement.textContent = `${uniqueResultsCount}`;
-            uniqueResultsElement.style.display = 'inline';
-        } else {
-            uniqueResultsElement.style.display = 'none';
-        }
+    updateFilters(count) {
+        this.state.update({ activeFiltersCount: count });
     }
 
-    /**
-     * Bind all event handlers
-     */
-    bindEventHandlers() {
-        // Panel toggles
-        this.elements.toggleFilters?.addEventListener('click', () => {
-            this.togglePanel('filters');
-        });
-
-        this.elements.toggleResults?.addEventListener('click', () => {
-            this.togglePanel('results');
-        });
-
-        // Clear all filters
-        this.elements.clearAllBtn?.addEventListener('click', () => {
-            this.handleClearAllFilters();
+    updateResults(count, uniqueCount = 0) {
+        this.state.update({ 
+            resultsCount: count,
+            uniqueResultsCount: uniqueCount 
         });
     }
 
-    /**
-     * Initialize panel states (open by default)
-     */
-    initializePanelStates() {
-        this.elements.filtersPanel?.classList.remove('panel-closed');
-        this.elements.resultsPanel?.classList.remove('panel-closed-right');
-        
-        this.elements.toggleFilters?.classList.add('active');
-        this.elements.toggleResults?.classList.add('active');
-        
-        this.elements.filtersPanel?.classList.add('panel-open');
-        this.elements.resultsPanel?.classList.add('panel-open');
-    }
-
-    /**
-     * Toggle a specific panel
-     */
     togglePanel(panelType) {
-        const panelConfig = this.getPanelConfig(panelType);
-        if (!panelConfig) return;
-
-        const { panel, button, closedClass } = panelConfig;
-        const isCurrentlyOpen = !panel.classList.contains(closedClass);
-        
-        if (isCurrentlyOpen) {
-            this.closePanel(panel, button, closedClass);
-        } else {
-            this.openPanel(panel, button, closedClass);
-        }
-        
-        EventUtils.emit('navbar:panelToggled', { 
-            type: panelType, 
-            isOpen: !isCurrentlyOpen 
-        });
+        const key = `is${panelType.charAt(0).toUpperCase() + panelType.slice(1)}Open`;
+        this.state.update({ [key]: !this.state[key] });
     }
 
-    /**
-     * Get panel configuration
-     */
     getPanelConfig(panelType) {
         const configs = {
-            filters: {
-                panel: this.elements.filtersPanel,
-                button: this.elements.toggleFilters,
-                closedClass: 'panel-closed'
+            filters: { 
+                panel: this.elements.filtersPanel, 
+                button: this.elements.toggleFilters 
             },
-            results: {
-                panel: this.elements.resultsPanel,
-                button: this.elements.toggleResults,
-                closedClass: 'panel-closed-right'
+            results: { 
+                panel: this.elements.resultsPanel, 
+                button: this.elements.toggleResults 
             }
         };
-        
         return configs[panelType];
     }
 
-    /**
-     * Close a panel
-     */
-    closePanel(panel, button, closedClass) {
-        panel?.classList.add(closedClass);
-        panel?.classList.remove('panel-open');
-        button?.classList.remove('active');
-    }
-
-    /**
-     * Open a panel
-     */
-    openPanel(panel, button, closedClass) {
-        panel?.classList.remove(closedClass);
-        panel?.classList.add('panel-open');
-        button?.classList.add('active');
-    }
-
-    /**
-     * Close all panels
-     */
     closeAllPanels() {
-        this.closePanel(this.elements.filtersPanel, this.elements.toggleFilters, 'panel-closed');
-        this.closePanel(this.elements.resultsPanel, this.elements.toggleResults, 'panel-closed-right');
+        this.state.update({
+            isFiltersOpen: false,
+            isResultsOpen: false
+        });
     }
 
-    /**
-     * Handle clear all filters action
-     */
-    handleClearAllFilters() {
-        // Hide popup if open
-        this.popupManagers.activeFilters?.hide();
-        
-        // Reset local state
-        this.currentFilters = {};
-        this.currentQuery = '';
-        
-        // Update UI immediately
-        this.updateActiveFiltersCount(0);
-        this.updateResultsCount(0);
-        
-        // Emit event for external handling
-        EventUtils.emit('navbar:clearAllFilters', { 
-            resetInterface: true,
-            clearSearch: true,
-            clearFacets: true,
-            clearMap: true
+    clearAllFilters() {
+        // Chiudi popup attivi
+        Object.values(this.popups).forEach(popup => popup?.hide());
+
+        // Reset stato
+        this.state.update({
+            activeFiltersCount: 0,
+            resultsCount: 0,
+            uniqueResultsCount: 0
         });
-        
-        // Reset interfaces after delay
+
+        // Emetti evento
+        document.dispatchEvent(new CustomEvent('navbar:clearAllFilters', {
+            detail: {
+                resetInterface: true,
+                clearSearch: true,
+                clearFacets: true,
+                clearMap: true
+            }
+        }));
+
+        // Reset interfaccia con delay
         setTimeout(() => {
             ResetUtils.resetFacetsInterface();
             ResetUtils.clearSearchInput();
         }, 100);
-        
+
         NotificationUtils.show('Tutti i filtri sono stati rimossi', 'success', 2000);
     }
 
-    /**
-     * Setup responsive behavior
-     */
-setupResponsiveBehavior() {
-    // inizializza hamburger/menu dinamico
-    this.setupHamburgerMenu();
+    // Utility Methods
 
-    // comportamento legacy: chiude i pannelli su schermi piccoli
-    const handleSmallScreens = () => {
-        if (window.innerWidth < 768) {
-            this.closeAllPanels();
-            // nascondo anche il container desktop se presente
-            this.elements.bottomNavContent?.classList.add('hidden');
-        } else {
-            // su desktop apro (o lascio come prima)
-            this.elements.bottomNavContent?.classList.remove('hidden');
-            this.elements.bottomNavContent?.classList.add('flex');
-        }
-    };
-
-    window.addEventListener('resize', handleSmallScreens);
-    // chiamata iniziale
-    handleSmallScreens();
-}
-
-
-
-/**
- * Crea hamburger + menu mobile (se non esistono) e inizializza layout
- */
-setupHamburgerMenu() {
-    // crea i nodi se mancano
-    this.createHamburgerAndMobileMenu();
-    // allinea elementi subito
-    this.updateMenuLayout();
-    // resize listener per spostare dentro/fuori
-    window.addEventListener('resize', () => {
-        this.updateMenuLayout();
-    });
-}
-
-/**
- * Crea DOM per hamburger e mobile menu se non esistono
- */
-createHamburgerAndMobileMenu() {
-    const bottomNav = this.elements.bottomNav || document.querySelector('nav#bottom-nav') || document.querySelector('nav') || document.body;
-    this.elements.bottomNav = bottomNav;
-
-    // Hamburger button
-    if (!document.getElementById('hamburger-btn')) {
-        const btn = document.createElement('button');
-        btn.id = 'hamburger-btn';
-        btn.className = 'md:hidden p-2 z-60'; // visibile solo su small screens
-        btn.setAttribute('aria-label', 'Apri menu');
-        btn.innerHTML = `
-            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <line x1="5" y1="7" x2="19" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
-                <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
-                <line x1="5" y1="17" x2="19" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
-            </svg>
-        `;
-        bottomNav.appendChild(btn);
-
-        btn.addEventListener('click', () => {
-            const mobileMenu = document.getElementById('bottom-nav-mobile-menu');
-            if (mobileMenu) {
-                mobileMenu.classList.toggle('hidden');
-            }
-        });
-    }
-
-    // Mobile menu container (appears above bottom nav)
-    if (!document.getElementById('bottom-nav-mobile-menu')) {
-        const menu = document.createElement('div');
-        menu.id = 'bottom-nav-mobile-menu';
-        // posizione fissa sopra la bottom nav; hidden di default
-        menu.className = 'hidden md:hidden fixed bottom-14 left-4 right-4 bg-white shadow-lg p-3 rounded-lg flex flex-col gap-2 z-50';
-        // aggiungo una classe di transizione per fluidità
-        menu.style.transition = 'transform .18s ease, opacity .18s ease';
-        document.body.appendChild(menu);
-    }
-}
-
-/**
- * Decide se mettere gli elementi nel menu mobile o rimetterli nel bottom nav (desktop)
- */
-updateMenuLayout() {
-    const isMobile = window.innerWidth < 768;
-    const mobileMenu = document.getElementById('bottom-nav-mobile-menu');
-    let desktopContainer = this.elements.bottomNavContent || document.getElementById('bottom-nav-content');
-
-    // se non esiste container desktop, crealo dentro bottomNav (non rompere layout desktop)
-    if (!desktopContainer) {
-        desktopContainer = document.createElement('div');
-        desktopContainer.id = 'bottom-nav-content';
-        // default: visibile su desktop, nascosto su mobile
-        desktopContainer.className = 'hidden md:flex items-center space-x-3';
-        this.elements.bottomNav?.appendChild(desktopContainer);
-        this.elements.bottomNavContent = desktopContainer;
-    }
-
-    if (isMobile) {
-        // nascondi la porzione desktop (se presente) e sposta dentro mobile menu
-        desktopContainer.classList.remove('flex');
-        desktopContainer.classList.add('hidden');
-        this.moveToMobileMenu(mobileMenu);
-    } else {
-        // desktop: assicurati che il container sia visibile e riporta gli elementi
-        desktopContainer.classList.remove('hidden');
-        desktopContainer.classList.add('flex');
-        this.moveToDesktop(mobileMenu, desktopContainer);
-    }
-}
-
-/**
- * Sposta i nostri elementi dentro il mobile menu (preservando event listeners)
- */
-moveToMobileMenu(menu) {
-    if (!menu) return;
-    const ids = [
-        'toggle-filters',
-        'active-filters-badge',
-        'clear-all-btn',
-        'map-layer-selector',
-        'map-markers-selector',
-        'toggle-legend-btn',
-        'results-counter',
-        'unique-results-counter',
-        'toggle-results',
-    ];
-    ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el && el.parentNode !== menu) {
-            // aggiungo full width per rendere più comodo il tap su mobile
-            el.classList.add('w-full', 'block');
-            menu.appendChild(el);
-        }
-    });
-    // di default il menu resta nascosto finché non si clicca hamburger
-    menu.classList.add('hidden');
-}
-
-/**
- * Riporta gli elementi nel container desktop
- */
-moveToDesktop(menu, desktopContainer) {
-    if (!desktopContainer) return;
-    if (!menu) return;
-
-    // Prendo una copia dei figli perché stiamo spostando nodi
-    const nodes = Array.from(menu.childNodes);
-    nodes.forEach(node => {
-        // ignora nodi non-elemento
-        if (!(node instanceof HTMLElement)) return;
-        // rimuovo classi di full width usate per mobile
-        node.classList.remove('w-full', 'block');
-        desktopContainer.appendChild(node);
-    });
-
-    // nascondi menu mobile
-    menu.classList.add('hidden');
-}
-
-
-
-    /**
-     * Get current state
-     */
     getState() {
         return {
-            ...this.state,
-            isFiltersOpen: !this.elements.filtersPanel?.classList.contains('panel-closed'),
-            isResultsOpen: !this.elements.resultsPanel?.classList.contains('panel-closed-right'),
-            currentFilters: { ...this.currentFilters },
-            currentQuery: this.currentQuery
+            ...this.state.getSnapshot(),
+            currentFilters: this.currentFilters,
+            currentQuery: this.currentQuery,
+            config: this.config,
+            mapInstance: this.mapInstance
         };
     }
 
-    /**
-     * Set state
-     */
-    setState(newState) {
-        Object.entries(newState).forEach(([key, value]) => {
-            switch (key) {
-                case 'activeFiltersCount':
-                    this.updateActiveFiltersCount(value);
-                    break;
-                case 'resultsCount':
-                    this.updateResultsCount(value, newState.uniqueResultsCount);
-                    break;
-                case 'isFiltersOpen':
-                    this.setPanelState('filters', value);
-                    break;
-                case 'isResultsOpen':
-                    this.setPanelState('results', value);
-                    break;
-                case 'currentFilters':
-                    this.currentFilters = { ...value };
-                    break;
-                case 'currentQuery':
-                    this.currentQuery = value;
-                    break;
-                default:
-                    if (this.state.hasOwnProperty(key)) {
-                        this.state[key] = value;
-                    }
+    setState(updates) {
+        const stateUpdates = {};
+        
+        Object.entries(updates).forEach(([key, value]) => {
+            if (this.state.hasOwnProperty(key)) {
+                stateUpdates[key] = value;
+            } else if (['currentFilters', 'currentQuery', 'config', 'mapInstance'].includes(key)) {
+                console.warn(`NavBarRenderer: ${key} è read-only`);
             }
         });
-    }
 
-    /**
-     * Set panel state
-     */
-    setPanelState(panelType, shouldBeOpen) {
-        const panelConfig = this.getPanelConfig(panelType);
-        if (!panelConfig) return;
-
-        const { panel, closedClass } = panelConfig;
-        const isCurrentlyOpen = !panel?.classList.contains(closedClass);
-        
-        if (shouldBeOpen !== isCurrentlyOpen) {
-            this.togglePanel(panelType);
+        if (Object.keys(stateUpdates).length > 0) {
+            this.state.update(stateUpdates);
         }
     }
 
-    /**
-     * Event listener management
-     */
     addEventListener(eventName, handler) {
         document.addEventListener(`navbar:${eventName}`, handler);
     }
@@ -563,46 +335,28 @@ moveToDesktop(menu, desktopContainer) {
         document.removeEventListener(`navbar:${eventName}`, handler);
     }
 
-    /**
-     * Show notification
-     */
     showNotification(message, type = 'info', duration = 3000) {
         NotificationUtils.show(message, type, duration);
     }
 
-    /**
-     * Reset interface completely
-     */
     resetInterface() {
-        this.currentFilters = {};
-        this.currentQuery = '';
-        this.updateActiveFiltersCount(0);
-        this.updateResultsCount(0);
-        this.popupManagers.activeFilters?.hide();
-        this.closeAllPanels();
+        this.state.reset();
+        Object.values(this.popups).forEach(popup => popup?.hide());
         ResetUtils.resetFacetsInterface();
         ResetUtils.clearSearchInput();
     }
 
-    /**
-     * Destroy and cleanup
-     */
     destroy() {
-        // Destroy popup managers
-        Object.values(this.popupManagers).forEach(manager => {
-            manager?.destroy();
-        });
+        // Cleanup di tutti i listener e risorse
+        this.cleanupFns.forEach(cleanup => cleanup());
+        Object.values(this.popups).forEach(popup => popup?.destroy());
         
-        // Clear references
+        this.cleanupFns = [];
         this.elements = {};
-        this.currentFilters = {};
-        this.currentQuery = '';
-        this.config = null;
-        this.mapInstance = null;
-        this.popupManagers = {};
-        this.state.isInitialized = false;
+        this.popups = {};
+        this.mobileMenu = null;
     }
 }
 
-// Export singleton instance
+// Esporta istanza singleton
 export const navBarRenderer = new NavBarRenderer();

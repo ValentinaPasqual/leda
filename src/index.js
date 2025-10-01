@@ -1,5 +1,5 @@
 // src/index.js
-import { initMap } from './utils/initMap.js';
+import { initMap } from './map_components/map/initMap.js';
 import { parseData } from './utils/dataParser.js';
 import { loadConfiguration } from './utils/configLoader.js';
 import { UniversalNav } from './navigation/universalNav.js';
@@ -10,7 +10,13 @@ import './styles/fonts.css'
 
 // Funzione per aggiornare i contenuti dinamicamente
 function updateProjectDescription(config) {
+
+  if (config.project && config.project.projectShortTitle) {
+    document.title = config.project.projectShortTitle;
+  }
+  
   // Aggiorna elementi in base agli attributi data-*
+
   const projectTitle = document.querySelector('[data-content="project-title"]');
   if (projectTitle) projectTitle.textContent = config.project.projectTitle;
   

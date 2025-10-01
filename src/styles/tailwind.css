@@ -805,5 +805,125 @@ header {
   }
 }
 
+/* ####################################################################################### */
+/* ############################### NAVBAR DELLA MAPPA #################################### */
+/* ####################################################################################### */
+
+/* === GESTIONE VISIBILITÀ CON DATA-ATTRIBUTES === */
+
+/* Nascondi elementi con data-visible="false" */
+[data-visible="false"] {
+    display: none !important;
+}
+
+[data-visible="true"] {
+    display: initial;
+}
+
+/* === GESTIONE PANNELLI CON DATA-ATTRIBUTES === */
+
+/* Pannelli chiusi (sinistra) */
+#filters-panel[data-open="false"] {
+    transform: translateX(-100%);
+}
+
+#filters-panel[data-open="true"] {
+    transform: translateX(0);
+}
+
+/* Pannelli chiusi (destra) */
+#results-panel[data-open="false"] {
+    transform: translateX(100%);
+}
+
+#results-panel[data-open="true"] {
+    transform: translateX(0);
+}
+
+/* Transizioni smooth per i pannelli */
+#filters-panel,
+#results-panel {
+    transition: transform 0.3s ease-in-out;
+}
+
+/* === GESTIONE TOGGLE BUTTONS === */
+
+/* Stato attivo dei pulsanti toggle */
+[data-active="false"] {
+    opacity: 0.6;
+}
+
+[data-active="true"] {
+    opacity: 1;
+}
+
+/* === GESTIONE MENU MOBILE === */
+
+/* Menu mobile nascosto/visibile */
+#bottom-nav-mobile-menu[data-open="false"] {
+    display: none;
+}
+
+#bottom-nav-mobile-menu[data-open="true"] {
+    display: flex;
+}
+
+/* Transizioni per il menu mobile */
+#bottom-nav-mobile-menu {
+    transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+/* === RESPONSIVE === */
+
+/* Il layout responsive è gestito da JavaScript per lo spostamento degli elementi,
+   ma le transizioni e gli stati sono gestiti da CSS */
+
+/* Elementi dentro il menu mobile */
+#bottom-nav-mobile-menu > * {
+    width: 100%;
+    display: block;
+}
+
+/* === ANIMAZIONI E TRANSIZIONI === */
+
+/* Transizioni per elementi visibili/invisibili */
+[data-visible] {
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+[data-visible="false"] {
+    opacity: 0;
+    visibility: hidden;
+}
+
+[data-visible="true"] {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Transizioni per pulsanti attivi */
+[data-active] {
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+/* === UTILITY CLASSES === */
+
+/* Per garantire che le transizioni funzionino correttamente */
+.panel-transition {
+    will-change: transform;
+}
+
+/* Per elementi che devono rimanere in vista durante le animazioni */
+.z-panel {
+    z-index: 40;
+}
+
+.z-nav {
+    z-index: 50;
+}
+
+.z-menu {
+    z-index: 60;
+}
 
 
