@@ -49,13 +49,11 @@
     "defaultSort": "date_desc",
     "sortOptions": [
       {"value": "title_asc", "label": "Titolo (Asc)"},
-      {"value": "title_desc", "label": "Titolo (Desc)"},
-      {"value": "date_asc", "label": "Anno (Asc)"},
-      {"value": "date_desc", "label": "Anno (Desc)"}
+      {"value": "title_desc", "label": "Titolo (Desc)"}
     ]
   },
   "resultsDisplay": {
-    "tagsToShow": ["Location", "Titolo"]
+    "tagsToShow": ["Titolo"]
   },
   "sortings": {
     "title_desc": {
@@ -64,14 +62,6 @@
     },
     "title_asc": {
       "field": "Titolo",
-      "order": "asc"
-    },
-    "date_desc": {
-      "field": "Anno",
-      "order": "desc"
-    },
-    "date_asc": {
-      "field": "Anno",
       "order": "asc"
     }
   },
