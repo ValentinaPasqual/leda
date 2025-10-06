@@ -22,6 +22,20 @@
     "card_description": "Descrizione Ecocritica",
     "popup_description": "Note sullo spazio"
   },
+  "modal_information": {
+    "Titolo": "Titolo",
+    "Autore": "Autore",
+    "Anno": "Anno di prima pubblicazione", 
+    "Editore": "Editore",
+    "Modo": "Modo",
+    "Temi Ecologici": "Temi Ecologici",
+    "Descrizione Ecocritica": "Descrizione dei Temi Ecocritici",
+    "Note sullo spazio": "Note",
+    "Tipologia dello Spazio": "Tipologia",
+    "Temporalità dello Spazio": "Temporalità", 
+    "Definizione dello spazio": "Definizione",
+    "Interpretazione": "Motivazione dello studioso"
+  },
   "map": {
     "initialView": [41.8719, 12.5674],
     "initialZoom": 6,
@@ -46,14 +60,16 @@
   },
   "searchConfig": {
     "debounceTime": 300,
-    "defaultSort": "date_desc",
+    "defaultSort": "title_asc",
     "sortOptions": [
       {"value": "title_asc", "label": "Titolo (Asc)"},
-      {"value": "title_desc", "label": "Titolo (Desc)"}
+      {"value": "title_desc", "label": "Titolo (Desc)"},
+      {"value": "date_asc", "label": "Anno (Asc)"},
+      {"value": "date_desc", "label": "Anno (Desc)"}
     ]
   },
   "resultsDisplay": {
-    "tagsToShow": ["Titolo"]
+    "tagsToShow": ["Titolo", "Anno"]
   },
   "sortings": {
     "title_desc": {
@@ -62,6 +78,14 @@
     },
     "title_asc": {
       "field": "Titolo",
+      "order": "asc"
+    },
+    "date_desc": {
+      "field": "Anno",
+      "order": "desc"
+    },
+    "date_asc": {
+      "field": "Anno",
       "order": "asc"
     }
   },
@@ -119,13 +143,6 @@
       "title": "I modi",
       "size": 100,
       "category": "I riferimenti letterari",
-      "conjunction": false,
-      "type": "simple"
-    },
-    "Interpretazione": {
-      "title": "Motivazione dell'interpretazione",
-      "size": 100,
-      "category": "Le interpretazioni",
       "conjunction": false,
       "type": "simple"
     }
