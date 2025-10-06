@@ -45,10 +45,26 @@ export class NavBarRenderer {
     }
 
     // Getters per accesso globale
-    get config() { return window.ledaSearch?.config; }
-    get mapInstance() { return window.ledaSearch?.mapInstance; }
-    get currentFilters() { return window.ledaSearch?.state?.filters || {}; }
-    get currentQuery() { return window.ledaSearch?.state?.query || ''; }
+    get config() { 
+        return window.ledaSearch?.config; 
+    }
+
+    get mapInstance() { 
+        return window.ledaSearch?.mapInstance; 
+    }
+
+    get currentFilters() { 
+        const state = window.ledaSearch?.stateManager?.state || 
+                    window.ledaSearch?.filterManager?.stateManager?.state;
+        
+        return state?.filters || {};
+    }
+
+    get currentQuery() { 
+        const state = window.ledaSearch?.stateManager?.state || 
+                    window.ledaSearch?.filterManager?.stateManager?.state;
+        return state?.query || ''; 
+    }
 
     init() {
         try {

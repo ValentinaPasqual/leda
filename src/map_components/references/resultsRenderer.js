@@ -156,51 +156,48 @@ export class ResultsRenderer {
       `;
     }).join('');
 
-    return `
-      <div class="result-card bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300 p-6" 
-           data-result-id="${work.pivot_ID}">
-        <!-- Header -->
-        <div class="flex items-start justify-between gap-4">
-          <div class="min-w-0 flex-1">
-            <!-- Title and Subtitles -->
-            <div class="mb-4">
-              <h1 class="text-xl font-bold text-gray-900 leading-tight">${work.Title}</h1>
-              <div class="flex items-center gap-4 mt-2">
-                ${work.Subtitle ? `<p class="text-lg text-gray-700 font-medium truncate">${work.Subtitle}</p>` : ''}
-                ${work.Subtitle && work.Subtitle2 ? `<span class="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0"></span>` : ''}
-                ${work.Subtitle2 ? `<p class="text-lg text-gray-600 font-mono flex-shrink-0">${work.Subtitle2}</p>` : ''}
-              </div>
-            </div>
-            
-            <!-- Description with vertical bar -->
-            ${work.Description ? `
-              <div class="flex items-start gap-2">
-                <div class="w-1 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full shadow-sm flex-shrink-0" style="height: auto; min-height: 1.5rem;"></div>
-                <p class="text-base text-gray-600 flex-1">${work.Description}</p>
-              </div>
-            ` : ''}
-          </div>
-          
-          <!-- More button -->
-          <button class="modal-toggle-btn inline-flex items-center px-4 py-2 rounded-full shadow-md hover:shadow-lg transition-all duration-200 flex-shrink-0 bg-primary-500 hover:bg-primary-600 text-white"
-                  data-work-index="${index}"
-                  title="Visualizza tutte le opere">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-            </svg>
-          </button>
+return `
+  <div class="result-card bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300 p-6" 
+       data-result-id="${work.pivot_ID}">
+    <!-- Header with Title, Subtitles and Button -->
+    <div class="flex items-start justify-between gap-4 mb-4">
+      <div class="min-w-0 flex-1">
+        <h1 class="text-xl font-bold text-gray-900 leading-tight">${work.Title}</h1>
+        <div class="flex items-center gap-4 mt-2">
+          ${work.Subtitle ? `<p class="text-lg text-gray-700 font-medium truncate">${work.Subtitle}</p>` : ''}
+          ${work.Subtitle && work.Subtitle2 ? `<span class="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0"></span>` : ''}
+          ${work.Subtitle2 ? `<p class="text-lg text-gray-600 font-mono flex-shrink-0">${work.Subtitle2}</p>` : ''}
         </div>
-        
-        <!-- Locations -->
-        ${spacesButtons ? `
-          <div class="pt-4 border-t border-gray-200">
-            <div class="flex flex-wrap gap-2">
-              ${spacesButtons}
-            </div>
-          </div>
-        ` : ''}
       </div>
-    `;
+      
+      <!-- More button -->
+      <button class="modal-toggle-btn inline-flex items-center px-4 py-2 rounded-full shadow-md hover:shadow-lg transition-all duration-200 flex-shrink-0 bg-primary-500 hover:bg-primary-600 text-white"
+              data-work-index="${index}"
+              title="Visualizza tutte le opere">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Description with vertical bar -->
+    ${work.Description ? `
+      <div class="flex items-stretch gap-2">
+        <div class="w-1 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full shadow-sm flex-shrink-0"></div>
+        <p class="text-xs text-gray-600 flex-1">${work.Description}</p>
+      </div>
+    ` : ''}
+    
+    <!-- Locations -->
+    ${spacesButtons ? `
+      <div class="pt-4 border-t border-gray-200 mt-4">
+        <div class="flex flex-wrap gap-2">
+          ${spacesButtons}
+        </div>
+      </div>
+    ` : ''}
+  </div>
+`;
   }
 
   _addModalListeners() {

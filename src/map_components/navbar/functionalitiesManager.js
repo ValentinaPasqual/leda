@@ -146,16 +146,36 @@ export class ActiveFiltersPopupManager extends BasePopupManager {
         const content = document.createElement('div');
         content.className = `space-y-1 ${POPUP_CONFIG.contentMaxHeight} overflow-y-auto overflow-x-hidden`;
         
-        const searchState = {
-            query: this.navBar.currentQuery,
-            filters: this.navBar.currentFilters
-        };
+        // Recupera il searchState nello stesso modo della modale
+        const searchState = this.getSearchState();
         
         const renderer = new FilterBadgesRenderer(this.navBar.config);
-        content.innerHTML = renderer.render(searchState);
+        const filterBadgesHtml = renderer.render(searchState);
+        
+        if (!filterBadgesHtml || filterBadgesHtml.trim() === '') {
+            content.innerHTML = '<div class="p-3 text-sm text-gray-500 italic">Nessun filtro applicato</div>';
+        } else {
+            content.innerHTML = filterBadgesHtml;
+        }
         
         popup.appendChild(content);
         return popup;
+    }
+
+    /**
+     * Recupera il searchState corrente dal sistema globale
+     */
+    getSearchState() {
+        // Prova prima da window.ledaSearch.state (fonte principale)
+        if (window.ledaSearch?.state) {
+            return window.ledaSearch.state;
+        }
+        
+        // Fallback: costruisci manualmente
+        return {
+            query: this.navBar.currentQuery || '',
+            filters: this.navBar.currentFilters || {}
+        };
     }
 }
 
@@ -274,7 +294,7 @@ export class LegendPopupManager extends BasePopupManager {
         p.className = 'text-sm text-gray-700 leading-relaxed';
         p.appendChild(document.createTextNode('I '));
         p.appendChild(this.tooltip('filtri', this.getElement('#toggle-filters'), 'right'));
-        p.appendChild(document.createTextNode(' permettono di selezionare i luoghi sulla mappa ed i riferimenti relazionati.  '));
+        p.appendChild(document.createTextNode(' intervengono sul filtraggio sia dei luoghi sulla mappa sia dei riferimenti ad essi associati. Il numero di occorrenze dei filtri rappresenta il numero di volte in cui ciascun luogo è stato menzionato. '));
         
         section.appendChild(p);
         return section;
