@@ -5,10 +5,10 @@
     "start": "vite",
     "dev": "vite --host",
     "deploy": "npm run build && gh-pages -d dist",
-    "build": "vite build",
+    "build": "vite build --mode production",
     "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/assets/css/tailwind.css --watch",
     "preview": "vite preview",
-     "setup": "npm install"
+    "setup": "npm install"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
