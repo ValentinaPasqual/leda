@@ -4,7 +4,7 @@
   "scripts": {
     "start": "vite",
     "dev": "vite --host",
-    "deploy": "npm run build && gh-pages -d dist -t true",
+    "deploy": "npm run build && gh-pages -d dist",
     "build": "vite build --mode production",
     "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/assets/css/tailwind.css --watch",
     "preview": "vite preview",
