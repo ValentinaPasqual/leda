@@ -2,10 +2,10 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
 
-const BASE_PATH = '/apap_demo/';
+const BASE_PATH = process.env.VITE_BASE_PATH || '/';
 
 export default defineConfig({
-  base: process.env.BASE_PATH ,
+  base: BASE_PATH, 
   
   define: {
     __APP_ID__: JSON.stringify(BASE_PATH.replace(/\//g, '') || 'root')
