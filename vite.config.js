@@ -1,11 +1,6 @@
-import { defineConfig, loadEnv } from 'vite'
-import { resolve } from 'path'
-
+// vite.config.js
 export default defineConfig(({ mode }) => {
-  // Load environment variables based on the mode
   const env = loadEnv(mode, process.cwd(), '');
-
-  // Use VITE_BASE_PATH from env
   const BASE_PATH = env.VITE_BASE_PATH || '/';
 
   return {
@@ -13,14 +8,17 @@ export default defineConfig(({ mode }) => {
     define: {
       __APP_ID__: JSON.stringify(BASE_PATH.replace(/\//g, '') || 'root')
     },
+    
     resolve: {
       alias: {
         '@imgs': resolve(__dirname, 'src/styles/imgs')
       }
     },
+    
     build: {
       outDir: 'dist',
       assetsDir: 'assets',
+      
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'index.html'),
@@ -28,18 +26,18 @@ export default defineConfig(({ mode }) => {
           indice: resolve(__dirname, 'pages/indice.html'),
           indici: resolve(__dirname, 'pages/indici.html'),
           percorsi: resolve(__dirname, 'pages/percorsi.html'),
-          percorso: resolve(__dirname, 'pages/percorso.html')
+          percorso: resolve(__dirname, 'pages/percorso.html'),
         },
         output: {
           entryFileNames: 'assets/js/[name].js',
-          chunkFileNames: 'assets/js/[name]-[hash].js',
+          chunkFileNames: 'assets/js/[name]-[hash].js',  // Rimuovi underscore
           assetFileNames: (info) => {
             if (info.name.endsWith('.css')) {
               return 'assets/css/[name][extname]';
             }
             return 'assets/[ext]/[name][extname]';
-          }
-          // Rimuove gli underscore dai chunk comuni (a github pages non piace)
+          },
+          // Rimuovere underscore dai chunk comuni [a github non piace]
           manualChunks: undefined
         }
       }
