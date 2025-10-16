@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
   const BASE_PATH = env.VITE_BASE_PATH || '/';
 
   return {
-    base: BASE_PATH,   // ✅ correctly returned
+    base: BASE_PATH,  
     define: {
       __APP_ID__: JSON.stringify(BASE_PATH.replace(/\//g, '') || 'root')
     },
@@ -39,6 +39,8 @@ export default defineConfig(({ mode }) => {
             }
             return 'assets/[ext]/[name][extname]';
           }
+          // Rimuove gli underscore dai chunk comuni (a github pages non piace)
+          manualChunks: undefined
         }
       }
     }
