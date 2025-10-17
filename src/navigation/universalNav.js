@@ -1,22 +1,17 @@
-// universalNav.js - Versione con supporto BASE_PATH di Vite
+// universalNav.js - Versione con Layout Normale e Overlay su Scroll
 import { dirname, join, basename, relative } from 'pathe';
 
 export class UniversalNav {
     constructor(config) {
-        // Ottieni il BASE_PATH da Vite
-        this.viteBasePath = import.meta.env.BASE_URL || '/';
         this.currentPath = this.normalizePath(window.location.pathname);
         this.config = config;
         this.basePath = this.calculateBasePath(this.config);
         this.header = null;
         this.isScrolling = false;
-        this.scrollThreshold = 100;
-        
-        console.log('Vite BASE_URL:', this.viteBasePath);
-        console.log('Current Path:', this.currentPath);
-        console.log('Calculated Base Path:', this.basePath);
+        this.scrollThreshold = 100; // Pixel di scroll prima che diventi overlay
     }
 
+    // Normalizza il path considerando che "/base/" equivale a "/base/index.html"
     normalizePath(path) {
         if (path.endsWith('/')) {
             return path + 'index.html';
@@ -30,38 +25,23 @@ export class UniversalNav {
     }
 
     calculateBasePath(config) {
-        // Rimuovi il BASE_PATH di Vite dal currentPath per ottenere il path relativo
-        let relativePath = this.currentPath;
-        if (this.viteBasePath !== '/' && relativePath.startsWith(this.viteBasePath)) {
-            relativePath = relativePath.substring(this.viteBasePath.length);
+        const currentDir = dirname(this.currentPath);
+        const rootDir = '/' + config?.project?.projectShortTitle?.toLowerCase() || '';
+        
+        const relativePath = relative(currentDir, rootDir);
+        
+        if (relativePath === '' || relativePath === '.') {
+            return './';
         }
         
-        const currentDir = dirname(relativePath);
-        
-        // Se siamo nella root, ritorna il BASE_PATH di Vite
-        if (currentDir === '/' || currentDir === '' || currentDir === '.') {
-            return this.viteBasePath;
-        }
-        
-        // Altrimenti calcola il path relativo alla root
-        const depth = currentDir.split('/').filter(p => p).length;
-        const relativeDots = '../'.repeat(depth);
-        
-        return relativeDots + this.viteBasePath.replace(/^\//, '');
+        return relativePath || './';
     }
 
     getRelativePath(targetPath) {
-        // Se basePath è già assoluto (inizia con /), usalo direttamente
-        if (this.basePath.startsWith('/')) {
-            return join(this.basePath, targetPath).replace(/\/+/g, '/');
-        }
-        
-        // Altrimenti usa join
         return join(this.basePath, targetPath);
     }
 
-    // ... resto del codice rimane uguale ...
-    
+    // Metodo render pubblico
     render() {
         const nav = this.createNavElement();
         
@@ -75,14 +55,11 @@ export class UniversalNav {
         const navHTML = this.generateNavHTML(navItems);
         nav.innerHTML = navHTML;
         
+        // Setup event listeners
         this.setupEventListeners();
         this.setupScrollListener();
         
-        console.log('Navigation rendered - Links:', {
-            home: this.getRelativePath('index.html'),
-            mappa: this.getRelativePath('pages/mappa.html')
-        });
-        
+        console.log('Navigation rendered from:', this.currentPath, 'Base path:', this.basePath);
         return nav;
     }
 
@@ -90,6 +67,7 @@ export class UniversalNav {
         const logoImageUrl = this.config?.project?.projectThumbnailURL;
         
         if (logoImageUrl && logoImageUrl.trim() !== '') {
+            // Controlla se il percorso inizia già con imgs/
             const imagePath = logoImageUrl.startsWith('imgs/') 
                 ? this.getRelativePath(logoImageUrl)
                 : this.getRelativePath(`imgs/${logoImageUrl}`);
@@ -131,35 +109,51 @@ export class UniversalNav {
 
         return `
             <div class="flex justify-between items-center h-20">
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center justify-center">
-                        ${this.generateLogoHTML()}
-                    </div>
-                </div>
-                <div class="hidden md:flex items-center space-x-8">
-                    ${desktopNav}
-                </div>
-                <div class="md:hidden relative">
-                    <input type="checkbox" id="menu-toggle" class="hidden peer">
-                    <label for="menu-toggle" class="cursor-pointer text-gray-600 hover:text-primary-600 transition duration-200 peer-checked:text-primary-600">
-                        <svg class="h-6 w-6 peer-checked:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                        <svg class="h-6 w-6 hidden peer-checked:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </label>
-                    <div class="hidden peer-checked:block absolute right-0 top-12 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
-                        ${mobileNav}
-                    </div>
-                </div>
-            </div>
+    <!-- Logo -->
+    <div class="flex items-center space-x-4">
+        <div class="flex items-center justify-center">
+            ${this.generateLogoHTML()}
+        </div>
+    </div>
+
+    <!-- Desktop Navigation -->
+    <div class="hidden md:flex items-center space-x-8">
+        ${desktopNav}
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <div class="md:hidden relative">
+        <input type="checkbox" id="menu-toggle" class="hidden peer">
+        <label for="menu-toggle" class="cursor-pointer text-gray-600 hover:text-primary-600 transition duration-200 peer-checked:text-primary-600">
+            <svg class="h-6 w-6 peer-checked:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <svg class="h-6 w-6 hidden peer-checked:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </label>
+        
+        <div class="hidden peer-checked:block absolute right-0 top-12 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+            ${mobileNav}
+        </div>
+    </div>
+</div>
         `;
     }
 
     isActivePath(targetPath) {
         const currentFile = basename(this.currentPath);
         const targetFile = basename(targetPath);
+        
+        // Questo blocco è il problema:
+        if (currentFile === 'index.html' && targetFile === 'index.html') {
+            if (targetPath === 'index.html') {
+                const currentDir = dirname(this.currentPath);
+                const projectDir = '/' + (this.config?.project?.projectShortTitle?.toLowerCase() || '');
+                return currentDir === projectDir;
+            }
+        }
+        
         return currentFile === targetFile;
     }
 
@@ -167,10 +161,12 @@ export class UniversalNav {
         let header = document.querySelector('header');
         if (!header) {
             header = document.createElement('header');
+            // Inizialmente con layout normale - occupa spazio
             header.className = 'bg-white shadow-lg border-b border-primary-100 w-full sticky top-0 z-40 transition-all duration-300';
             document.body.insertBefore(header, document.body.firstChild);
         }
         
+        // Memorizza il riferimento all'header
         this.header = header;
         
         let nav = header.querySelector('nav');
@@ -193,12 +189,19 @@ export class UniversalNav {
             const shouldBeOverlay = scrollY > this.scrollThreshold;
             
             if (shouldBeOverlay && !this.isScrolling) {
+                // Passa a modalità overlay
                 this.isScrolling = true;
                 this.header.className = 'bg-white shadow-lg border-b border-primary-100 w-full fixed top-0 z-40 transition-all duration-300';
+                
+                // Aggiungi padding al body per compensare l'header fixed
                 document.body.style.paddingTop = this.header.offsetHeight + 'px';
+                
             } else if (!shouldBeOverlay && this.isScrolling) {
+                // Torna a modalità normale
                 this.isScrolling = false;
                 this.header.className = 'bg-white shadow-lg border-b border-primary-100 w-full sticky top-0 z-40 transition-all duration-300';
+                
+                // Rimuovi il padding dal body
                 document.body.style.paddingTop = '';
             }
             
@@ -214,6 +217,7 @@ export class UniversalNav {
         
         window.addEventListener('scroll', requestUpdate, { passive: true });
         
+        // Cleanup function per rimuovere il listener se necessario
         this.cleanupScrollListener = () => {
             window.removeEventListener('scroll', requestUpdate);
         };
@@ -244,10 +248,13 @@ export class UniversalNav {
         });
     }
 
+    // Metodo per cleanup quando necessario
     destroy() {
         if (this.cleanupScrollListener) {
             this.cleanupScrollListener();
         }
+        
+        // Rimuovi il padding dal body se presente
         document.body.style.paddingTop = '';
     }
 }
