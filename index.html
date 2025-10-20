@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mappa Interattiva</title>
   <script type="module" crossorigin src="/leda/assets/js/main.js"></script>
-  <link rel="modulepreload" crossorigin href="/leda/assets/js/universalFooter-C2U-GN5J.js">
-  <link rel="modulepreload" crossorigin href="/leda/assets/js/initMap-BX67ZGbG.js">
-  <link rel="modulepreload" crossorigin href="/leda/assets/js/dataParser-DI6PJHPC.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/universalFooter-ebKbAGuz.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/_commonjsHelpers-BosuxZz1.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/initMap-DfG4N5_K.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/dataParser-B7kIDYMB.js">
   <link rel="stylesheet" crossorigin href="/leda/assets/css/universalFooter.css">
   <link rel="stylesheet" crossorigin href="/leda/assets/css/initMap.css">
   <link rel="stylesheet" crossorigin href="/leda/assets/css/fonts.css">
@@ -43,7 +44,7 @@
                         <!-- CTA button -->
                         <div class="mt-8 flex flex-col sm:flex-row gap-4">
                             <!-- Mappa interattiva button -->
-                            <button class="section-btn group bg-primary-600 hover:bg-gradient-to-r hover:from-primary-600 hover:to-secondary-600 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center" data-section="1">
+                            <button class="section-btn group bg-primary-600 hover:bg-gradient-to-r hover:from-primary-600 hover:to-secondary-600 text-white px-8 py-4 rounded-xl font-semibold text-l transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center" data-section="1">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 group-hover:rotate-12 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                                 </svg>
@@ -51,11 +52,18 @@
                             </button>
                             
                             <!-- Indici button -->
-                            <button class="section-btn group bg-primary-600 hover:bg-gradient-to-r hover:from-primary-600 hover:to-secondary-600 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center" data-section="2">
+                            <button class="section-btn group bg-primary-600 hover:bg-gradient-to-r hover:from-primary-600 hover:to-secondary-600 text-white px-8 py-4 rounded-xl font-semibold text-l transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center" data-section="2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 group-hover:scale-110 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
                                 Scopri gli indici
+                            </button>
+
+                            <button class="section-btn group bg-primary-600 hover:bg-gradient-to-r hover:from-primary-600 hover:to-secondary-600 text-white px-8 py-4 rounded-xl font-semibold text-l transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center" data-section="3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 group-hover:scale-110 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                </svg>
+                                Scopri i percorsi critici
                             </button>
                         </div>
                     </div>
@@ -147,6 +155,46 @@
 <section class="section-fullscreen bg-gray-50" data-section-id="2">
     <div id="index-cards-container" class="w-full"></div>
 </section>
+
+<!-- Nuova Sezione: Percorsi Critici -->
+<section class="section-fullscreen bg-gradient-to-br from-secondary-50 via-white to-primary-50" data-section-id="percorsi">
+  <div class="max-w-4xl mx-auto px-6 text-center">
+    <!-- Badge decorativo -->
+    <div class="inline-flex items-center bg-secondary-100 text-secondary-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+      </svg>
+      Percorsi Critici
+    </div>
+    
+    <!-- Titolo -->
+    <h2 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-secondary-700 to-primary-700 bg-clip-text text-transparent">
+      Leggi i percorsi critici
+    </h2>
+    
+    <!-- Descrizione -->
+    <p class="text-xl sm:text-2xl text-gray-600 mb-10 lg:mb-12 max-w-2xl mx-auto">
+      Scopri la collezione attraverso i percorsi critici creati dagli esperti
+    </p>
+    
+    <!-- CTA Button -->
+    <a href="pages/percorsi.html" 
+       class="inline-flex items-center bg-secondary-600 hover:bg-gradient-to-r hover:from-secondary-600 hover:to-primary-600 text-white px-8 py-4 lg:px-10 lg:py-5 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 group">
+      <span class="mr-3">Esplora i percorsi</span>
+      <svg class="w-5 h-5 lg:w-6 lg:h-6 transition-transform duration-300 group-hover:translate-x-1" 
+           fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5-5 5M6 12h12"></path>
+      </svg>
+    </a>
+    
+    <!-- Elementi decorativi opzionali -->
+    <div class="mt-12 flex justify-center gap-8 opacity-40">
+      <div class="w-16 h-16 rounded-full bg-secondary-200"></div>
+      <div class="w-12 h-12 rounded-full bg-primary-200"></div>
+      <div class="w-20 h-20 rounded-full bg-secondary-100"></div>
+    </div>
+  </div>
+</section>
     </div>
 
     <!-- Indicatori di sezione -->
@@ -154,6 +202,9 @@
         <div class="indicator active" data-section="0"></div>
         <div class="indicator" data-section="1"></div>
         <div class="indicator" data-section="2"></div>
+        <div class="indicator" data-section="3"></div>
+
+
     </div>
 
     <!-- Il tuo script + nuovo script per la navigazione -->
