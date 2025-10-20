@@ -1,12 +1,13 @@
 // navbarState.js
 export class NavBarState {
     constructor() {
-        this.activeFiltersCount = 0;
-        this.resultsCount = 0;
-        this.uniqueResultsCount = 0;
-        this.isFiltersOpen = true;
-        this.isResultsOpen = true;
-        this.listeners = new Map();
+        this.activeFiltersCount = 0; // filtri attivi
+        this.mentionsCount = 0;      // menzioni     
+        this.resultsCount = 0;       // luoghi
+        this.uniqueResultsCount = 0; // riferimenti 
+        this.isFiltersOpen = true;   // pannello filtri
+        this.isResultsOpen = true;   // pannello riferimenti
+        this.listeners = new Map();  
     }
 
     update(updates) {
@@ -31,5 +32,31 @@ export class NavBarState {
 
     notify(changes) {
         this.listeners.forEach(cb => cb(changes));
+    }
+
+    getSnapshot() {
+        return {
+            activeFiltersCount: this.activeFiltersCount,
+            resultsCount: this.resultsCount,
+            uniqueResultsCount: this.uniqueResultsCount,
+            isFiltersOpen: this.isFiltersOpen,
+            isResultsOpen: this.isResultsOpen
+        };
+    }
+
+    reset() {
+        this.update({
+            activeFiltersCount: 0,
+            mentionsCount: 0,              
+            resultsCount: 0,
+            uniqueResultsCount: 0,
+            isFiltersOpen: true,
+            isResultsOpen: true
+        });
+    }
+
+    // Getter per compatibilità (così puoi usare this.state.propertyName nel renderer)
+    get state() {
+        return this.getSnapshot();
     }
 }

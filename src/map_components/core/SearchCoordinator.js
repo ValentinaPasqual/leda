@@ -25,12 +25,9 @@ export class SearchCoordinator {
       // Calculate unique pivot_ID count
       const uniqueResultsCount = this.calculateUniqueResultsCount(results.items);
       
-      // Update navbar with both counts
-      if (callbacks.onNavBarUpdate) {
-        callbacks.onNavBarUpdate(results.items?.length || 0, { 
-          uniqueResultsCount: uniqueResultsCount 
-        });
-      }
+    if (callbacks.onNavBarUpdate) {
+        callbacks.onNavBarUpdate(results.items || []);
+    }
       
       console.log('Search completed:', results.items?.length || 0, 'items found');
       return results;

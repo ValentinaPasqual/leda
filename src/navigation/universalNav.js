@@ -5,7 +5,7 @@ export class UniversalNav {
     constructor(config) {
         this.currentPath = this.normalizePath(window.location.pathname);
         this.config = config;
-        this.basePath = this.calculateBasePath(this.config);
+        this.basePath = this.calculateBasePath();
         this.header = null;
         this.isScrolling = false;
         this.scrollThreshold = 100; // Pixel di scroll prima che diventi overlay
@@ -24,11 +24,14 @@ export class UniversalNav {
         return path;
     }
 
-    calculateBasePath(config) {
-        const currentDir = dirname(this.currentPath);
-        const rootDir = '/' + config?.project?.projectShortTitle?.toLowerCase() || '';
+    calculateBasePath() {
+        // Use the environmental base path from Vite
+        const envBasePath = import.meta.env.BASE_URL || '/';
         
-        const relativePath = relative(currentDir, rootDir);
+        const currentDir = dirname(this.currentPath);
+        
+        // Calculate relative path from current directory to the base
+        const relativePath = relative(currentDir, envBasePath);
         
         if (relativePath === '' || relativePath === '.') {
             return './';
@@ -145,12 +148,15 @@ export class UniversalNav {
         const currentFile = basename(this.currentPath);
         const targetFile = basename(targetPath);
         
-        // Questo blocco è il problema:
+        // For index.html, check if we're at the root of the app
         if (currentFile === 'index.html' && targetFile === 'index.html') {
             if (targetPath === 'index.html') {
                 const currentDir = dirname(this.currentPath);
-                const projectDir = '/' + (this.config?.project?.projectShortTitle?.toLowerCase() || '');
-                return currentDir === projectDir;
+                // Use the environmental base path
+                const basePath = import.meta.env.BASE_URL || '/';
+                const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+                
+                return currentDir === normalizedBasePath || currentDir === normalizedBasePath + '/';
             }
         }
         

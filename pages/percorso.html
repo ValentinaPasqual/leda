@@ -4,169 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Percorso Critico</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Georgia, 'Times New Roman', serif;
-            background: #f5f5f5;
-            line-height: 1.6;
-            color: #333;
-        }
-
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .loader-content {
-            text-align: center;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 60px 20px;
-            background: white;
-            min-height: 100vh;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .header {
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 20px;
-            margin-bottom: 40px;
-        }
-
-        h1 {
-            color: #2c3e50;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .breadcrumb {
-            color: #666;
-            font-size: 0.9em;
-        }
-
-        .breadcrumb a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-
-        #content {
-            font-size: 1.1em;
-        }
-
-        #content h2, #content h3 {
-            color: #667eea;
-            margin-top: 1.5em;
-            margin-bottom: 0.5em;
-        }
-
-        #content p {
-            margin-bottom: 1.2em;
-            text-align: justify;
-        }
-
-        #content ul, #content ol {
-            margin-left: 30px;
-            margin-bottom: 1.2em;
-        }
-
-        #content img {
-            max-width: 100%;
-            height: auto;
-            margin: 20px 0;
-            border-radius: 8px;
-        }
-
-        .error {
-            background: #ffebee;
-            border-left: 4px solid #d32f2f;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 40px 0;
-        }
-
-        .error h2 {
-            color: #d32f2f;
-            margin-bottom: 10px;
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-top: 40px;
-            padding: 12px 24px;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .back-link:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-        }
-    </style>
 </head>
-<body>
-    <div class="loader" id="loader">
-        <div class="loader-content">
-            <div class="spinner"></div>
-            <p>Caricamento del percorso critico...</p>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-body percorso">
+    <!-- Loader -->
+    <div class="fixed inset-0 bg-white/95 backdrop-blur-sm flex justify-center items-center z-50" id="loader">
+        <div class="text-center">
+            <div class="spinner border-4 border-gray-200 border-t-primary rounded-full w-16 h-16 mx-auto mb-4"></div>
+            <p class="text-gray-600 font-body text-lg">Caricamento del percorso critico...</p>
         </div>
     </div>
-
-    <div class="container">
-        <div class="header">
-            <div class="breadcrumb">
-                <a href="index.html">Home</a> / <span id="currentPath">Percorso Critico</span>
+  
+    <!-- Contenuto principale -->
+    <div class="min-h-screen">
+        <div class="">
+            <!-- Card principale -->
+            <div id="layout-wrapper" style="display:flex; width:100%; height:100vh; overflow:hidden;">
+                <!-- DOCUMENTO (espandibile) -->
+                <div id="content" class="p-5 justify-content" style="flex:1; overflow-y:auto; padding:20px; transition: flex 0.3s ease;"></div>
+                
+                <!-- PANEL LATERALE (nascosto di default) -->
+                <div id="side-panel" style="flex:0; width:0; overflow:hidden; border-left:1px solid #ddd; background:#f9f9f9; transition: all 0.3s ease;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:20px 20px 10px 20px; min-width:400px;">
+                        <button id="close-panel-btn" style="background:none; border:none; cursor:pointer; padding:4px; display:flex; align-items:center; justify-content:center;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 6L6 18M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="side-panel-content" style="padding:0 20px 20px 20px; min-width:400px;"></div>
+                </div>
             </div>
-            <h1 id="mainTitle">Percorso Critico</h1>
+          
+            <!-- Box di errore (nascosto di default) -->
+            <div id="errorContainer" class="hidden mt-8 bg-white rounded-2xl shadow-xl overflow-hidden border-l-8 border-red-500">
+                <div class="p-8">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="font-headings text-2xl font-bold text-red-600 mb-3" id="errorTitle">
+                                Errore nel caricamento
+                            </h2>
+                            <div class="space-y-2 text-gray-700 font-body" id="errorMessage">
+                                <!-- Messaggio di errore verrà inserito qui -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div id="content">
-            <!-- Il contenuto del DOCX verrà caricato qui -->
-        </div>
-
-        <a href="index.html" class="back-link">← Torna alla Home</a>
     </div>
-
-        <script type="module">
-        import '/src/percorso.js'; 
+ 
+    <script type="module">
+        import '/src/percorso.js';
     </script>
 </body>
 </html>

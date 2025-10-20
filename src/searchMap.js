@@ -148,19 +148,19 @@ class LEDASearch {
   }
 
   getSearchCallbacks() {
-    return {
-      onMarkersUpdate: (items) => this.components.renderMarkers(items),
-      onResultsUpdate: (items) => {
-        this.components.resultsRenderer.updateResultsList(items, this.config, {
-          filters: this.stateManager.getState().filters,
-          query: this.stateManager.getState().query,
-          sort: this.stateManager.getState().sort
-        });
-      },
-      onAggregationsUpdate: (aggregations) => this.renderFacets(aggregations),
-      onNavBarUpdate: (count, options) => this.updateNavBar(count, options),
-      onError: (message, type) => this.uiManager.showNotification(message, type)
-    };
+      return {
+        onMarkersUpdate: (items) => this.components.renderMarkers(items),
+        onResultsUpdate: (items) => {
+          this.components.resultsRenderer.updateResultsList(items, this.config, {
+            filters: this.stateManager.getState().filters,
+            query: this.stateManager.getState().query,
+            sort: this.stateManager.getState().sort
+          });
+        },
+        onAggregationsUpdate: (aggregations) => this.renderFacets(aggregations),
+        onNavBarUpdate: (results) => this.updateNavBar(results),  // <-- Passa l'array completo
+        onError: (message, type) => this.uiManager.showNotification(message, type)
+      };
   }
 
   async performSearch() {
@@ -190,12 +190,11 @@ async handleStateChange(action) {
     );
   }
 
-  updateNavBar(resultsCount = 0, options = {}) {
-    this.components.navBar.updateFromSearchState(
-      this.stateManager.getState(),
-      resultsCount,
-      options
-    );
+  updateNavBar(results = []) {
+      this.components.navBar.updateFromSearchState(
+          this.stateManager.getState(),
+          results  // Passa l'array completo
+      );
   }
 
 focusOnMap(lat, lng, locationName) {

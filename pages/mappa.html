@@ -110,14 +110,15 @@
             <!-- Right section - Results -->
             <div class="flex items-center space-x-3">
                 <!-- Results counter -->
-                <div class="flex flex-col space-y-2">
-                    <div id="results-counter" class="bg-secondary-100 text-secondary-800 text-xs font-semibold px-2 py-1 rounded-full">
-                        <span id="results-count">0</span> luoghi
-                    </div>
-                    
-                    <div id="unique-results-counter" class="bg-primary-100 text-primary-800 text-xs font-semibold px-2 py-1 rounded-full">
-                        <span id="unique-results-count">0</span> riferimenti
-                    </div>
+                <div id="results-counter" class="bg-gradient-to-r from-yellow-100 via-secondary-100 to-primary-100 text-gray-800 text-xs font-semibold px-3 py-2 rounded-full flex items-center gap-2 cursor-help">
+                    <span id="mentions-count" class="text-yellow-800 text-xs">0</span>
+                    <span class="text-yellow-700 text-xs">menzioni</span>
+                    <span class="text-gray-400 text-xs">·</span>
+                    <span id="results-count" class="text-secondary-800">0</span>
+                    <span class="text-secondary-700">luoghi</span>
+                    <span class="text-gray-400">·</span>
+                    <span id="unique-results-count" class="text-primary-800">0</span>
+                    <span class="text-primary-700">riferimenti</span>
                 </div>
 
                 <button id="toggle-results" class="group nav-button flex items-center space-x-2 px-4 py-2 rounded-full shadow-lg hover:shadow-xl">

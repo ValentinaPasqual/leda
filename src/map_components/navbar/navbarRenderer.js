@@ -1,5 +1,5 @@
 /**
- * Navigation Bar Renderer - Ottimizzato
+ * Navigation Bar Renderer - Ottimizzato con conteggi corretti
  * Coordina tutti i componenti della navbar
  */
 
@@ -15,22 +15,24 @@ import {
 } from './functionalitiesManager.js';
 
 const ELEMENT_IDS = {
-    filtersPanel: 'filters-panel',
-    resultsPanel: 'results-panel',
-    toggleFilters: 'toggle-filters',
-    toggleResults: 'toggle-results',
-    activeFiltersBadge: 'active-filters-badge',
-    activeFiltersCount: 'active-filters-count',
-    resultsCounter: 'results-counter',
-    resultsCount: 'results-count',
-    uniqueResultsCounter: 'unique-results-counter',
-    uniqueResultsCount: 'unique-results-count',
-    clearAllBtn: 'clear-all-btn',
-    layerButton: 'map-layer-selector',
-    markersButton: 'map-markers-selector',
-    bottomNav: 'bottom-nav',
-    bottomNavContent: 'bottom-nav-content',
-    toggleLegendBtn: 'toggle-legend-btn'
+    filtersPanel: 'filters-panel', // Bottone pannello filtri
+    resultsPanel: 'results-panel', // Bottone pannello Riferimenti
+    toggleFilters: 'toggle-filters', // Avvia pannello filtri
+    toggleResults: 'toggle-results', // Avvia pannello Riferimenti
+    activeFiltersBadge: 'active-filters-badge', // badge con conteggio filtri attivi 
+    activeFiltersCount: 'active-filters-count', // numero conteggio filtri attivi
+    mentionsCounter: 'mentions-counter',  // numero conteggio menzioni di luoghi in riferimenti
+    mentionsCount: 'mentions-count',  // conteggio menzioni di luoghi in riferimenti     
+    resultsCounter: 'results-counter',  // numero conteggio riferimenti unici
+    resultsCount: 'results-count',  // conteggio riferimenti unici
+    uniqueResultsCounter: 'unique-results-counter', // numero conteggio luoghi (unici)
+    uniqueResultsCount: 'unique-results-count', // conteggio luoghi (unici)
+    clearAllBtn: 'clear-all-btn', // bottone cancella tuti i filtri
+    layerButton: 'map-layer-selector', // bottone per scegliere layer mappa
+    markersButton: 'map-markers-selector', // bottone per selettore tipo di marker
+    bottomNav: 'bottom-nav', // contenitore barra di navigazione
+    bottomNavContent: 'bottom-nav-content', // contenuto barra di navigazione
+    toggleLegendBtn: 'toggle-legend-btn' // bottone legenda
 };
 
 export class NavBarRenderer {
@@ -73,6 +75,7 @@ export class NavBarRenderer {
             this.bindEvents();
             this.initPopups();
             this.initMobileMenu();
+            this.initTooltip(); 
         } catch (error) {
             console.error('NavBarRenderer: Initialization error', error);
         }
@@ -98,7 +101,7 @@ export class NavBarRenderer {
         this.elements.toggleFilters?.setAttribute('data-active', 'true');
         this.elements.toggleResults?.setAttribute('data-active', 'true');
         
-        // se non ci sono filtri attivi non mostra il badge "attivi"
+        // se non ci sono filtri attivi non mostra il badge "attivi" e "cancella"
         if (this.state.activeFiltersCount === 0) {
             this.elements.activeFiltersBadge?.classList.add('hidden');
             this.elements.clearAllBtn?.classList.add('hidden');
@@ -106,15 +109,15 @@ export class NavBarRenderer {
     }
 
     onStateChange(changes) {
-        // Aggiorna UI in base ai cambiamenti di stato
         if ('activeFiltersCount' in changes) {
             this.updateFiltersUI(changes.activeFiltersCount.new);
         }
 
-        if ('resultsCount' in changes || 'uniqueResultsCount' in changes) {
+        if ('resultsCount' in changes || 'uniqueResultsCount' in changes || 'mentionsCount' in changes) {
             this.updateResultsUI(
-                this.state.resultsCount, 
-                this.state.uniqueResultsCount
+                this.state.mentionsCount || 0,      // Menzioni totali
+                this.state.uniqueResultsCount || 0, // Riferimenti (pivot_IDs)
+                this.state.resultsCount || 0        // Luoghi (locations)
             );
         }
 
@@ -126,7 +129,6 @@ export class NavBarRenderer {
             this.updatePanelUI('results', changes.isResultsOpen.new);
         }
 
-        // Emetti eventi personalizzati
         this.emitStateChanges(changes);
     }
 
@@ -135,31 +137,42 @@ export class NavBarRenderer {
             this.elements.activeFiltersCount.textContent = count;
         }
         
+        // Mostra/nascondi badge e bottone "cancella"
+        if (count > 0) {
+            this.elements.activeFiltersBadge?.classList.remove('hidden');
+            this.elements.clearAllBtn?.classList.remove('hidden');
+        } else {
+            this.elements.activeFiltersBadge?.classList.add('hidden');
+            this.elements.clearAllBtn?.classList.add('hidden');
+        }
+        
         this.elements.activeFiltersBadge?.setAttribute('data-visible', count > 0);
         this.elements.clearAllBtn?.setAttribute('data-visible', count > 0);
     }
 
-    updateResultsUI(resultsCount, uniqueResultsCount) {
+    updateResultsUI(mentionsCount, pivotIdsCount, locationsCount) {
+        // 1. MENZIONI (totale risultati)
+        if (this.elements.mentionsCount) {
+            this.elements.mentionsCount.textContent = mentionsCount;
+        }
+        if (this.elements.mentionsCounter) {
+            this.elements.mentionsCounter.style.display = mentionsCount > 0 ? '' : 'none';
+        }
+        
+        // 2. LUOGHI (locations uniche)
         if (this.elements.resultsCount) {
-            this.elements.resultsCount.textContent = resultsCount;
+            this.elements.resultsCount.textContent = locationsCount;
+        }
+        if (this.elements.resultsCounter) {
+            this.elements.resultsCounter.style.display = locationsCount > 0 ? '' : 'none';
         }
         
-        this.elements.resultsCounter?.setAttribute('data-visible', resultsCount > 0);
-        
-        // Gestisci contatore risultati unici
-        let uniqueEl = this.elements.uniqueResultsCount;
-        
-        if (!uniqueEl && uniqueResultsCount > 0 && this.elements.resultsCounter) {
-            uniqueEl = document.createElement('span');
-            uniqueEl.id = ELEMENT_IDS.uniqueResultsCount;
-            uniqueEl.className = 'ml-2 text-xs text-gray-600 bg-blue-100 px-2 py-1 rounded-full';
-            this.elements.resultsCounter.appendChild(uniqueEl);
-            this.elements.uniqueResultsCount = uniqueEl;
+        // 3. RIFERIMENTI (pivot_IDs unici)
+        if (this.elements.uniqueResultsCount) {
+            this.elements.uniqueResultsCount.textContent = pivotIdsCount;
         }
-        
-        if (uniqueEl) {
-            uniqueEl.textContent = `${uniqueResultsCount}`;
-            uniqueEl.setAttribute('data-visible', uniqueResultsCount > 0);
+        if (this.elements.uniqueResultsCounter) {
+            this.elements.uniqueResultsCounter.style.display = pivotIdsCount > 0 ? '' : 'none';
         }
     }
 
@@ -235,27 +248,137 @@ export class NavBarRenderer {
 
     // API Pubbliche
 
-    updateFromSearchState(searchState, resultsCount = 0, options = {}) {
+    /**
+     * Aggiorna i contatori dalla ricerca
+     * @param {Object} searchState - Stato della ricerca
+     * @param {Array} results - Array dei risultati
+     * @param {Object} options - Opzioni aggiuntive
+     */
+    updateFromSearchState(searchState, results = [], options = {}) {
         if (!searchState) return;
 
         let filtersCount = FilterUtils.calculateActiveFiltersCount(searchState.filters);
         if (searchState.query?.trim()) filtersCount += 1;
 
+        const counts = this.calculateUniqueCounts(results);
+
         this.state.update({
             activeFiltersCount: filtersCount,
-            resultsCount: resultsCount,
-            uniqueResultsCount: options.uniqueResultsCount || 0
+            mentionsCount: counts.totalMentions,      // MENZIONI
+            resultsCount: counts.uniqueLocations,     // LUOGHI
+            uniqueResultsCount: counts.uniquePivotIds // RIFERIMENTI
         });
+    }
+
+    /**
+     * Calcola conteggi unici dai risultati
+     * @param {Array} results - Array di risultati
+     * @returns {Object} Oggetto con uniquePivotIds, uniqueLocations e totalMentions
+     */
+    calculateUniqueCounts(results) {
+        if (!Array.isArray(results) || results.length === 0) {
+            return { 
+                uniquePivotIds: 0, 
+                uniqueLocations: 0,
+                totalMentions: 0 
+            };
+        }
+
+        const pivotIds = new Set();
+        const locations = new Set();
+
+        results.forEach(result => {
+            // Aggiungi pivot_ID unico
+            if (result.pivot_ID) {
+                pivotIds.add(result.pivot_ID);
+            }
+
+            // Aggiungi Location unica (con la L maiuscola!)
+            if (result.Location) {
+                locations.add(result.Location);
+            }
+        });
+
+        console.log('✅ CONTEGGI:', {
+            totalMentions: results.length,
+            uniquePivotIds: pivotIds.size,
+            uniqueLocations: locations.size,
+            'pivot_IDs': Array.from(pivotIds),
+            'Locations': Array.from(locations)
+        });
+
+        return {
+            uniquePivotIds: pivotIds.size,      // Riferimenti unici
+            uniqueLocations: locations.size,    // Luoghi unici
+            totalMentions: results.length       // Menzioni totali
+        };
     }
 
     updateFilters(count) {
         this.state.update({ activeFiltersCount: count });
     }
 
-    updateResults(count, uniqueCount = 0) {
+    // Inizializza il tooltip del counter 
+    initTooltip() {
+        const resultsCounter = this.elements.resultsCounter;
+        if (!resultsCounter) return;
+
+        // Crea tooltip come elemento separato nel body
+        const tooltip = document.createElement('div');
+        tooltip.id = 'results-counter-tooltip';
+        tooltip.className = 'fixed px-4 py-3 bg-gray-900 text-white text-xs rounded-lg shadow-xl whitespace-nowrap opacity-0 pointer-events-none transition-opacity duration-200';
+        tooltip.style.zIndex = '99999';
+        tooltip.innerHTML = `
+            <div class="space-y-1">
+                <div><strong class="text-yellow-300">Menzioni:</strong> Numero delle menzioni di luoghi nei riferimenti</div>
+                <div><strong class="text-green-300">Luoghi:</strong> Numero di luoghi unici menzionati</div>
+                <div><strong class="text-blue-300">Riferimenti:</strong> Numero di riferimenti che menzionano i luoghi</div>
+            </div>
+            <div class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                <div class="border-4 border-transparent border-t-gray-900"></div>
+            </div>
+        `;
+        document.body.appendChild(tooltip);
+
+        // Funzione per posizionare il tooltip
+        const positionTooltip = () => {
+            const rect = resultsCounter.getBoundingClientRect();
+            tooltip.style.left = `${rect.left + rect.width / 2}px`;
+            tooltip.style.top = `${rect.top - 10}px`;
+            tooltip.style.transform = 'translate(-50%, -100%)';
+        };
+
+        // Event listeners
+        resultsCounter.addEventListener('mouseenter', () => {
+            positionTooltip();
+            tooltip.style.opacity = '1';
+        });
+
+        resultsCounter.addEventListener('mouseleave', () => {
+            tooltip.style.opacity = '0';
+        });
+
+        // Aggiorna posizione su scroll/resize
+        window.addEventListener('scroll', positionTooltip);
+        window.addEventListener('resize', positionTooltip);
+
+        // Cleanup
+        this.cleanupFns.push(() => {
+            tooltip.remove();
+            window.removeEventListener('scroll', positionTooltip);
+            window.removeEventListener('resize', positionTooltip);
+        });
+    }
+
+    /**
+     * Aggiorna i contatori dei risultati
+     * @param {number} pivotIdsCount - Numero di pivot_IDs unici (Riferimenti)
+     * @param {number} locationsCount - Numero di locations uniche (Luoghi)
+     */
+    updateResults(pivotIdsCount, locationsCount = 0) {
         this.state.update({ 
-            resultsCount: count,
-            uniqueResultsCount: uniqueCount 
+            resultsCount: pivotIdsCount,        // Riferimenti
+            uniqueResultsCount: locationsCount  // Luoghi
         });
     }
 

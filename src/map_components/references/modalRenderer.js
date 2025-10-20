@@ -46,9 +46,9 @@ export class ModalRenderer {
     const firstEntry = allEntriesForWork[0];
     const completeWork = {
       pivot_ID: idOpera,
-      Title: firstEntry[window.ledaSearch.config.result_cards.card_title],
-      Subtitle: firstEntry[window.ledaSearch.config.result_cards.card_subtitle],
-      Subtitle2: firstEntry[window.ledaSearch.config.result_cards.card_subtitle_2],
+      Title: firstEntry[this.config.result_cards.card_title],
+      Subtitle: firstEntry[this.config.result_cards.card_subtitle],
+      Subtitle2: firstEntry[this.config.result_cards.card_subtitle_2],
       "Location": [],
       coordinates: [],
       allEntries: allEntriesForWork,

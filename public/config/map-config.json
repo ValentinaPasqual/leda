@@ -1,45 +1,58 @@
 {
-  "project": {
-    "projectShortTitle": "APAP_demo",
-    "projectThumbnailURL": "imgs/project_logo.png",
-    "projectTitle": "Atlante prêt-à-porter, a demo",
-    "projectSubtitle": "Una demo esemplificative delle configurazioni possibili di Atlante prêt-à-porter",
-    "projectDescription": "Atlante prêt-à-porter è un'interfaccia web customizzabile per progetti che integrano i propri dati su mappa geolocazzata insieme a un catalogo...",
-    "mapInfoTitle": "Come Usare Questa Mappa",
-    "mapInfoDescription": "Clicca sui marker per vedere i dettagli."
+  "project" : {
+    "projectShortTitle": "LEDA",
+    "projectThumbnailURL": "LEDA_logo.png",
+    "projectTitle": "For an Atlas of Italian Ecological Literature",
+    "projectSubtitle":"From the Great Acceleration to the Pandemic",
+    "projectDescription":"For an Atlas of Italian Ecological Literature è un progetto biennale (novembre 2023-novembre 2025) realizzato in collaborazione fra l'Università IULM di Milano, l'Università degli Studi di Siena e l'Università di Bologna. <br><br> L'obiettivo è realizzare il primo atlante della letteratura ecocritica italiana: uno strumento interattivo, basato su una struttura ipertestuale, che consentirà di visualizzare, interagire e ragionare sugli spazi di quei testi che hanno tematizzato in chiave critica il rapporto uomo-ambiente. Verranno presi in considerazione testi narrativi che vanno dalla Grande accelerazione alla Pandemia, dunque per un arco temporale di circa ottant'anni.",
+    "mapInfoTitle": "Scopri l'Atlante",
+    "mapInfoDescription": "Questa mappa interattiva ti permette di esplorare i luoghi descritti dalle opere selezionate. Clicca sui marker per visualizzare informazioni dettagliate."
   },
   "datasetConfig": {
-    "multivalue_rows": {
-      "custom_locations_category_1": ","
+    "multivalue_rows" : {
+      "Tipologia del luogo": ", ",
+      "Tipologia dello Spazio": "; ",
+      "Modo":","
     }
   },
   "result_cards": {
-    "card_title": "Item_Name",
-    "card_subtitle": "catalogue_custom_category_1",
-    "card_subtitle_2": "catalogue_custom_category_3",
-    "card_description": "",
-    "popup_description": ""
+    "card_title": "Titolo", 
+    "card_subtitle": "Autore",
+    "card_subtitle_2": "Anno",
+    "card_description": "Descrizione Ecocritica",
+    "popup_description": "Note sullo spazio"
+  },
+  "modal_information": {
+    "Titolo": "Titolo",
+    "Autore": "Autore",
+    "Anno": "Anno di prima pubblicazione", 
+    "Editore": "Editore",
+    "Modo": "Modo",
+    "Temi Ecologici": "Temi Ecologici",
+    "Descrizione Ecocritica": "Descrizione dei Temi Ecocritici",
+    "Note sullo spazio": "Note",
+    "Tipologia dello Spazio": "Tipologia",
+    "Temporalità dello Spazio": "Temporalità", 
+    "Definizione dello spazio": "Definizione",
+    "Interpretazione": "Motivazione dello studioso"
   },
   "map": {
-    "initialView": [
-      41.9028,
-      12.4964
-    ],
-    "initialZoom": 12,
+    "initialView": [41.8719, 12.5674],
+    "initialZoom": 6,
     "tileLayers": {
-      "Default": {
-        "tileLayer": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        "attribution": "© OpenStreetMap contributors"
-      },
-      "Terrain": {
-        "tileLayer": "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-        "attribution": "© OpenTopoMap (CC-BY-SA)"
-      },
-      "CartoDB_Positron": {
-        "tileLayer": "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-        "attribution": "© OpenStreetMap © CartoDB"
-      }
+    "Default": {
+      "tileLayer": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "attribution": "© OpenStreetMap contributors"
+    },
+    "Terrain": {
+      "tileLayer": "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+      "attribution": "© OpenTopoMap (CC-BY-SA)"
+    },
+    "CartoDB_Positron": {
+      "tileLayer": "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+      "attribution": "© OpenStreetMap © CartoDB"
     }
+  }
   },
   "map_popups": {
     "show_polygons": "True",
@@ -47,88 +60,99 @@
   },
   "searchConfig": {
     "debounceTime": 300,
-    "defaultSort": "item_name_asc",
+    "defaultSort": "title_asc",
     "sortOptions": [
-      {
-        "value": "item_name_asc",
-        "label": "Item_Name (Asc)"
-      },
-      {
-        "value": "item_name_desc",
-        "label": "Item_Name (Desc)"
-      }
+      {"value": "title_asc", "label": "Titolo (Asc)"},
+      {"value": "title_desc", "label": "Titolo (Desc)"},
+      {"value": "date_asc", "label": "Anno (Asc)"},
+      {"value": "date_desc", "label": "Anno (Desc)"}
     ]
   },
   "resultsDisplay": {
-    "tagsToShow": [
-      "Item_Name"
-    ]
+    "tagsToShow": ["Titolo", "Anno"]
   },
   "sortings": {
-    "item_name_asc": {
-      "field": "Item_Name",
+    "title_desc": {
+      "field": "Titolo",
+      "order": "desc"
+    },
+    "title_asc": {
+      "field": "Titolo",
       "order": "asc"
     },
-    "item_name_desc": {
-      "field": "Item_Name",
+    "date_desc": {
+      "field": "Anno",
       "order": "desc"
+    },
+    "date_asc": {
+      "field": "Anno",
+      "order": "asc"
     }
   },
-  "aggregations": {
+  "aggregations": {   
     "Location": {
-      "title": "I Luoghi",
+      "title": "I luoghi",
       "category": "Gli spazi narrati",
-      "size": 500,
+      "size": 100,
       "conjunction": false,
       "type": "simple"
     },
-    "custom_locations_category_1": {
-      "title": "Categoria 1",
+    "Tipologia dello Spazio": {
+      "title": "Le tipologie",
       "category": "Gli spazi narrati",
-      "size": 500,
-      "conjunction": false,
-      "type": "simple"
-    },
-    "catalogue_custom_category_1": {
-      "title": "Categoria 1",
-      "category": "I riferimenti",
-      "size": 500,
-      "conjunction": false,
-      "type": "simple"
-    },
-    "catalogue_custom_category_2": {
-      "title": "Categoria 2",
-      "category": "I riferimenti",
-      "size": 500,
+      "size": 100,
       "conjunction": false,
       "type": "taxonomy"
     },
-    "catalogue_custom_category_3": {
-      "title": "Categoria 3",
-      "category": "I riferimenti",
-      "size": 500,
+    "Temporalità dello Spazio": {
+      "title": "Il tempo",
+      "category": "Gli spazi narrati",
+      "size": 100,
+      "conjunction": false,
+      "type": "simple"
+    },
+    "Definizione dello spazio": {
+      "title": "Riferimento spaziale",
+      "category": "Gli spazi narrati",
+      "size": 100,
+      "conjunction": false,
+      "type": "simple"
+    },
+    "Temi Ecologici": {
+      "title": "I temi ecologici",
+      "category": "I riferimenti letterari",
+      "size": 100,
+      "conjunction": false,
+      "type": "taxonomy"
+    },
+    "Titolo": {
+      "title": "I titoli",
+      "category": "I riferimenti letterari",
+      "size": 100,
+      "conjunction": false,
+      "type": "simple"
+    },
+    "Autore": {
+      "title": "Gli autori",
+      "size": 100,
+      "category": "I riferimenti letterari",
+      "conjunction": false,
+      "type": "simple"
+    },
+    "Anno": {
+      "title": "Gli anni di pubblicazione",
+      "size": 100,
+      "category": "I riferimenti letterari",
       "conjunction": false,
       "type": "range"
     },
-    "custom_locations_category_2": {
-      "title": "Categoria 2",
-      "category": "Gli spazi narrati",
-      "size": 500,
+    "Modo": {
+      "title": "I modi",
+      "size": 100,
+      "category": "I riferimenti letterari",
       "conjunction": false,
-      "type": "taxonomy"
+      "type": "simple"
     }
   },
-  "modal_information": {
-    "Item_Name": "Nome del Riferimento",
-    "catalogue_custom_category_1": "Categoria 1",
-    "catalogue_custom_category_2": "Categoria 2",
-    "catalogue_custom_category_3": "Categoria 3",
-    "custom_locations_category_1": "Categoria 1",
-    "custom_locations_category_2": "Categoria 2"
-  },
-  "searchableFields": [
-    "Item_Name",
-    "catalogue_custom_category_1",
-    "catalogue_custom_category_3"
-  ]
+  "searchableFields": ["Titolo", "Anno", "Autore"]
 }

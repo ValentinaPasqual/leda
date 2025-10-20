@@ -5,9 +5,120 @@
 ```public/data/``` should contain 3 files, 1 json and two TSV files:
 - ```locations.tsv``` contains data pertaining the locations
 - ```references.tsv``` contains data pertaining the references (catalogue)
+
+
+# Struttura del Dataset con Tabelle Collegate
+
+Il dataset è composto da **due file TSV collegati** tramite una **colonna pivot** che permette all'applicazione di allineare e correlare i dati.
+
+---
+
+## File Principali
+
+### 1. `locations.tsv`
+Contiene i dati geografici.
+
+**Colonne obbligatorie:**
+- `Location` - nome del luogo
+- `lat_long` - coordinate geografiche
+
+### 2. `references.tsv`
+Contiene i riferimenti, eventi o documenti.
+
+**Colonne obbligatorie:**
+- `ID` - identificatore unico
+- Colonna pivot (vedi sotto)
+
+---
+
+## La Colonna Pivot
+
+La **colonna pivot** è la colonna che:
+- **Condivide lo stesso nome** in entrambe le tabelle
+- **Contiene gli stessi valori** per creare il collegamento
+- **Determina la relazione** tra i due file
+
+L'applicazione utilizza questa colonna per allineare e correlare automaticamente i dati delle due tabelle.
+
+---
+
+## Esempi di Strutture
+
+### Esempio 1: Pivot su `Location`
+
+**Caso d'uso:** Mappare eventi o riferimenti associati a luoghi specifici
+
+#### `locations.tsv`
+Ogni riga rappresenta un **luogo** (es. una montagna).
+
+| Location | lat_long | Altitudine | Provincia |
+|----------|----------|------------|-----------|
+| Monte Bianco | 45.8333,6.8642 | 4808m | Aosta |
+| Matterhorn | 45.9763,7.6586 | 4478m | Aosta |
+
+#### `references.tsv`
+Ogni riga rappresenta un **evento o riferimento** collegato a un luogo.
+
+| ID | Location | Data | Descrizione |
+|----|----------|------|-------------|
+| REF001 | Monte Bianco | 1786-08-08 | Prima ascensione |
+| REF002 | Monte Bianco | 1965-02-15 | Spedizione invernale |
+| REF003 | Matterhorn | 1865-07-14 | Prima ascensione |
+
+**Relazione:** Molti eventi (references) → Un luogo (location)
+
+---
+
+### Esempio 2: Pivot su `Titolo del riferimento`
+
+**Caso d'uso:** Mappare le menzioni geografiche trovate in documenti o riferimenti bibliografici
+
+#### `references.tsv`
+Ogni riga rappresenta un **documento o riferimento bibliografico**.
+
+| ID | Titolo del riferimento | Autore | Anno |
+|----|------------------------|--------|------|
+| REF001 | Viaggio nelle Alpi | G. Rossi | 1823 |
+| REF002 | Esplorazioni del Monte Rosa | A. Verdi | 1842 |
+
+#### `locations.tsv`
+Ogni riga rappresenta una **menzione geografica** trovata in un riferimento.
+
+| Location | lat_long | Titolo del riferimento | Pagina |
+|----------|----------|------------------------|--------|
+| Cervino | 45.9763,7.6586 | Viaggio nelle Alpi | 45 |
+| Aosta | 45.7370,7.3205 | Viaggio nelle Alpi | 12 |
+| Monte Rosa | 45.9372,7.8670 | Esplorazioni del Monte Rosa | 8 |
+| Macugnaga | 45.9667,7.9667 | Esplorazioni del Monte Rosa | 23 |
+
+**Relazione:** Molti luoghi (locations) → Un riferimento (reference)
+
+---
+
+## Riepilogo
+
+| Aspetto | Descrizione |
+|---------|-------------|
+| **Colonna pivot** | Colonna con stesso nome e valori in entrambe le tabelle |
+| **Funzione** | Permette all'app di collegare automaticamente i due file |
+| **Flessibilità** | La scelta della colonna pivot determina quale entità è "principale" e quale è "correlata" |
+| **Relazione** | Può essere 1:molti in entrambe le direzioni, a seconda della colonna pivot scelta |
+
+---
+
+## Note Tecniche
+
+- I nomi delle colonne pivot devono corrispondere **esattamente** (case-sensitive)
+- I valori nella colonna pivot devono corrispondere **esattamente** per creare il collegamento
+- È possibile avere colonne aggiuntive in entrambi i file oltre a quelle obbligatorie
+- Il formato TSV (Tab-Separated Values) deve essere rispettato per entrambi i file
+
+
 - ```polygons.tsv``` contains dataset to be reconciled with the locations stored in ```locations.tsv``` -- SEE BUILD THE POLYGONS.json FILE
 
 SPIEGA ANCHE CHE LE TABELLE POSSONO ESSERE 1-N O N-1.
+
+Tabella 
 
 # Images
 ```public/imgs/``` should contain the image of the main logo of your website and should contain the string ```logo``` in it. 
