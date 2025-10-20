@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mappa Interattiva</title>
+    
+    <link rel="icon" href="data:;base64,=" />
+  <script type="module" crossorigin src="/leda/assets/js/mappa.js"></script>
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/universalFooter-BH0r178q.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/dataParser-7VK0E9mz.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/_commonjsHelpers-BosuxZz1.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/initMap-SJMGpn5m.js">
+  <link rel="modulepreload" crossorigin href="/leda/assets/js/modalRenderer-Cg3dEo6B.js">
+  <link rel="stylesheet" crossorigin href="/leda/assets/css/universalFooter.css">
+  <link rel="stylesheet" crossorigin href="/leda/assets/css/initMap.css">
+  <link rel="stylesheet" crossorigin href="/leda/assets/css/mappa.css">
+</head>
+<body class="h-screen flex flex-col" id="map-page">
+
+    <!-- MAIN CONTENT -->
+    <section class="main flex-1 relative overflow-hidden">
+        <!-- Filters Panel -->
+        <div id="filters-panel" class="overlay-panel panel-closed absolute left-0 top-0 bottom-0 w-30 z-50 shadow-lg overflow-auto">
+        
+            <!-- Dynamic facets container -->
+            <div id="facets-container">
+                <template id="facet-template">
+                    <div class="facet-group mb-4">
+                        <h3 class="font-semibold mb-2"></h3>
+                        <div class="facet-options space-y-2">
+                            <!-- Facet options will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div id="map" class="absolute inset-0"></div>
+
+        <!-- Results Panel -->
+        <div id="results-panel" class="overlay-panel panel-closed-right absolute right-0 top-0 bottom-0 w-30 z-50 shadow-lg overflow-auto">
+            
+            <div class="results-container">
+                <div class="search-sort-container">
+                    <!-- Search Input -->
+                    <div class="mb-4">
+                        <input type="text" id="search-input" 
+                            class="w-full p-2 border rounded" 
+                            placeholder="Cerca...">
+                    </div>
+
+                    <!-- Sort -->
+                    <div class="mb-4">
+                            <select id="sort-select" class="w-full p-2 border rounded-lg">
+                                <!-- Sort options will be populated by JavaScript -->
+                            </select>
+                    </div>
+                </div>
+                    
+                <div id="results" class="space-y-4">
+                    <!-- Results will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="bottom-navbar bg-white shadow-lg border-t border-primary-100 w-full z-40 transition-all duration-300 p-2 h-18 flex-shrink-0">
+        <div class="flex items-center justify-between max-w-screen-xl mx-auto">
+            
+            <!-- Left section - Filters -->
+            <div class="flex items-center space-x-3 font-medium">
+                <button id="toggle-filters" class="group nav-button flex items-center space-x-2 px-4 py-2 rounded-full shadow-lg hover:shadow-xl">
+                    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4 w-4 group-hover:rotate-12 transition-transform duration-200">
+                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+                    </svg>
+                    Filtri
+                </button>
+                
+                <!-- Active filters indicator -->
+                <div id="active-filters-badge" class="nav-button bg-secondary-100 text-secondary-700 hover:text-secondary-800 hover:bg-secondary-200 text-xs font-semibold px-2 py-1 rounded-full">
+                    <span id="active-filters-count"></span> attivi
+                </div>
+                <button id="clear-all-btn" class="group nav-button px-2 py-1 rounded-full text-xs font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-2 h-2 group-hover:rotate-12 transition-transform duration-200">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    <span class="font-medium">Cancella filtri</span>
+                </button>
+            </div>
+
+            <!-- Center section - Quick actions -->
+            <div class="flex items-center space-x-2">
+                <button id="toggle-legend-btn" class="group nav-button px-3 py-2 rounded-full text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 group-hover:rotate-12 transition-transform duration-200" fill="currentColor" viewBox="0 0 512 512">
+                        <path d="M507.31 84.69L464 41.37c-6-6-14.14-9.37-22.63-9.37H288V16c0-8.84-7.16-16-16-16h-32c-8.84 0-16 7.16-16 16v16H56c-13.25 0-24 10.75-24 24v80c0 13.25 10.75 24 24 24h385.37c8.49 0 16.62-3.37 22.63-9.37l43.31-43.31c6.25-6.26 6.25-16.38 0-22.63zM224 496c0 8.84 7.16 16 16 16h32c8.84 0 16-7.16 16-16V384h-64v112zm232-272H288v-32h-64v32H70.63c-8.49 0-16.62 3.37-22.63 9.37L4.69 276.69c-6.25 6.25-6.25 16.38 0 22.63L48 342.63c6 6 14.14 9.37 22.63 9.37H456c13.25 0 24-10.75 24-24v-80c0-13.25-10.75-24-24-24z"/>                    
+                    </svg>
+                    Legenda
+                </button>   
+                <button id="map-layer-selector" class="group nav-button px-3 py-2 rounded-full text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 group-hover:rotate-12 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.4 10L21 12L17.4 14M17.4 10L12 13L6.6 10M17.4 10L21 8L12 3L3 8L6.6 10M6.6 10L3 12L6.6 14M17.4 14L21 16L12 21L3 16L6.6 14M17.4 14L12 17L6.6 14"></path>
+                    </svg>
+                    Strati cartografici
+                </button>
+
+                <button id="map-markers-selector" class="group nav-button px-3 py-2 rounded-full text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 group-hover:rotate-12 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z"></path> 
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22C16 18 20 14.4183 20 10C20 5.58172 16.4183 2 12 2C7.58172 2 4 5.58172 4 10C4 14.4183 8 18 12 22Z"></path>
+                    </svg>
+                    Marcatori
+                </button>
+
+            </div>
+
+            <!-- Right section - Results -->
+            <div class="flex items-center space-x-3">
+                <!-- Results counter -->
+                <div id="results-counter" class="bg-gradient-to-r from-yellow-100 via-secondary-100 to-primary-100 text-gray-800 text-xs font-semibold px-3 py-2 rounded-full flex items-center gap-2 cursor-help">
+                    <span id="mentions-count" class="text-yellow-800 text-xs">0</span>
+                    <span class="text-yellow-700 text-xs">menzioni</span>
+                    <span class="text-gray-400 text-xs">·</span>
+                    <span id="results-count" class="text-secondary-800">0</span>
+                    <span class="text-secondary-700">luoghi</span>
+                    <span class="text-gray-400">·</span>
+                    <span id="unique-results-count" class="text-primary-800">0</span>
+                    <span class="text-primary-700">riferimenti</span>
+                </div>
+
+                <button id="toggle-results" class="group nav-button flex items-center space-x-2 px-4 py-2 rounded-full shadow-lg hover:shadow-xl">
+                    <span class="font-medium">Riferimenti</span>
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:rotate-12 transition-transform duration-200">
+                        <path d="M8 6.00067L21 6.00139M8 12.0007L21 12.0015M8 18.0007L21 18.0015M3.5 6H3.51M3.5 12H3.51M3.5 18H3.51M4 6C4 6.27614 3.77614 6.5 3.5 6.5C3.22386 6.5 3 6.27614 3 6C3 5.72386 3.22386 5.5 3.5 5.5C3.77614 5.5 4 5.72386 4 6ZM4 12C4 12.2761 3.77614 12.5 3.5 12.5C3.22386 12.5 3 12.2761 3 12C3 11.7239 3.22386 11.5 3.5 11.5C3.77614 11.5 4 11.7239 4 12ZM4 18C4 18.2761 3.77614 18.5 3.5 18.5C3.22386 18.5 3 18.2761 3 18C3 17.7239 3.22386 17.5 3.5 17.5C3.77614 17.5 4 17.7239 4 18Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+
+      
+</body>
+</html>
