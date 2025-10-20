@@ -8,8 +8,8 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Installed libs + deploy folder
+dist
 node_modules
-dist/
 *.local
 
 # Editor directories and files
