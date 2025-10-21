@@ -91,7 +91,7 @@
   },
   "aggregations": {   
     "Location": {
-      "title": "I luoghi",
+      "title": "I riferimenti spaziali",
       "category": "Gli spazi narrati",
       "size": 100,
       "conjunction": false,
@@ -105,14 +105,14 @@
       "type": "taxonomy"
     },
     "Temporalità dello Spazio": {
-      "title": "Il tempo",
+      "title": "Le collocazioni temporali",
       "category": "Gli spazi narrati",
       "size": 100,
       "conjunction": false,
       "type": "simple"
     },
     "Definizione dello spazio": {
-      "title": "Riferimento spaziale",
+      "title": "Stato di realtà",
       "category": "Gli spazi narrati",
       "size": 100,
       "conjunction": false,
