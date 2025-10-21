@@ -91,7 +91,7 @@
   },
   "aggregations": {   
     "Location": {
-      "title": "I riferimenti spaziali",
+      "title": "Le collocazioni spaziali",
       "category": "Gli spazi narrati",
       "size": 100,
       "conjunction": false,
