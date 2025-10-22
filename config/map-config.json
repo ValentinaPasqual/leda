@@ -93,62 +93,62 @@
     "Location": {
       "title": "Le collocazioni spaziali",
       "category": "Gli spazi narrati",
-      "size": 100,
+      "size": 500,
       "conjunction": false,
       "type": "simple"
     },
     "Tipologia dello Spazio": {
       "title": "Le tipologie di collocazioni spaziali",
       "category": "Gli spazi narrati",
-      "size": 100,
+      "size": 500,
       "conjunction": false,
       "type": "taxonomy"
     },
     "Temporalità dello Spazio": {
       "title": "Le collocazioni temporali",
       "category": "Gli spazi narrati",
-      "size": 100,
+      "size": 500,
       "conjunction": false,
       "type": "simple"
     },
     "Definizione dello spazio": {
       "title": "Gli stati di realtà",
       "category": "Gli spazi narrati",
-      "size": 100,
+      "size": 500,
       "conjunction": false,
       "type": "simple"
     },
     "Temi Ecologici": {
       "title": "I temi ecologici",
       "category": "I riferimenti letterari",
-      "size": 100,
+      "size": 500,
       "conjunction": false,
       "type": "taxonomy"
     },
     "Titolo": {
       "title": "I titoli",
       "category": "I riferimenti letterari",
-      "size": 100,
+      "size": 500,
       "conjunction": false,
       "type": "simple"
     },
     "Autore": {
       "title": "Gli autori",
-      "size": 100,
+      "size": 500,
       "category": "I riferimenti letterari",
       "conjunction": false,
       "type": "simple"
     },
     "Anno": {
       "title": "Gli anni di pubblicazione",
-      "size": 100,
+      "size": 500,
       "category": "I riferimenti letterari",
       "conjunction": false,
       "type": "range"
     },
     "Modo": {
       "title": "I modi",
-      "size": 100,
+      "size": 500,
       "category": "I riferimenti letterari",
       "conjunction": false,
       "type": "simple"
