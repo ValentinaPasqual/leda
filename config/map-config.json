@@ -98,7 +98,7 @@
       "type": "simple"
     },
     "Tipologia dello Spazio": {
-      "title": "Le tipologie",
+      "title": "Le tipologie di collocazioni spaziali",
       "category": "Gli spazi narrati",
       "size": 100,
       "conjunction": false,
@@ -112,7 +112,7 @@
       "type": "simple"
     },
     "Definizione dello spazio": {
-      "title": "Gli Stati di realtà",
+      "title": "Gli stati di realtà",
       "category": "Gli spazi narrati",
       "size": 100,
       "conjunction": false,
