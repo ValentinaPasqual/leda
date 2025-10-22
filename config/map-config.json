@@ -31,7 +31,7 @@
     "Temi Ecologici": "Temi Ecologici",
     "Descrizione Ecocritica": "Descrizione dei Temi Ecocritici",
     "Note sullo spazio": "Note",
-    "Tipologia dello Spazio": "Tipologia",
+    "Tipologia del luogo": "Tipologia",
     "Temporalità dello Spazio": "Temporalità", 
     "Definizione dello spazio": "Definizione",
     "Interpretazione": "Motivazione dello studioso"
@@ -97,12 +97,12 @@
       "conjunction": false,
       "type": "simple"
     },
-    "Tipologia dello Spazio": {
+    "Tipologia del luogo": {
       "title": "Le tipologie di collocazioni spaziali",
       "category": "Gli spazi narrati",
       "size": 500,
       "conjunction": false,
-      "type": "taxonomy"
+      "type": "simple"
     },
     "Temporalità dello Spazio": {
       "title": "Le collocazioni temporali",
