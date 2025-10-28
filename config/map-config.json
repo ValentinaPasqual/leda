@@ -2,9 +2,9 @@
   "project" : {
     "projectShortTitle": "LEDA",
     "projectThumbnailURL": "LEDA_logo.png",
-    "projectTitle": "For an Atlas of Italian Ecological Literature",
-    "projectSubtitle":"From the Great Acceleration to the Pandemic",
-    "projectDescription":"For an Atlas of Italian Ecological Literature è un progetto biennale (novembre 2023-novembre 2025) realizzato in collaborazione fra l'Università IULM di Milano, l'Università degli Studi di Siena e l'Università di Bologna. <br><br> L'obiettivo è realizzare il primo atlante della letteratura ecocritica italiana: uno strumento interattivo, basato su una struttura ipertestuale, che consentirà di visualizzare, interagire e ragionare sugli spazi di quei testi che hanno tematizzato in chiave critica il rapporto uomo-ambiente. Verranno presi in considerazione testi narrativi che vanno dalla Grande accelerazione alla Pandemia, dunque per un arco temporale di circa ottant'anni.",
+    "projectTitle": "Atlante digitale della letteratura ecologica italiana",
+    "projectSubtitle":"LEDA: Literary Ecology in a Digital Altlas",
+    "projectDescription":"L’Atlante digitale della letteratura ecologica italiana è il frutto del progetto For an Atlas of Italian Ecological Literature: From the Great Acceleration to the Pandemic, nato dalla collaborazione fra l’Università IULM di Milano, l'Università degli Studi di Siena e l’Università di Bologna nell’ambito del programma PRIN 2022 PNRR.<br><br>Si tratta di uno strumento interattivo che consente di visualizzare, interagire e ragionare sugli spazi di quei testi che hanno tematizzato in chiave critica il rapporto uomo-ambiente.Al suo interno, trovano spazio circa cento testi narrativi, pubblicati in un arco temporale che va dalla Grande accelerazione degli anni Cinguanta alla Pandemia degli anni Venti del nuovo millennio. Questi testi sono indagabili attraverso una mappa, ma anche a partire da una serie di indici e percorsi che consentono di riflettere sul rapporto fra letteratura, spazio e questioni ecocritiche.  ",
     "mapInfoTitle": "Scopri l'Atlante",
     "mapInfoDescription": "Questa mappa interattiva ti permette di esplorare i luoghi descritti dalle opere selezionate. Clicca sui marker per visualizzare informazioni dettagliate."
   },
@@ -62,10 +62,10 @@
     "debounceTime": 300,
     "defaultSort": "title_asc",
     "sortOptions": [
-      {"value": "title_asc", "label": "Titolo (Asc)"},
-      {"value": "title_desc", "label": "Titolo (Desc)"},
-      {"value": "date_asc", "label": "Anno (Asc)"},
-      {"value": "date_desc", "label": "Anno (Desc)"}
+      {"value": "title_asc", "label": "Titolo (Ascendente)"},
+      {"value": "title_desc", "label": "Titolo (Discendente)"},
+      {"value": "date_asc", "label": "Anno (Ascentende)"},
+      {"value": "date_desc", "label": "Anno (Discendente)"}
     ]
   },
   "resultsDisplay": {
@@ -91,14 +91,14 @@
   },
   "aggregations": {   
     "Location": {
-      "title": "Le collocazioni spaziali",
+      "title": "I luoghi",
       "category": "Gli spazi narrati",
       "size": 500,
       "conjunction": false,
       "type": "simple"
     },
     "Tipologia del luogo": {
-      "title": "Le tipologie di collocazioni spaziali",
+      "title": "Le tipologie di spazio",
       "category": "Gli spazi narrati",
       "size": 500,
       "conjunction": false,
