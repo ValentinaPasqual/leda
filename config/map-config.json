@@ -23,18 +23,24 @@
     "popup_description": "Note sullo spazio"
   },
   "modal_information": {
-    "Titolo": "Titolo",
-    "Autore": "Autore",
-    "Anno": "Anno di prima pubblicazione", 
-    "Editore": "Editore",
-    "Modo": "Modo",
-    "Temi Ecologici": "Temi Ecologici",
-    "Descrizione Ecocritica": "Descrizione dei Temi Ecocritici",
-    "Note sullo spazio": "Note",
-    "Tipologia del luogo": "Tipologia",
-    "Temporalità dello Spazio": "Temporalità", 
-    "Definizione dello spazio": "Definizione",
-    "Interpretazione": "Motivazione dello studioso"
+    "fields" :{
+    "catalogue": {
+      "Titolo": "Titolo",
+      "Autore": "Autore",
+      "Anno": "Anno di prima pubblicazione", 
+      "Editore": "Editore",
+      "Modo": "Modo",
+      "Temi Ecologici": "Temi Ecologici",
+      "Descrizione Ecocritica": "Descrizione dei Temi Ecocritici"
+    },
+    "geodata" : {
+      "Note sullo spazio": "Note",
+      "Tipologia del luogo": "Tipologia",
+      "Temporalità dello Spazio": "Temporalità", 
+      "Definizione dello spazio": "Definizione",
+      "Interpretazione": "Motivazione dello studioso"
+    }
+  }
   },
   "map": {
     "initialView": [41.8719, 12.5674],
